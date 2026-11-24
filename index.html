@@ -3,73 +3,110 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090e1c">
-<title>MINI ARCADE 2.0</title>
+<title>MINI ARCADE 3.0</title>
 
 <style>
 :root{
- --bg:#090e1c;--panel:#141e33;--panel2:#1d2b46;
- --text:#f1f5ff;--muted:#99abc5;
- --accent:#69e3c0;--line:#30415e;
+ --bg:#090e1c;
+ --panel:#141e33;
+ --panel2:#1d2b46;
+ --line:#30415e;
+ --text:#f1f5ff;
+ --muted:#9eabc1;
+ --accent:#69e3c0;
+ --danger:#ff7180;
 }
 *{box-sizing:border-box}
 body{
- margin:0;background:radial-gradient(ellipse at top,#1b3154,var(--bg) 65%);
+ margin:0;background:radial-gradient(ellipse at top,#20385b,var(--bg) 65%);
  color:var(--text);font-family:system-ui,Arial,sans-serif;
  min-height:100vh;
 }
-button{font:inherit;cursor:pointer;touch-action:manipulation}
-header{text-align:center;padding:28px 15px 15px}
-header h1{font-size:clamp(32px,8vw,55px);margin:0;letter-spacing:-2px}
-header p{color:var(--muted);margin:7px}
-.version{font-size:11px;color:var(--accent);letter-spacing:3px;font-weight:900}
+button,select{font:inherit;touch-action:manipulation}
+button{cursor:pointer}
+header{text-align:center;padding:30px 14px 20px}
+header h1{font-size:clamp(36px,9vw,58px);margin:5px;letter-spacing:-2px}
+header p{color:var(--muted)}
+.version{color:var(--accent);letter-spacing:4px;font-size:11px;font-weight:900}
 .container{max-width:1050px;margin:auto;padding:12px}
+button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.primary,.secondary{
+ border:0;border-radius:11px;padding:12px 17px;font-weight:800;
+}
+.primary{background:var(--accent);color:#071b17}
+.secondary{background:#2b3c59;color:white}
+.primary:disabled,.secondary:disabled{opacity:.5;cursor:not-allowed}
 .nav{
- display:flex;gap:8px;overflow-x:auto;padding:10px 0 18px;
+ display:flex;gap:8px;overflow-x:auto;padding:12px 0;
  scrollbar-width:none;
 }
 .nav button{
  flex-shrink:0;background:var(--panel);color:white;
- border:1px solid var(--line);border-radius:12px;padding:12px 16px;
+ border:1px solid var(--line);border-radius:12px;padding:12px 15px;
 }
 .nav button.active{background:var(--accent);color:#071b17}
+.page{display:none}
+.page.active{display:block}
 .game{
  display:none;background:linear-gradient(145deg,#192741,#111a2c);
  border:1px solid var(--line);border-radius:20px;
- padding:20px;margin-bottom:20px;
- box-shadow:0 15px 40px #0004;
+ padding:20px;margin:12px 0 25px;
+ box-shadow:0 15px 45px #0004;
 }
 .game.active{display:block}
-.heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 h2{margin:0;font-size:25px}
-.description{color:var(--muted);font-size:13px}
-.primary,.secondary{
- border:0;border-radius:11px;padding:11px 17px;font-weight:800;
-}
-.primary{background:var(--accent);color:#071b17}
-.secondary{background:#2a3c59;color:white}
-.stats{
- display:flex;gap:17px;flex-wrap:wrap;color:var(--muted);
- margin:15px 0;font-size:14px;
-}
+.description,.hint{color:var(--muted);font-size:13px;line-height:1.6}
+.stats{display:flex;gap:17px;flex-wrap:wrap;color:var(--muted);margin:15px 0;font-size:14px}
 .stats b{color:white}
 canvas{
  display:block;width:100%;max-width:700px;height:auto;
  margin:15px auto;border-radius:14px;
  border:1px solid #405575;touch-action:none;
 }
+.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px auto}
 .center{text-align:center;padding:15px 5px}
 .big{font-size:clamp(35px,9vw,60px);font-weight:900}
-.hint{font-size:13px;color:var(--muted);line-height:1.5}
-.controls{
- display:flex;justify-content:center;gap:9px;
- flex-wrap:wrap;margin:14px auto;
+.tapzone{
+ width:100%;min-height:155px;border:0;border-radius:17px;
+ background:#293c59;color:white;font-size:24px;font-weight:900;
 }
-.control{
- width:55px;height:50px;background:#293c59;color:white;
- border:1px solid #455a78;border-radius:13px;font-size:22px;
+.green{background:#16805f!important}
+.red{background:#a13e50!important}
+.dashboard{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:9px;margin:15px 0;
 }
+.dashcard{
+ padding:15px 8px;background:var(--panel);
+ border:1px solid var(--line);border-radius:14px;text-align:center;
+}
+.dashcard b{font-size:23px;display:block}
+.dashcard span{color:var(--muted);font-size:11px}
+.cards{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+ gap:12px;margin:18px 0;
+}
+.gamecard{
+ text-align:left;padding:18px;border-radius:16px;
+ background:var(--panel);border:1px solid var(--line);
+ color:white;min-height:125px;
+}
+.gamecard strong{display:block;font-size:18px;margin-bottom:6px}
+.gamecard span{color:var(--muted);font-size:12px}
+.gamecard:active{transform:scale(.98)}
+.grid{
+ display:grid;grid-template-columns:repeat(4,minmax(50px,85px));
+ justify-content:center;gap:9px;margin:20px auto;
+}
+.memory-card{
+ aspect-ratio:1;border-radius:12px;background:#293c59;
+ color:white;border:1px solid #49607e;font-size:28px;
+}
+.memory-card.open{background:#386c73}
+.memory-card.matched{background:#24654e}
 .dpad{
  display:grid;grid-template-columns:55px 55px 55px;
  grid-template-rows:50px 50px 50px;
@@ -80,447 +117,510 @@ canvas{
 .dpad .left{grid-column:1;grid-row:2}
 .dpad .down{grid-column:2;grid-row:2}
 .dpad .right{grid-column:3;grid-row:2}
-.tapzone{
- width:100%;min-height:160px;border:0;border-radius:17px;
- background:#293c59;color:white;font-size:24px;font-weight:900;
+.meter{max-width:550px;height:18px;background:#293b56;border-radius:20px;overflow:hidden;margin:18px auto}
+#micBar{height:100%;width:0;background:linear-gradient(90deg,#5be1b5,#e8d36d,#ff7180)}
+.achievement{
+ padding:12px;background:var(--panel2);
+ border:1px solid var(--line);border-radius:12px;
+ margin:8px 0;text-align:left;
 }
-.green{background:#16805f!important}
-.red{background:#a13e50!important}
-.grid{
- display:grid;grid-template-columns:repeat(4,minmax(55px,85px));
- justify-content:center;gap:9px;margin:20px auto;
-}
-.card{
- aspect-ratio:1;border-radius:12px;background:#293c59;
- color:white;border:1px solid #49607e;font-size:29px;
-}
-.card.open{background:#386c73}
-.card.matched{background:#24654e}
-.meter{
- max-width:550px;height:17px;background:#293b56;
- border-radius:20px;overflow:hidden;margin:18px auto;
-}
-#micBar{
- height:100%;width:0;
- background:linear-gradient(90deg,#5be1b5,#e8d36d,#ff7180);
- transition:width .06s;
-}
-.dashboard{
- display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
- gap:10px;margin:15px 0;
-}
-.dashcard{
- padding:15px;background:var(--panel);border:1px solid var(--line);
- border-radius:14px;text-align:center;
-}
-.dashcard b{font-size:23px;display:block}
-.dashcard span{color:var(--muted);font-size:12px}
+.achievement.locked{opacity:.45}
+.achievement strong{display:block}
+.achievement small{color:var(--muted)}
 footer{text-align:center;padding:25px;color:#71829e;font-size:12px}
-@media(max-width:480px){
+@media(max-width:520px){
  .game{padding:14px}
+ .dashboard{grid-template-columns:repeat(2,1fr)}
  .nav button{padding:11px 13px}
- .stats{gap:11px}
+ .stats{gap:10px}
 }
 </style>
 </head>
 
 <body>
-
 <header>
- <div class="version">ARCADE EXPERIENCE</div>
+ <div class="version">ULTIMATE EDITION</div>
  <h1>MINI ARCADE</h1>
- <p>Your own collection of browser games.</p>
- <p class="hint">VERSION 2.0</p>
+ <p>Your personal browser gaming universe.</p>
+ <p class="hint">VERSION 3.0</p>
 </header>
 
 <main class="container">
 
-<section class="dashboard">
- <div class="dashcard"><b id="totalGames">6</b><span>Games</span></div>
- <div class="dashcard"><b id="totalRecords">0</b><span>Records saved</span></div>
- <div class="dashcard"><b id="soundStatus">ON</b><span>Sound</span></div>
- <div class="dashcard"><b>2.0</b><span>Version</span></div>
-</section>
-
-<div class="controls">
- <button class="secondary" onclick="toggleSound()" id="soundButton">Sound: ON</button>
- <button class="secondary" onclick="resetRecords()">Reset Records</button>
+<div class="dashboard">
+ <div class="dashcard"><b>6</b><span>GAMES</span></div>
+ <div class="dashcard"><b id="records">0</b><span>RECORDS</span></div>
+ <div class="dashcard"><b id="achievementCount">0/8</b><span>ACHIEVEMENTS</span></div>
+ <div class="dashcard"><b id="soundStatus">ON</b><span>SOUND</span></div>
 </div>
 
 <nav class="nav">
- <button class="active" onclick="openGame('flappy',this)">🐤 Flappy</button>
- <button onclick="openGame('snake',this)">🐍 Snake</button>
- <button onclick="openGame('reaction',this)">⚡ Reaction</button>
- <button onclick="openGame('clicker',this)">👆 Click Rush</button>
- <button onclick="openGame('memory',this)">🧠 Memory</button>
- <button onclick="openGame('mic',this)">🎙 Mic Meter</button>
+ <button class="active" data-page="home">Home</button>
+ <button data-page="flappy">Flappy</button>
+ <button data-page="snake">Snake</button>
+ <button data-page="reaction">Reaction</button>
+ <button data-page="clicker">Click Rush</button>
+ <button data-page="memory">Memory</button>
+ <button data-page="mic">Mic Meter</button>
+ <button data-page="achievements">Achievements</button>
+ <button data-page="settings">Settings</button>
 </nav>
 
-<!-- FLAPPY BIRD -->
+<!-- HOME -->
 
-<section class="game active" id="flappy">
- <div class="heading">
-  <div><h2>Flappy Bird</h2><p class="description">Fly through the pipes!</p></div>
-  <button class="primary" onclick="startFlappy()">Start / Restart</button>
+<section class="page active" id="home">
+ <h2>Welcome to the Arcade!</h2>
+ <p class="description">Choose a game and start playing.</p>
+ <div class="cards">
+  <button class="gamecard" data-open="flappy"><strong>🐤 Flappy Bird</strong><span>Fly through pipes and beat your record.</span></button>
+  <button class="gamecard" data-open="snake"><strong>🐍 Snake</strong><span>Eat food, grow longer, survive.</span></button>
+  <button class="gamecard" data-open="reaction"><strong>⚡ Reaction Test</strong><span>Test your reaction speed.</span></button>
+  <button class="gamecard" data-open="clicker"><strong>👆 Click Rush</strong><span>How many clicks in ten seconds?</span></button>
+  <button class="gamecard" data-open="memory"><strong>🧠 Memory Match</strong><span>Find every matching pair.</span></button>
+  <button class="gamecard" data-open="mic"><strong>🎙 Mic Meter</strong><span>Control the meter with your voice.</span></button>
  </div>
- <div class="stats">
-  <span>Score: <b id="fs">0</b></span>
-  <span>Best: <b id="fb">0</b></span>
+ <h2>Your Records</h2>
+ <div id="homeRecords" class="achievement"></div>
+</section>
+
+<!-- FLAPPY -->
+
+<section class="page" id="flappy">
+ <div class="game active">
+  <div class="heading">
+   <div><h2>Flappy Bird</h2><p class="description">Avoid the pipes!</p></div>
+   <button class="primary" id="flapStart">Start / Restart</button>
+  </div>
+  <div class="stats">
+   <span>Score: <b id="fs">0</b></span>
+   <span>Best: <b id="fb">0</b></span>
+   <span>State: <b id="flapState">Ready</b></span>
+  </div>
+  <canvas id="fc" width="700" height="400"></canvas>
+  <div class="controls">
+   <button class="primary" id="flapButton">FLAP!</button>
+   <button class="secondary" id="flapPause">Pause</button>
+  </div>
+  <p class="hint">Tap, click, press Space, or use FLAP. Mobile-friendly.</p>
  </div>
- <canvas id="fc" width="700" height="400"></canvas>
- <div class="controls">
-  <button class="primary" onclick="flap()">FLAP!</button>
-  <button class="secondary" onclick="pauseFlappy()">Pause</button>
- </div>
- <p class="hint">Tap the screen, press Space, or use FLAP.</p>
 </section>
 
 <!-- SNAKE -->
 
-<section class="game" id="snake">
- <div class="heading">
-  <div><h2>Snake</h2><p class="description">Eat the food and grow!</p></div>
-  <button class="primary" onclick="startSnake()">Restart</button>
+<section class="page" id="snake">
+ <div class="game active">
+  <div class="heading">
+   <div><h2>Snake</h2><p class="description">Eat food and avoid your tail.</p></div>
+   <button class="primary" id="snakeStart">Restart</button>
+  </div>
+  <div class="stats">
+   <span>Score: <b id="ss">0</b></span>
+   <span>Best: <b id="sb">0</b></span>
+   <span>Level: <b id="snakeLevel">1</b></span>
+  </div>
+  <canvas id="sc" width="400" height="400"></canvas>
+  <div class="dpad">
+   <button class="up" data-dir="up">↑</button>
+   <button class="left" data-dir="left">←</button>
+   <button class="down" data-dir="down">↓</button>
+   <button class="right" data-dir="right">→</button>
+  </div>
+  <p class="hint">Use the D-pad, arrow keys, or swipe.</p>
  </div>
- <div class="stats">
-  <span>Score: <b id="ss">0</b></span>
-  <span>Best: <b id="sb">0</b></span>
- </div>
- <canvas id="sc" width="400" height="400"></canvas>
- <div class="dpad">
-  <button class="up" onclick="setDirection(0,-1)">↑</button>
-  <button class="left" onclick="setDirection(-1,0)">←</button>
-  <button class="down" onclick="setDirection(0,1)">↓</button>
-  <button class="right" onclick="setDirection(1,0)">→</button>
- </div>
- <p class="hint">Mobile: use the D-pad or swipe on the game. Desktop: arrow keys.</p>
 </section>
 
 <!-- REACTION -->
 
-<section class="game" id="reaction">
- <div class="heading"><h2>Reaction Test</h2></div>
- <p class="description">Test how quickly you can react.</p>
- <div class="stats">
-  <span>Best: <b id="rb">---</b></span>
- </div>
- <button class="primary" onclick="startReaction()">Start Test</button>
- <div class="center">
-  <button class="tapzone" id="reactionZone" onclick="reactionClick()">READY?</button>
-  <div class="big" id="reactionResult">---</div>
-  <p class="hint" id="reactionMessage">Wait for green!</p>
+<section class="page" id="reaction">
+ <div class="game active">
+  <h2>Reaction Test</h2>
+  <p class="description">Wait for green. Then tap immediately!</p>
+  <div class="stats">Best: <b id="rb">---</b></div>
+  <button class="primary" id="reactionStart">Start Test</button>
+  <div class="center">
+   <button class="tapzone" id="reactionZone">READY?</button>
+   <div class="big" id="reactionResult">---</div>
+   <p class="hint" id="reactionMessage">Wait for green!</p>
+  </div>
  </div>
 </section>
 
-<!-- CLICK RUSH -->
+<!-- CLICKER -->
 
-<section class="game" id="clicker">
- <h2>Click Rush</h2>
- <p class="description">10 seconds. Maximum clicks. Go!</p>
- <div class="stats">
-  <span>Time: <b id="ct">10.0</b></span>
-  <span>Clicks: <b id="cs">0</b></span>
-  <span>CPS: <b id="cps">0</b></span>
-  <span>Best: <b id="cb">0</b></span>
+<section class="page" id="clicker">
+ <div class="game active">
+  <h2>Click Rush</h2>
+  <p class="description">Ten seconds. Maximum clicks.</p>
+  <div class="stats">
+   <span>Time: <b id="ct">10.0</b></span>
+   <span>Clicks: <b id="cs">0</b></span>
+   <span>CPS: <b id="cps">0</b></span>
+   <span>Best: <b id="cb">0</b></span>
+  </div>
+  <button class="primary" id="clickStart">Start Round</button>
+  <div class="center">
+   <button class="tapzone" id="clickZone" disabled>CLICK!</button>
+   <p id="clickMessage" class="hint">Get ready!</p>
+  </div>
  </div>
- <button class="primary" onclick="startClick()">Start Round</button>
- <div class="center">
-  <button class="tapzone" id="clickZone" onclick="addClick()" disabled>CLICK!</button>
- </div>
- <p class="hint" id="clickMessage">Get ready!</p>
 </section>
 
 <!-- MEMORY -->
 
-<section class="game" id="memory">
- <h2>Memory Match</h2>
- <p class="description">Find all matching pairs.</p>
- <div class="controls">
-  <select id="memoryDifficulty" onchange="resetMemory()" class="secondary">
-   <option value="6">Easy: 6 pairs</option>
-   <option value="8" selected>Normal: 8 pairs</option>
-   <option value="10">Hard: 10 pairs</option>
-  </select>
-  <button class="primary" onclick="resetMemory()">Shuffle</button>
+<section class="page" id="memory">
+ <div class="game active">
+  <h2>Memory Match</h2>
+  <p class="description">Find all the matching pairs.</p>
+  <div class="controls">
+   <select id="memoryDifficulty" class="secondary">
+    <option value="6">Easy: 6 pairs</option>
+    <option value="8" selected>Normal: 8 pairs</option>
+    <option value="10">Hard: 10 pairs</option>
+   </select>
+   <button class="primary" id="memoryReset">New Game</button>
+  </div>
+  <div class="stats">
+   <span>Moves: <b id="moves">0</b></span>
+   <span>Pairs: <b id="pairs">0</b></span>
+   <span>Time: <b id="memoryTime">0</b>s</span>
+  </div>
+  <div class="grid" id="memoryGrid"></div>
+  <p class="hint" id="memoryMessage">Find all the pairs!</p>
  </div>
- <div class="stats">
-  <span>Moves: <b id="moves">0</b></span>
-  <span>Pairs: <b id="pairs">0</b></span>
-  <span>Time: <b id="memoryTime">0</b>s</span>
- </div>
- <div class="grid" id="memoryGrid"></div>
- <p class="hint" id="memoryMessage">Find the pairs!</p>
 </section>
 
-<!-- MICROPHONE -->
+<!-- MIC -->
 
-<section class="game" id="mic">
- <h2>Mic Volume Meter</h2>
- <p class="description">Your voice controls the volume meter.</p>
- <div class="center">
-  <div class="big"><span id="volume">0</span>%</div>
-  <div class="meter"><div id="micBar"></div></div>
-  <p id="micLevel">Quiet</p>
-  <button class="primary" onclick="startMic()">Enable Microphone</button>
-  <button class="secondary" onclick="stopMic()">Stop</button>
-  <p class="hint" id="micStatus">Microphone is off.</p>
+<section class="page" id="mic">
+ <div class="game active">
+  <h2>Mic Volume Meter</h2>
+  <p class="description">Your microphone controls the volume.</p>
+  <div class="center">
+   <div class="big"><span id="volume">0</span>%</div>
+   <div class="meter"><div id="micBar"></div></div>
+   <p id="micLevel">Quiet</p>
+   <button class="primary" id="micStart">Enable Microphone</button>
+   <button class="secondary" id="micStop">Stop</button>
+   <p class="hint" id="micStatus">Microphone is off.</p>
+  </div>
+ </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+
+<section class="page" id="achievements">
+ <div class="game active">
+  <h2>Achievements</h2>
+  <p class="description">Unlock these by playing games.</p>
+  <div id="achievementList"></div>
+ </div>
+</section>
+
+<!-- SETTINGS -->
+
+<section class="page" id="settings">
+ <div class="game active">
+  <h2>Settings</h2>
+  <div class="controls">
+   <button class="secondary" id="soundToggle">Sound: ON</button>
+   <button class="secondary" id="resetAll">Reset All Progress</button>
+  </div>
+  <p class="hint">Your records and achievements are saved in this browser.</p>
+  <p class="hint">Microphone audio is processed locally. It is never recorded or uploaded by this game.</p>
  </div>
 </section>
 
 </main>
-
-<footer>MINI ARCADE 2.0 · Built with HTML, CSS & JavaScript</footer>
+<footer>MINI ARCADE 3.0 · ULTIMATE EDITION</footer>
 
 <script>
-// SHARED SYSTEMS
+"use strict";
+
+// STORAGE AND GLOBAL SYSTEM
 
 const $=id=>document.getElementById(id);
-let soundEnabled=true;
+const STORAGE="mini_arcade_3";
+let sound=true;
+let currentPage="home";
 let audio=null;
 
-function beep(freq=500,duration=.08){
- if(!soundEnabled)return;
+const defaultData={
+ records:{flappy:0,snake:0,reaction:0,clicker:0,memory:0},
+ achievements:[]
+};
+
+function loadData(){
  try{
-  audio=audio||new AudioContext();
-  const osc=audio.createOscillator();
-  const gain=audio.createGain();
+  const raw=JSON.parse(localStorage.getItem(STORAGE));
+  if(!raw)return structuredClone(defaultData);
+  return {
+   records:{...defaultData.records,...raw.records},
+   achievements:Array.isArray(raw.achievements)?raw.achievements:[]
+  };
+ }catch{
+  return structuredClone(defaultData);
+ }
+}
+let data=loadData();
+
+function saveData(){
+ try{localStorage.setItem(STORAGE,JSON.stringify(data));}
+ catch{console.warn("Progress could not be saved.");}
+}
+function beep(freq=500,duration=.07){
+ if(!sound)return;
+ try{
+  audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+  if(audio.state==="suspended")audio.resume();
+  const osc=audio.createOscillator(),gain=audio.createGain();
   osc.frequency.value=freq;
-  gain.gain.value=.045;
+  gain.gain.value=.04;
   osc.connect(gain);gain.connect(audio.destination);
   osc.start();
   gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);
   osc.stop(audio.currentTime+duration);
- }catch(e){}
+ }catch{}
 }
-
-function getBest(key){
- return Number(localStorage.getItem("ma_"+key)||0);
-}
-function saveBest(key,value,lower=false){
- const old=getBest(key);
+function record(key,value,lower=false){
+ const old=data.records[key]||0;
  const next=lower?(old===0?value:Math.min(old,value)):Math.max(old,value);
- localStorage.setItem("ma_"+key,next);
- updateDashboard();
+ data.records[key]=next;
+ saveData();refreshUI();
  return next;
 }
-function updateDashboard(){
- let keys=["flappy","snake","reaction","clicker","memory"];
- let count=keys.filter(k=>getBest(k)>0).length;
- $("totalRecords").textContent=count;
- $("fb").textContent=getBest("flappy");
- $("sb").textContent=getBest("snake");
- $("rb").textContent=getBest("reaction")?getBest("reaction")+" ms":"---";
- $("cb").textContent=getBest("clicker");
+function unlock(id){
+ if(data.achievements.includes(id))return;
+ data.achievements.push(id);
+ saveData();refreshUI();
+ beep(900,.2);
+}
+const achievements=[
+ ["first","First Steps","Play your first game."],
+ ["flappy10","Flying High","Score 10 in Flappy Bird."],
+ ["snake10","Snake Master","Score 10 in Snake."],
+ ["fast","Quick Reflexes","React in under 250 ms."],
+ ["click50","Click Machine","Get 50 clicks in one round."],
+ ["memory","Memory Master","Complete Memory Match."],
+ ["mic","Sound Check","Activate the microphone."],
+ ["all","Arcade Explorer","Set a record in all five score games."]
+];
+function checkExplorer(){
+ if(["flappy","snake","reaction","clicker","memory"].every(k=>data.records[k]>0))unlock("all");
+}
+function refreshUI(){
+ $("records").textContent=Object.values(data.records).filter(v=>v>0).length;
+ $("achievementCount").textContent=data.achievements.length+"/8";
+ $("soundStatus").textContent=sound?"ON":"OFF";
+ $("soundToggle").textContent="Sound: "+(sound?"ON":"OFF");
+ $("fb").textContent=data.records.flappy;
+ $("sb").textContent=data.records.snake;
+ $("rb").textContent=data.records.reaction?data.records.reaction+" ms":"---";
+ $("cb").textContent=data.records.clicker;
+ $("homeRecords").innerHTML=
+  Object.entries(data.records).map(([k,v])=>
+   "<div>"+k.toUpperCase()+": <b>"+(v||"Not played")+"</b></div>"
+  ).join("");
+ $("achievementList").innerHTML=achievements.map(([id,name,desc])=>{
+  const done=data.achievements.includes(id);
+  return '<div class="achievement '+(done?"":"locked")+'"><strong>'+
+   (done?"✓ ":"🔒 ")+name+'</strong><small>'+desc+'</small></div>';
+ }).join("");
 }
 function toggleSound(){
- soundEnabled=!soundEnabled;
- $("soundButton").textContent="Sound: "+(soundEnabled?"ON":"OFF");
- $("soundStatus").textContent=soundEnabled?"ON":"OFF";
+ sound=!sound;refreshUI();
 }
-function resetRecords(){
- if(!confirm("Reset all arcade records?"))return;
- ["flappy","snake","reaction","clicker","memory"].forEach(k=>localStorage.removeItem("ma_"+k));
- updateDashboard();
-}
-let currentGame="flappy";
+$("soundToggle").onclick=toggleSound;
+$("resetAll").onclick=()=>{
+ if(!confirm("Delete all scores and achievements?"))return;
+ data=structuredClone(defaultData);saveData();refreshUI();
+};
+refreshUI();
 
-function openGame(id,button){
+
+// GAME LIFECYCLE
+
+function stopAll(){
  stopFlappy();
  stopSnake();
+ stopReaction();
+ stopClick();
+ stopMemory();
  stopMic();
-
- document.querySelectorAll(".game").forEach(g=>g.classList.remove("active"));
- document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-
- $(id).classList.add("active");
- button.classList.add("active");
- currentGame=id;
 }
-updateDashboard();
+function openPage(id){
+ stopAll();
+ currentPage=id;
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.querySelectorAll(".nav button").forEach(b=>
+  b.classList.toggle("active",b.dataset.page===id)
+ );
+ $(id).classList.add("active");
+ if(id==="flappy")drawFlappy();
+ if(id==="snake")drawSnake();
+ if(id==="memory"&&!memoryCards.length)resetMemory();
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>openPage(b.dataset.page));
+document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openPage(b.dataset.open));
 
 
-// FLAPPY BIRD 2.0
+// FLAPPY BIRD
 
 const fc=$("fc"),fx=fc.getContext("2d");
-let bird,pipes,fscore=0,fstate="idle",fraf=0,lastTime=0;
-let fcloud=0;
+let bird=null,pipes=[],fscore=0,fstate="idle",fraf=0,lastF=0,cloudOffset=0;
 
 function startFlappy(){
- cancelAnimationFrame(fraf);
- bird={x:145,y:180,velocity:0};
+ stopFlappy();
+ bird={x:145,y:180,v:0};
  pipes=[];
- fscore=0;
- fstate="playing";
- lastTime=0;
- for(let i=0;i<3;i++)pipes.push({
-  x:450+i*270,gap:125+Math.random()*150,passed:false
- });
- $("fs").textContent=0;
+ for(let i=0;i<3;i++)pipes.push({x:480+i*265,gap:115+Math.random()*165,passed:false});
+ fscore=0;fstate="playing";lastF=0;
+ $("fs").textContent=0;$("flapState").textContent="Playing";
+ unlock("first");beep(500);
  fraf=requestAnimationFrame(flapFrame);
- beep(500);
 }
 function flap(){
- if(fstate==="playing"){
-  bird.velocity=-7;
-  beep(650,.04);
- }
+ if(fstate!=="playing")return;
+ bird.v=-7.2;beep(650,.04);
+}
+function stopFlappy(){
+ if(fraf)cancelAnimationFrame(fraf);
+ fraf=0;
+ if(fstate==="playing"||fstate==="paused")fstate="idle";
 }
 function pauseFlappy(){
  if(fstate==="playing"){
   fstate="paused";cancelAnimationFrame(fraf);
-  drawFlappy();
+  $("flapState").textContent="Paused";drawFlappy();
  }else if(fstate==="paused"){
-  fstate="playing";lastTime=0;
+  fstate="playing";lastF=0;
+  $("flapState").textContent="Playing";
   fraf=requestAnimationFrame(flapFrame);
  }
 }
-function stopFlappy(){
- if(fstate==="playing"||fstate==="paused"){
-  fstate="idle";cancelAnimationFrame(fraf);
- }
-}
 function endFlappy(){
- fstate="over";
- cancelAnimationFrame(fraf);
- saveBest("flappy",fscore);
- drawFlappy();
- beep(150,.2);
+ fstate="over";cancelAnimationFrame(fraf);fraf=0;
+ $("flapState").textContent="Game over";
+ record("flappy",fscore);
+ if(fscore>=10)unlock("flappy10");
+ checkExplorer();drawFlappy();beep(150,.2);
 }
 function drawFlappy(){
  const w=700,h=400;
  fx.clearRect(0,0,w,h);
- let sky=fx.createLinearGradient(0,0,0,h);
- sky.addColorStop(0,"#183c61");
- sky.addColorStop(1,"#8bb6bd");
+ const sky=fx.createLinearGradient(0,0,0,h);
+ sky.addColorStop(0,"#183c61");sky.addColorStop(1,"#8bb6bd");
  fx.fillStyle=sky;fx.fillRect(0,0,w,h);
 
- // Clouds
  fx.fillStyle="#ffffff55";
  for(let i=0;i<5;i++){
-  let x=(i*180-fcloud%180+750)%750;
-  fx.beginPath();fx.arc(x,65+i%3*45,20,0,7);
-  fx.arc(x+25,65+i%3*45,25,0,7);
-  fx.arc(x+50,65+i%3*45,18,0,7);
+  const x=(i*180-cloudOffset%180+750)%750;
+  fx.beginPath();
+  fx.arc(x,60+i%3*45,19,0,7);
+  fx.arc(x+25,60+i%3*45,24,0,7);
+  fx.arc(x+50,60+i%3*45,17,0,7);
   fx.fill();
  }
- // Pipes
  pipes.forEach(p=>{
   let top=p.gap-72,bottom=p.gap+72;
   fx.fillStyle="#36b979";
-  fx.fillRect(p.x,0,65,top);
-  fx.fillRect(p.x,bottom,65,h-bottom);
+  fx.fillRect(p.x,0,65,top);fx.fillRect(p.x,bottom,65,h-bottom);
   fx.fillStyle="#21865d";
   fx.fillRect(p.x-5,top-15,75,15);
   fx.fillRect(p.x-5,bottom,75,15);
  });
- // Ground
- fx.fillStyle="#a17a50";fx.fillRect(0,375,700,25);
- fx.fillStyle="#64bd76";fx.fillRect(0,375,700,8);
+ fx.fillStyle="#a17a50";fx.fillRect(0,375,w,25);
+ fx.fillStyle="#64bd76";fx.fillRect(0,375,w,8);
 
- // Bird
  if(bird){
-  fx.save();
-  fx.translate(bird.x,bird.y);
-  fx.rotate(Math.min(.7,Math.max(-.5,bird.velocity*.07)));
-  fx.fillStyle="#ffda69";
-  fx.beginPath();fx.arc(0,0,17,0,7);fx.fill();
-  fx.fillStyle="#fff";
-  fx.beginPath();fx.arc(7,-6,6,0,7);fx.fill();
-  fx.fillStyle="#172238";
-  fx.beginPath();fx.arc(9,-6,2.5,0,7);fx.fill();
-  fx.fillStyle="#ff895e";
-  fx.beginPath();fx.moveTo(15,0);fx.lineTo(29,5);fx.lineTo(15,9);fx.fill();
+  fx.save();fx.translate(bird.x,bird.y);
+  fx.rotate(Math.min(.7,Math.max(-.5,bird.v*.07)));
+  fx.fillStyle="#ffda69";fx.beginPath();fx.arc(0,0,17,0,7);fx.fill();
+  fx.fillStyle="white";fx.beginPath();fx.arc(7,-6,6,0,7);fx.fill();
+  fx.fillStyle="#172238";fx.beginPath();fx.arc(9,-6,2.5,0,7);fx.fill();
+  fx.fillStyle="#ff895e";fx.beginPath();
+  fx.moveTo(15,0);fx.lineTo(29,5);fx.lineTo(15,9);fx.fill();
   fx.restore();
  }
  if(fstate!=="playing"){
   fx.fillStyle="#081322bb";fx.fillRect(0,0,w,h);
-  fx.fillStyle="white";fx.textAlign="center";
-  fx.font="bold 30px Arial";
+  fx.fillStyle="white";fx.textAlign="center";fx.font="bold 30px Arial";
   fx.fillText(fstate==="over"?"GAME OVER":fstate==="paused"?"PAUSED":"FLAPPY BIRD",350,180);
-  fx.font="16px Arial";
-  fx.fillText(fstate==="over"?"Press Restart to play again":"Tap Start to begin",350,215);
+  fx.font="16px Arial";fx.fillText("Tap Start to play",350,215);
  }
 }
 function flapFrame(t){
  if(fstate!=="playing")return;
- let dt=Math.min((t-lastTime)/16.67||1,2);
- lastTime=t;
- bird.velocity+=.34*dt;
- bird.y+=bird.velocity*dt;
- fcloud+=dt;
-
+ const dt=Math.min((t-lastF)/16.67||1,2);lastF=t;
+ bird.v+=.34*dt;bird.y+=bird.v*dt;cloudOffset+=dt;
  pipes.forEach(p=>{
   p.x-=3.1*dt;
   if(!p.passed&&p.x+65<bird.x){
-   p.passed=true;fscore++;
-   $("fs").textContent=fscore;beep(800,.06);
+   p.passed=true;fscore++;$("fs").textContent=fscore;beep(800,.04);
   }
  });
- if(pipes[pipes.length-1].x<350){
+ if(pipes[pipes.length-1].x<350)
   pipes.push({x:700,gap:105+Math.random()*165,passed:false});
- }
  pipes=pipes.filter(p=>p.x>-80);
-
- let collision=bird.y<15||bird.y>360;
- for(let p of pipes){
+ let hit=bird.y<15||bird.y>360;
+ for(const p of pipes){
   if(bird.x+13>p.x&&bird.x-13<p.x+65&&
-  (bird.y-13<p.gap-72||bird.y+13>p.gap+72))collision=true;
+   (bird.y-13<p.gap-72||bird.y+13>p.gap+72))hit=true;
  }
- if(collision){endFlappy();return;}
- drawFlappy();
- fraf=requestAnimationFrame(flapFrame);
+ if(hit){endFlappy();return;}
+ drawFlappy();fraf=requestAnimationFrame(flapFrame);
 }
-fc.addEventListener("pointerdown",e=>{e.preventDefault();flap()});
-document.addEventListener("keydown",e=>{
- if(currentGame==="flappy"&&e.code==="Space"){
-  e.preventDefault();flap();
- }
-});
+$("flapStart").onclick=startFlappy;
+$("flapButton").onclick=flap;
+$("flapPause").onclick=pauseFlappy;
+fc.addEventListener("pointerdown",e=>{e.preventDefault();flap();});
 drawFlappy();
 
 
-// SNAKE 2.0
+// SNAKE
 
 const sc=$("sc"),sx=sc.getContext("2d");
-let snake,food,dx=1,dy=0,nextX=1,nextY=0;
+let snake=[],food=null,dx=1,dy=0,nextX=1,nextY=0;
 let snakeScore=0,snakeLoop=null,snakePlaying=false;
 
 function startSnake(){
  stopSnake();
  snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
  dx=1;dy=0;nextX=1;nextY=0;
- snakeScore=0;
- $("ss").textContent=0;
- placeFood();
- snakePlaying=true;
- snakeLoop=setInterval(snakeStep,115);
- drawSnake();
+ snakeScore=0;$("ss").textContent=0;
+ placeFood();snakePlaying=true;
+ snakeLoop=setInterval(snakeStep,115);drawSnake();
+ unlock("first");
 }
-function stopSnake(){
- snakePlaying=false;clearInterval(snakeLoop);
-}
+function stopSnake(){snakePlaying=false;clearInterval(snakeLoop);snakeLoop=null;}
 function placeFood(){
- do{
- food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};
- }while(snake.some(p=>p.x===food.x&&p.y===food.y));
+ let free=[];
+ for(let y=0;y<20;y++)for(let x=0;x<20;x++)
+  if(!snake.some(p=>p.x===x&&p.y===y))free.push({x,y});
+ food=free.length?free[Math.floor(Math.random()*free.length)]:null;
+ if(!food){stopSnake();record("snake",snakeScore);}
 }
 function setDirection(x,y){
- if(x===-dx&&y===-dy)return;
+ if(!snakePlaying||x===-dx&&y===-dy)return;
  nextX=x;nextY=y;
 }
 function snakeStep(){
  dx=nextX;dy=nextY;
- let head={x:snake[0].x+dx,y:snake[0].y+dy};
+ const head={x:snake[0].x+dx,y:snake[0].y+dy};
+ const eating=food&&head.x===food.x&&head.y===food.y;
+ const body=eating?snake:snake.slice(0,-1);
  if(head.x<0||head.y<0||head.x>=20||head.y>=20||
- snake.some(p=>p.x===head.x&&p.y===head.y)){
- stopSnake();saveBest("snake",snakeScore);beep(150,.2);return;
+ body.some(p=>p.x===head.x&&p.y===head.y)){
+  stopSnake();record("snake",snakeScore);
+  if(snakeScore>=10)unlock("snake10");
+  checkExplorer();beep(150,.2);drawSnake();return;
  }
  snake.unshift(head);
- if(head.x===food.x&&head.y===food.y){
-  snakeScore++;
-  $("ss").textContent=snakeScore;
+ if(eating){
+  snakeScore++;$("ss").textContent=snakeScore;
+  $("snakeLevel").textContent=1+Math.floor(snakeScore/5);
   placeFood();beep(700,.05);
-  if(snakeLoop){clearInterval(snakeLoop);snakeLoop=setInterval(snakeStep,Math.max(55,115-snakeScore*2));}
+  clearInterval(snakeLoop);
+  snakeLoop=setInterval(snakeStep,Math.max(55,115-snakeScore*2));
  }else snake.pop();
  drawSnake();
 }
@@ -532,232 +632,267 @@ function drawSnake(){
   sx.beginPath();sx.moveTo(0,i*20);sx.lineTo(400,i*20);sx.stroke();
  }
  if(food){
-  sx.fillStyle="#ff7683";
-  sx.beginPath();sx.arc(food.x*20+10,food.y*20+10,8,0,7);sx.fill();
+  sx.fillStyle="#ff7683";sx.beginPath();
+  sx.arc(food.x*20+10,food.y*20+10,8,0,7);sx.fill();
  }
- if(snake)snake.forEach((p,i)=>{
+ snake.forEach((p,i)=>{
   sx.fillStyle=i===0?"#91f5d0":"#43bb94";
   sx.fillRect(p.x*20+2,p.y*20+2,16,16);
  });
 }
-document.addEventListener("keydown",e=>{
- if(currentGame!=="snake")return;
- const keys={
- ArrowUp:[0,-1],ArrowDown:[0,1],
- ArrowLeft:[-1,0],ArrowRight:[1,0]
- };
- if(keys[e.key]){e.preventDefault();setDirection(...keys[e.key]);}
+document.querySelectorAll("[data-dir]").forEach(b=>{
+ const dirs={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+ const [x,y]=dirs[b.dataset.dir];
+ b.addEventListener("pointerdown",e=>{e.preventDefault();setDirection(x,y);});
 });
-let touchStart=null;
-sc.addEventListener("touchstart",e=>{
- const t=e.changedTouches[0];touchStart={x:t.clientX,y:t.clientY};
-},{passive:true});
-sc.addEventListener("touchend",e=>{
- if(!touchStart)return;
- const t=e.changedTouches[0],x=t.clientX-touchStart.x,y=t.clientY-touchStart.y;
- if(Math.max(Math.abs(x),Math.abs(y))>20){
+document.addEventListener("keydown",e=>{
+ if(currentPage!=="snake")return;
+ const dirs={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+ if(dirs[e.key]){e.preventDefault();setDirection(...dirs[e.key]);}
+});
+let swipe=null;
+sc.addEventListener("pointerdown",e=>{swipe={x:e.clientX,y:e.clientY};});
+sc.addEventListener("pointerup",e=>{
+ if(!swipe)return;
+ const x=e.clientX-swipe.x,y=e.clientY-swipe.y;
+ if(Math.max(Math.abs(x),Math.abs(y))>15){
   if(Math.abs(x)>Math.abs(y))setDirection(x>0?1:-1,0);
   else setDirection(0,y>0?1:-1);
  }
- touchStart=null;
-},{passive:true});
+ swipe=null;
+});
+$("snakeStart").onclick=startSnake;
 drawSnake();
 
 
-// REACTION TEST 2.0
+// REACTION TEST
 
 let reactionState="idle",reactionTimer=null,reactionStarted=0;
+function stopReaction(){
+ clearTimeout(reactionTimer);reactionTimer=null;reactionState="idle";
+}
 function startReaction(){
- clearTimeout(reactionTimer);
- reactionState="wait";
+ stopReaction();reactionState="wait";
  $("reactionZone").className="tapzone red";
  $("reactionZone").textContent="WAIT...";
  $("reactionResult").textContent="...";
- $("reactionMessage").textContent="Wait for the green signal!";
+ $("reactionMessage").textContent="Wait for green!";
  reactionTimer=setTimeout(()=>{
   if(reactionState!=="wait")return;
-  reactionState="go";
-  reactionStarted=performance.now();
+  reactionState="go";reactionStarted=performance.now();
   $("reactionZone").className="tapzone green";
   $("reactionZone").textContent="TAP NOW!";
  },1500+Math.random()*3500);
 }
 function reactionClick(){
  if(reactionState==="wait"){
-  clearTimeout(reactionTimer);
-  reactionState="idle";
+  stopReaction();
   $("reactionZone").className="tapzone";
-  $("reactionZone").textContent="TOO EARLY!";
-  $("reactionResult").textContent="False start!";
-  $("reactionMessage").textContent="Wait for green before tapping.";
-  beep(180);
- }else if(reactionState==="go"){
-  let result=Math.round(performance.now()-reactionStarted);
-  reactionState="idle";
+  $("reactionZone").textContent="FALSE START";
+  $("reactionResult").textContent="Too early!";
+  $("reactionMessage").textContent="Wait for green next time.";
+  beep(180);return;
+ }
+ if(reactionState==="go"){
+  const result=Math.round(performance.now()-reactionStarted);
+  stopReaction();
   $("reactionZone").className="tapzone";
   $("reactionZone").textContent="TRY AGAIN";
   $("reactionResult").textContent=result+" ms";
-  $("reactionMessage").textContent="Great reaction!";
-  saveBest("reaction",result,true);
-  beep(700);
+  $("reactionMessage").textContent=result<250?"Lightning fast!":"Nice reaction!";
+  record("reaction",result,true);
+  if(result<250)unlock("fast");
+  checkExplorer();beep(700);
  }
 }
+$("reactionStart").onclick=startReaction;
+$("reactionZone").onclick=reactionClick;
+$("rb").textContent=data.records.reaction?data.records.reaction+" ms":"---";
 
-// CLICK RUSH 2.0
 
-let clicks=0,clickRunning=false,clickTimer=null,clickEnd=0;
+// CLICK RUSH
+
+let clickTimer=null,clickRunning=false,clickCount=0,clickEnd=0;
+function stopClick(){
+ clearInterval(clickTimer);clickTimer=null;clickRunning=false;
+ $("clickZone").disabled=true;
+}
 function startClick(){
- clearInterval(clickTimer);
- clicks=0;clickRunning=true;
- clickEnd=Date.now()+10000;
- $("cs").textContent=0;$("cps").textContent=0;
- $("ct").textContent="10.0";
+ stopClick();clickCount=0;clickRunning=true;
+ clickEnd=performance.now()+10000;
+ $("cs").textContent=0;$("ct").textContent="10.0";$("cps").textContent=0;
  $("clickZone").disabled=false;
  $("clickMessage").textContent="GO!";
  clickTimer=setInterval(()=>{
-  let left=Math.max(0,clickEnd-Date.now());
+  const left=Math.max(0,clickEnd-performance.now());
   $("ct").textContent=(left/1000).toFixed(1);
-  $("cps").textContent=(clicks/Math.max(.01,(10-left/1000))).toFixed(1);
+  $("cps").textContent=(clickCount/Math.max(.01,10-left/1000)).toFixed(1);
   if(left<=0){
-   clearInterval(clickTimer);
-   clickRunning=false;
-   $("clickZone").disabled=true;
-   $("clickMessage").textContent="Finished! You scored "+clicks+" clicks.";
-   saveBest("clicker",clicks);
-   beep(700);
+   stopClick();
+   $("clickMessage").textContent="Finished! "+clickCount+" clicks.";
+   record("clicker",clickCount);
+   if(clickCount>=50)unlock("click50");
+   checkExplorer();beep(700);
   }
- },50);
+ },40);
 }
 function addClick(){
- if(!clickRunning)return;
- clicks++;
- $("cs").textContent=clicks;
+ if(!clickRunning||performance.now()>=clickEnd)return;
+ clickCount++;
+ $("cs").textContent=clickCount;
 }
+$("clickStart").onclick=startClick;
+$("clickZone").onclick=addClick;
 
-// MEMORY MATCH 2.0
 
-const memorySymbols=["★","◆","●","▲","☀","♫","♣","♥","✿","⬟"];
+// MEMORY MATCH
+
+const symbols=["★","◆","●","▲","☀","♫","♣","♥","✿","⬟"];
 let memoryCards=[],firstCard=null,memoryLocked=false,moves=0,pairs=0;
-let memoryTimer=null,memorySeconds=0;
+let memoryTimer=null,memorySeconds=0,memoryStarted=false;
 
+function stopMemory(){
+ clearInterval(memoryTimer);memoryTimer=null;
+}
 function resetMemory(){
- clearInterval(memoryTimer);
- let count=Number($("memoryDifficulty").value);
- memoryCards=[...memorySymbols.slice(0,count),...memorySymbols.slice(0,count)]
- .sort(()=>Math.random()-.5)
- .map(s=>({symbol:s,open:false,matched:false}));
- firstCard=null;memoryLocked=false;moves=0;pairs=0;memorySeconds=0;
+ stopMemory();
+ const count=Number($("memoryDifficulty").value);
+ const chosen=symbols.slice(0,count);
+ memoryCards=[...chosen,...chosen].sort(()=>Math.random()-.5)
+ .map((symbol,id)=>({symbol,id,open:false,matched:false}));
+ firstCard=null;memoryLocked=false;moves=0;pairs=0;
+ memorySeconds=0;memoryStarted=false;
  $("moves").textContent=0;$("pairs").textContent="0 / "+count;
  $("memoryTime").textContent=0;
- $("memoryMessage").textContent="Find all the pairs!";
+ $("memoryMessage").textContent="Find the pairs!";
  renderMemory();
- memoryTimer=setInterval(()=>{
-  if(pairs===count){clearInterval(memoryTimer);return;}
-  memorySeconds++;
-  $("memoryTime").textContent=memorySeconds;
- },1000);
 }
 function renderMemory(){
  const grid=$("memoryGrid");grid.innerHTML="";
- grid.style.gridTemplateColumns="repeat(4,minmax(55px,85px))";
+ grid.style.gridTemplateColumns="repeat(4,minmax(50px,85px))";
  memoryCards.forEach((c,i)=>{
-  let b=document.createElement("button");
-  b.className="card"+(c.open?" open":"")+(c.matched?" matched":"");
+  const b=document.createElement("button");
+  b.className="memory-card"+(c.open?" open":"")+(c.matched?" matched":"");
   b.textContent=c.open||c.matched?c.symbol:"?";
-  b.disabled=c.matched;
+  b.disabled=c.matched||memoryLocked||c.open;
+  b.setAttribute("aria-label",c.open||c.matched?c.symbol:"Hidden card");
   b.onclick=()=>flipMemory(i);
   grid.appendChild(b);
  });
 }
 function flipMemory(i){
- let c=memoryCards[i];
+ const c=memoryCards[i];
  if(memoryLocked||c.open||c.matched)return;
+ if(!memoryStarted){
+  memoryStarted=true;
+  memoryTimer=setInterval(()=>{
+   memorySeconds++;$("memoryTime").textContent=memorySeconds;
+  },1000);
+ }
  c.open=true;renderMemory();
  if(firstCard===null){firstCard=i;return;}
  moves++;$("moves").textContent=moves;
- let previous=firstCard;firstCard=null;
- if(memoryCards[previous].symbol===c.symbol){
-  memoryCards[previous].matched=true;c.matched=true;
-  pairs++;
+ const old=firstCard;firstCard=null;
+ if(memoryCards[old].symbol===c.symbol){
+  memoryCards[old].matched=true;c.matched=true;pairs++;
   $("pairs").textContent=pairs+" / "+Number($("memoryDifficulty").value);
-  beep(750);
-  renderMemory();
+  beep(750);renderMemory();
   if(pairs===Number($("memoryDifficulty").value)){
-   clearInterval(memoryTimer);
-   $("memoryMessage").textContent="YOU WON! Completed in "+moves+" moves and "+memorySeconds+" seconds.";
-   saveBest("memory",moves,true);
+   stopMemory();
+   $("memoryMessage").textContent="YOU WON! "+moves+" moves in "+memorySeconds+" seconds.";
+   record("memory",moves,true);unlock("memory");checkExplorer();
   }
  }else{
-  memoryLocked=true;
-  beep(250);
+  memoryLocked=true;beep(250);renderMemory();
   setTimeout(()=>{
-   memoryCards[previous].open=false;
-   c.open=false;
-   memoryLocked=false;
-   renderMemory();
+   memoryCards[old].open=false;c.open=false;
+   memoryLocked=false;renderMemory();
   },750);
  }
 }
+$("memoryReset").onclick=resetMemory;
+$("memoryDifficulty").onchange=resetMemory;
 resetMemory();
 
 
-// MICROPHONE 2.0
+// MICROPHONE
 
 let micStream=null,micContext=null,micAnalyser=null,micRAF=null;
+let micGeneration=0;
 
 async function startMic(){
+ stopMic();
+ const generation=micGeneration;
  if(!navigator.mediaDevices?.getUserMedia){
-  $("micStatus").textContent="Microphone requires HTTPS or localhost.";
+  $("micStatus").textContent="Microphone needs HTTPS or localhost.";
   return;
  }
- stopMic();
+ $("micStatus").textContent="Requesting permission...";
  try{
-  micStream=await navigator.mediaDevices.getUserMedia({audio:{
-   echoCancellation:true,noiseSuppression:true,autoGainControl:false
-  }});
+  const stream=await navigator.mediaDevices.getUserMedia({
+   audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}
+  });
+  if(generation!==micGeneration){
+   stream.getTracks().forEach(t=>t.stop());return;
+  }
+  micStream=stream;
   micContext=new(window.AudioContext||window.webkitAudioContext)();
   await micContext.resume();
   micAnalyser=micContext.createAnalyser();
   micAnalyser.fftSize=1024;
   micAnalyser.smoothingTimeConstant=.7;
-  micContext.createMediaStreamSource(micStream).connect(micAnalyser);
-  let data=new Uint8Array(micAnalyser.fftSize);
+  micContext.createMediaStreamSource(stream).connect(micAnalyser);
+  const samples=new Uint8Array(micAnalyser.fftSize);
   $("micStatus").textContent="Microphone active!";
+  unlock("mic");
   function measure(){
-   micAnalyser.getByteTimeDomainData(data);
+   if(!micAnalyser||generation!==micGeneration)return;
+   micAnalyser.getByteTimeDomainData(samples);
    let sum=0;
-   for(let v of data){
-    let n=(v-128)/128;sum+=n*n;
+   for(const sample of samples){
+    const v=(sample-128)/128;sum+=v*v;
    }
-   let rms=Math.sqrt(sum/data.length);
-   let volume=Math.min(100,Math.round(Math.pow(rms*260,.85)));
+   const rms=Math.sqrt(sum/samples.length);
+   const volume=Math.min(100,Math.round(Math.pow(rms*260,.85)));
    $("volume").textContent=volume;
    $("micBar").style.width=volume+"%";
    $("micLevel").textContent=volume<5?"Very quiet":volume<30?"Quiet":volume<65?"Medium":"Loud!";
    micRAF=requestAnimationFrame(measure);
   }
   measure();
- }catch(e){
-  stopMic();
-  $("micStatus").textContent="Could not access microphone. Check browser permissions.";
+ }catch(error){
+  if(generation===micGeneration){
+   stopMic();
+   $("micStatus").textContent=error.name==="NotAllowedError"?
+   "Permission denied. Allow microphone access in browser settings.":
+   "Microphone unavailable: "+error.message;
+  }
  }
 }
 function stopMic(){
+ micGeneration++;
  if(micRAF)cancelAnimationFrame(micRAF);
  micRAF=null;
  if(micStream)micStream.getTracks().forEach(t=>t.stop());
  micStream=null;
  if(micContext&&micContext.state!=="closed")micContext.close();
- micContext=null;
- $("volume").textContent=0;
- $("micBar").style.width="0%";
+ micContext=null;micAnalyser=null;
+ $("volume").textContent=0;$("micBar").style.width="0%";
  $("micLevel").textContent="Quiet";
  $("micStatus").textContent="Microphone is off.";
 }
+$("micStart").onclick=startMic;
+$("micStop").onclick=stopMic;
 
-window.addEventListener("pagehide",()=>{
- stopFlappy();stopSnake();stopMic();
+
+// INITIALIZATION AND CLEANUP
+
+window.addEventListener("pagehide",stopAll);
+document.addEventListener("visibilitychange",()=>{
+ if(document.hidden)stopAll();
 });
+
+refreshUI();
 </script>
 </body>
 </html>
