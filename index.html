@@ -713,6 +713,7 @@ $("micStart").onclick=startMic;$("micStop").onclick=stopMic;
  navButton.dataset.page="dev";
  navButton.textContent="Dev Panel";
  nav.appendChild(navButton);
+ navButton.onclick=()=>openPage("dev");
 
  const page=document.createElement("section");
  page.className="page";
