@@ -189,7 +189,7 @@ let sound=true,currentPage="home",audio=null;
 const defaultData={
  records:{flappy:0,snake:0,reaction:0,clicker:0,memory:0},
  achievements:[],
- stats:{gamesPlayed:0,totalClicks:0,micUsed:false,hardMemory:false,gamesVisited:[],soundToggles:0,titleTaps:0,settingsVisits:0,memoryWins:0}
+ stats:{gamesPlayed:0,totalClicks:0,micUsed:false,hardMemory:false,gamesVisited:[],soundToggles:0,titleTaps:0,settingsVisits:0,memoryWins:0,flappyRuns:0}
 };
 function cloneDefault(){return JSON.parse(JSON.stringify(defaultData))}
 function loadData(){
@@ -265,11 +265,11 @@ const achievementDefs=[
  ["forty","Almost There","Unlock 40 achievements.","legendary"],
  ["completion","The Completionist","Unlock every other achievement.","secret"],
  ["mystery","Behind the Curtain","Discover a hidden achievement.","secret"],
- ["secretSound","???","A hidden discovery.","secret"],
- ["secretTitle","???","A hidden discovery.","secret"],
- ["secretTour","???","A hidden discovery.","secret"],
- ["secretMemory","???","A hidden discovery.","secret"],
- ["secretSettings","???","A hidden discovery.","secret"],
+ ["secretSound","Sound Explorer","Toggle the sound setting 3 times.","secret"],
+ ["secretTitle","Title Enthusiast","Tap the MINI ARCADE title 5 times.","secret"],
+ ["secretTour","Arcade Tourist","Visit 3 different games.","secret"],
+ ["secretMemory","Perfect Pairing","Complete Easy Memory Match.","secret"],
+ ["secretSettings","Settings Regular","Visit the Settings page 5 times.","secret"],
  ["secretFlappy","Triple Takeoff","Start Flappy Bird 3 times.","secret"]
 ];
 const achievementMap=Object.fromEntries(achievementDefs.map(a=>[a[0],a]));
@@ -279,7 +279,6 @@ let noticeTimer=null,achievementFilter="all";
 function showNotice(id){
  const a=achievementMap[id];
  if(!a)return;
- // Reveal the actual achievement details after it has been unlocked.
  $("noticeTitle").textContent="Achievement unlocked: "+a[1];
  $("noticeDescription").textContent=a[2];
  $("noticeRarity").textContent=a[3];
@@ -291,16 +290,21 @@ function showNotice(id){
 function unlock(id){
  if(!achievementMap[id]||data.achievements.includes(id))return false;
  data.achievements.push(id);
- saveData();showNotice(id);beep(900,.18);refreshUI();checkMeta();
+ saveData();
+ showNotice(id);
+ beep(900,.18);
+ refreshUI();
+ checkMeta();
  return true;
 }
 function checkMeta(){
- const n=data.achievements.length;
- if(n>=5)unlock("firstFive");
- if(n>=10)unlock("ten");
- if(n>=25)unlock("twentyFive");
- if(n>=40)unlock("forty");
- if(n>=TOTAL_ACHIEVEMENTS-1)unlock("completion");
+ const unlocked=new Set(data.achievements);
+ const otherAchievements=achievementDefs.filter(a=>a[0]!=="completion");
+ if(unlocked.size>=5)unlock("firstFive");
+ if(unlocked.size>=10)unlock("ten");
+ if(unlocked.size>=25)unlock("twentyFive");
+ if(unlocked.size>=40)unlock("forty");
+ if(otherAchievements.every(a=>unlocked.has(a[0])))unlock("completion");
 }
 function gamePlayed(gameId){
  data.stats.gamesPlayed++;
@@ -342,7 +346,8 @@ function renderAchievements(){
   if(achievementFilter==="secret")return a[3]==="secret";
   return done||a[3]!=="secret";
  });
- list.innerHTML="";$("secretHints").hidden=achievementFilter!=="secret";
+ list.innerHTML="";
+ $("secretHints").hidden=achievementFilter!=="secret";
  if(!visible.length)list.innerHTML='<div class="empty">Nothing to show here yet.</div>';
  else visible.forEach(a=>{
   const done=data.achievements.includes(a[0]),hidden=a[3]==="secret"&&!done;
@@ -377,7 +382,9 @@ $("resetAll").onclick=()=>{
  stopAll();data=cloneDefault();saveData();refreshUI();
 };
 $("arcadeTitle").addEventListener("click",()=>{
- data.stats.titleTaps++;if(data.stats.titleTaps>=5)unlock("secretTitle");saveData();
+ data.stats.titleTaps++;
+ if(data.stats.titleTaps>=5)unlock("secretTitle");
+ saveData();
 });
 refreshUI();
 
@@ -388,7 +395,11 @@ function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
  $(id).classList.add("active");
- if(id==="settings"){data.stats.settingsVisits++;if(data.stats.settingsVisits>=5)unlock("secretSettings");saveData()}
+ if(id==="settings"){
+  data.stats.settingsVisits++;
+  if(data.stats.settingsVisits>=5)unlock("secretSettings");
+  saveData();
+ }
  if(id==="flappy")drawFlappy();
  if(id==="snake")drawSnake();
  if(id==="memory"){if(!memoryCards.length)resetMemory();else resumeMemory()}
@@ -401,12 +412,14 @@ document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openPage(b.dat
 const fc=$("fc"),fx=fc.getContext("2d",{alpha:false});
 const FW=700,FH=400;
 let bird=null,pipes=[],fscore=0,fstate="idle",fraf=0,lastF=0;
-let cloudOffset=0,flappyRuns=0,flappyMax=0;
+let cloudOffset=0,flappyRuns=Number(data.stats.flappyRuns)||0,flappyMax=0;
 const FGRAVITY=1050,FLAP_VELOCITY=-330,PIPE_SPEED=185,PIPE_WIDTH=65,PIPE_GAP=150;
 function makePipe(x){return{x,gap:100+Math.random()*190,passed:false}}
 function startFlappy(){
- stopFlappy();bird={x:145,y:180,v:0};pipes=[makePipe(480),makePipe(745),makePipe(1010)];
- fscore=0;flappyMax=0;fstate="playing";lastF=0;cloudOffset=0;flappyRuns++;
+ stopFlappy();
+ bird={x:145,y:180,v:0};pipes=[makePipe(480),makePipe(745),makePipe(1010)];
+ fscore=0;flappyMax=0;fstate="playing";lastF=0;cloudOffset=0;
+ flappyRuns++;data.stats.flappyRuns=flappyRuns;saveData();
  $("fs").textContent=0;$("flapState").textContent="Playing";
  if(flappyRuns>=5)unlock("flappyRestart");
  if(flappyRuns>=3)unlock("secretFlappy");
