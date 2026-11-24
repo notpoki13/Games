@@ -1,1057 +1,1733 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d19">
 <title>MINI ARCADE 4.1</title>
+
 <style>
-:root{--bg:#080d19;--panel:#111b2e;--panel2:#192842;--line:#2c405e;--text:#f1f6ff;--muted:#9aabc5;--accent:#70e8c5;--danger:#ff7185;--gold:#ffd477}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(ellipse at 50% -15%,#29466f 0%,var(--bg) 65%);font-family:system-ui,-apple-system,Arial,sans-serif}
-button,select{font:inherit;touch-action:manipulation}button{cursor:pointer}
-button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-header{text-align:center;padding:34px 14px 22px}
-header h1{font-size:clamp(38px,10vw,66px);margin:8px 0;letter-spacing:-3px;line-height:1}
-header p{color:var(--muted);margin:10px 0}
-.version{color:var(--accent);font-size:11px;font-weight:900;letter-spacing:5px}
-.container{max-width:1100px;margin:auto;padding:12px}
-.dashboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:15px 0}
-.dashcard{background:linear-gradient(145deg,#172640,#101a2c);border:1px solid var(--line);border-radius:15px;padding:15px 8px;text-align:center}
-.dashcard b{font-size:25px;display:block}.dashcard span{font-size:10px;color:var(--muted);letter-spacing:1px}
-.nav{display:flex;gap:8px;overflow-x:auto;padding:12px 0 16px;scrollbar-width:none;position:sticky;top:0;z-index:5;background:#080d19ef;backdrop-filter:blur(12px)}
-.nav button{flex-shrink:0;background:var(--panel);color:white;border:1px solid var(--line);border-radius:12px;padding:11px 15px}
-.nav button.active{background:var(--accent);color:#071b17;border-color:var(--accent)}
-.page{display:none}.page.active{display:block;animation:appear .2s ease}
-@keyframes appear{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:none}}
-.game{display:none;background:linear-gradient(145deg,#192944,#101a2c);border:1px solid var(--line);border-radius:20px;padding:21px;margin:12px 0 25px;box-shadow:0 16px 45px #0005}
-.game.active{display:block}
-.heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-h2{margin:0;font-size:25px}h3{margin:0}
-.description,.hint{color:var(--muted);font-size:13px;line-height:1.6}
-.stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);margin:15px 0;font-size:14px}.stats b{color:white}
-.primary,.secondary{border:0;border-radius:12px;padding:12px 17px;font-weight:850;transition:transform .12s,filter .12s}
-.primary{background:var(--accent);color:#071b17}.secondary{background:#2b3d5b;color:white}
-.primary:active,.secondary:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:not-allowed}
-canvas{display:block;width:100%;max-width:700px;height:auto;aspect-ratio:7/4;margin:15px auto;border-radius:14px;border:1px solid #405575;touch-action:none}
-.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px auto}
-.center{text-align:center;padding:15px 5px}.big{font-size:clamp(35px,9vw,60px);font-weight:950}
-.tapzone{width:100%;min-height:155px;border:0;border-radius:17px;background:#293c59;color:white;font-size:24px;font-weight:900}
-.green{background:#16805f!important}.red{background:#a13e50!important}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0}
-.gamecard{text-align:left;padding:19px;border-radius:17px;background:linear-gradient(145deg,#192b47,#111b2e);border:1px solid var(--line);color:white;min-height:135px;transition:transform .15s,border-color .15s}
-.gamecard:hover{transform:translateY(-3px);border-color:var(--accent)}
-.gamecard strong{display:block;font-size:18px;margin-bottom:8px}.gamecard span{color:var(--muted);font-size:12px;line-height:1.5}
-.section-title{margin:24px 0 10px}
-.achievement{padding:14px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;margin:9px 0;text-align:left;display:flex;align-items:center;gap:12px}
-.achievement.locked{opacity:.55}.achievement-icon{width:43px;height:43px;flex-shrink:0;border-radius:12px;display:grid;place-items:center;background:#263b59;font-size:20px}
-.achievement strong{display:block;font-size:14px}.achievement small{color:var(--muted);font-size:12px;line-height:1.5}
-.achievement-info{flex:1;min-width:0}.rarity{font-size:9px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
-.common{color:#c0cbdc}.rare{color:#69b9ff}.epic{color:#c39aff}.legendary{color:var(--gold)}.secret{color:#ff91b5}
-.progress-track{height:9px;background:#293b56;border-radius:20px;overflow:hidden;margin:12px 0}
-.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#53cda8,#8df0ce);border-radius:20px;transition:width .3s}
-.filterbar{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
-.filterbar button{background:#293b56;color:white;border:1px solid var(--line);padding:8px 12px;border-radius:10px;font-size:12px}
-.filterbar button.active{background:var(--accent);color:#071b17}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(50px,85px));justify-content:center;gap:9px;margin:20px auto}
-.memory-card{aspect-ratio:1;border-radius:12px;background:#293c59;color:white;border:1px solid #49607e;font-size:28px}
-.memory-card.open{background:#386c73}.memory-card.matched{background:#24654e}
-.dpad{display:grid;grid-template-columns:55px 55px 55px;grid-template-rows:50px 50px 50px;gap:6px;justify-content:center;margin:15px auto}
-.dpad button{background:#293c59;color:white;border:1px solid #455a78;border-radius:12px;font-size:22px}
-.dpad .up{grid-column:2}.dpad .left{grid-column:1;grid-row:2}.dpad .down{grid-column:2;grid-row:2}.dpad .right{grid-column:3;grid-row:2}
-.meter{max-width:550px;height:18px;background:#293b56;border-radius:20px;overflow:hidden;margin:18px auto}
-#micBar{height:100%;width:0;background:linear-gradient(90deg,#5be1b5,#e8d36d,#ff7180);transition:width .06s}
-.notice{position:fixed;z-index:20;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#1b304b;border:1px solid #52708f;border-radius:15px;padding:14px 18px;box-shadow:0 10px 40px #0008;width:min(90%,360px);transition:.25s}
-.notice.show{opacity:1;transform:translate(-50%,0)}.notice strong{display:block}.notice small{color:var(--muted)}.notice .rarity{margin-top:4px}
-.empty{text-align:center;color:var(--muted);padding:30px 10px}
-.hints-panel{margin-top:24px;padding:17px;border:1px solid #684b72;background:linear-gradient(145deg,#29213d,#171b30);border-radius:16px}
-.hints-panel h3{color:#ffb1d0;margin-bottom:7px}.hints-panel ul{padding-left:20px;margin:10px 0 0}
-.hints-panel li{color:var(--muted);font-size:13px;line-height:1.8;margin:5px 0}
-footer{text-align:center;padding:28px;color:#71829e;font-size:12px}
-@media(max-width:520px){.game{padding:14px}.dashboard{grid-template-columns:repeat(2,1fr)}.nav button{padding:10px 13px}.stats{gap:10px}header{padding-top:25px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+:root {
+  --bg:#080d19;
+  --panel:#111b2e;
+  --panel2:#192842;
+  --line:#2c405e;
+  --text:#eef4ff;
+  --muted:#9aabc5;
+  --accent:#65a8ff;
+  --green:#4ade80;
+  --red:#fb7185;
+}
+
+* {
+  box-sizing:border-box;
+}
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+
+button {
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  padding:11px 15px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+button:hover {
+  border-color:var(--accent);
+}
+
+button:disabled {
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+header {
+  padding:18px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+  background:#0d1525;
+}
+
+header h1 {
+  margin:0;
+  color:var(--accent);
+  letter-spacing:2px;
+}
+
+header p {
+  color:var(--muted);
+  margin:7px 0 0;
+}
+
+nav {
+  display:flex;
+  gap:8px;
+  padding:12px;
+  overflow-x:auto;
+  border-bottom:1px solid var(--line);
+}
+
+nav button {
+  flex-shrink:0;
+}
+
+nav button.active {
+  background:var(--accent);
+  color:#07111f;
+}
+
+main {
+  max-width:950px;
+  margin:auto;
+  padding:18px;
+}
+
+.page {
+  display:none;
+}
+
+.page.active {
+  display:block;
+}
+
+.panel {
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:18px;
+  margin-bottom:15px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  gap:12px;
+}
+
+.game-card {
+  background:var(--panel2);
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  cursor:pointer;
+  text-align:center;
+}
+
+.game-card h3 {
+  margin:5px 0;
+}
+
+.game-card p {
+  color:var(--muted);
+  font-size:13px;
+}
+
+canvas {
+  display:block;
+  width:100%;
+  max-width:500px;
+  margin:15px auto;
+  background:#07111f;
+  border:1px solid var(--line);
+  border-radius:12px;
+  touch-action:manipulation;
+}
+
+.stats {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:12px 0;
+}
+
+.stat {
+  background:var(--panel2);
+  padding:10px 14px;
+  border-radius:9px;
+}
+
+.muted {
+  color:var(--muted);
+}
+
+.success {
+  color:var(--green);
+}
+
+.danger {
+  color:var(--red);
+}
+
+.cheat-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.cheat-row:last-child {
+  border-bottom:0;
+}
+
+.cheat-row small {
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.toggle.on {
+  background:#14532d;
+  border-color:var(--green);
+}
+
+.toggle.off {
+  background:#351824;
+  border-color:var(--red);
+}
+
+footer {
+  text-align:center;
+  padding:25px;
+  color:var(--muted);
+}
+
+@media(max-width:500px) {
+  main {
+    padding:12px;
+  }
+
+  .panel {
+    padding:13px;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <header>
- <div class="version">ULTIMATE REMASTER</div>
- <h1 id="arcadeTitle">MINI ARCADE</h1>
- <p>Your personal browser gaming universe.</p>
- <p class="hint">VERSION 4.1</p>
+  <h1>MINI ARCADE</h1>
+  <p>Version 4.1 | Six games. One arcade.</p>
 </header>
-<main class="container">
-<div class="dashboard">
- <div class="dashcard"><b>6</b><span>GAMES</span></div>
- <div class="dashcard"><b id="records">0</b><span>RECORDS</span></div>
- <div class="dashcard"><b id="achievementCount">0/56</b><span>ACHIEVEMENTS</span></div>
- <div class="dashcard"><b id="soundStatus">ON</b><span>SOUND</span></div>
-</div>
-<nav class="nav">
- <button class="active" data-page="home">Home</button><button data-page="flappy">Flappy</button><button data-page="snake">Snake</button><button data-page="reaction">Reaction</button><button data-page="clicker">Click Rush</button><button data-page="memory">Memory</button><button data-page="mic">Mic Meter</button><button data-page="achievements">Achievements</button><button data-page="settings">Settings</button>
+
+<nav id="navigation">
+  <button class="active" data-page="home">Home</button>
+  <button data-page="achievements">Achievements</button>
+  <button data-page="stats">Statistics</button>
+  <button data-page="dev">Dev Panel</button>
 </nav>
-<section class="page active" id="home">
- <h2>Welcome back!</h2><p class="description">Your arcade. Your records. Your challenges.</p>
- <div class="cards">
-  <button class="gamecard" data-open="flappy"><strong>Flappy Bird</strong><span>Fly through the pipes. Chase a new high score.</span></button>
-  <button class="gamecard" data-open="snake"><strong>Snake</strong><span>Eat, grow, and survive as long as possible.</span></button>
-  <button class="gamecard" data-open="reaction"><strong>Reaction Test</strong><span>How fast can your reflexes react?</span></button>
-  <button class="gamecard" data-open="clicker"><strong>Click Rush</strong><span>Ten seconds. How many clicks can you get?</span></button>
-  <button class="gamecard" data-open="memory"><strong>Memory Match</strong><span>Find every matching pair.</span></button>
-  <button class="gamecard" data-open="mic"><strong>Mic Meter</strong><span>Watch your voice control the meter.</span></button>
- </div>
- <h2 class="section-title">Your Records</h2><div id="homeRecords" class="achievement"></div>
- <h2 class="section-title">Achievement Progress</h2>
- <div class="progress-track"><div class="progress-fill" id="homeProgress"></div></div>
- <p class="hint" id="homeProgressText">0 of 56 achievements unlocked.</p>
-</section>
-<section class="page" id="flappy">
- <div class="game active">
-  <div class="heading"><div><h2>Flappy Bird</h2><p class="description">Avoid the pipes. Keep flying.</p></div><button class="primary" id="flapStart">Start / Restart</button></div>
-  <div class="stats"><span>Score: <b id="fs">0</b></span><span>Best: <b id="fb">0</b></span><span>State: <b id="flapState">Ready</b></span></div>
-  <canvas id="fc" width="700" height="400"></canvas>
-  <div class="controls"><button class="primary" id="flapButton">FLAP!</button><button class="secondary" id="flapPause">Pause</button></div>
-  <p class="hint">Tap the screen, click, press Space, or use FLAP.</p>
- </div>
-</section>
-<section class="page" id="snake">
- <div class="game active">
-  <div class="heading"><div><h2>Snake</h2><p class="description">Eat food and avoid your tail.</p></div><button class="primary" id="snakeStart">Restart</button></div>
-  <div class="stats"><span>Score: <b id="ss">0</b></span><span>Best: <b id="sb">0</b></span><span>Level: <b id="snakeLevel">1</b></span></div>
-  <canvas id="sc" width="400" height="400"></canvas>
-  <div class="dpad"><button class="up" data-dir="up">↑</button><button class="left" data-dir="left">←</button><button class="down" data-dir="down">↓</button><button class="right" data-dir="right">→</button></div>
-  <p class="hint">Use the D-pad, arrow keys, or swipe.</p>
- </div>
-</section>
-<section class="page" id="reaction">
- <div class="game active"><h2>Reaction Test</h2><p class="description">Wait for green. Then tap immediately!</p>
-  <div class="stats">Best: <b id="rb">---</b></div><button class="primary" id="reactionStart">Start Test</button>
-  <div class="center"><button class="tapzone" id="reactionZone">READY?</button><div class="big" id="reactionResult">---</div><p class="hint" id="reactionMessage">Wait for green!</p></div>
- </div>
-</section>
-<section class="page" id="clicker">
- <div class="game active"><h2>Click Rush</h2><p class="description">Ten seconds. Maximum clicks.</p>
-  <div class="stats"><span>Time: <b id="ct">10.0</b></span><span>Clicks: <b id="cs">0</b></span><span>CPS: <b id="cps">0</b></span><span>Best: <b id="cb">0</b></span></div>
-  <button class="primary" id="clickStart">Start Round</button>
-  <div class="center"><button class="tapzone" id="clickZone" disabled>CLICK!</button><p id="clickMessage" class="hint">Get ready!</p></div>
- </div>
-</section>
-<section class="page" id="memory">
- <div class="game active"><h2>Memory Match</h2><p class="description">Find all the matching pairs.</p>
-  <div class="controls"><select id="memoryDifficulty" class="secondary"><option value="6">Easy: 6 pairs</option><option value="8" selected>Normal: 8 pairs</option><option value="10">Hard: 10 pairs</option></select><button class="primary" id="memoryReset">New Game</button></div>
-  <div class="stats"><span>Moves: <b id="moves">0</b></span><span>Pairs: <b id="pairs">0</b></span><span>Time: <b id="memoryTime">0</b>s</span></div>
-  <div class="grid" id="memoryGrid"></div><p class="hint" id="memoryMessage">Find all the pairs!</p>
- </div>
-</section>
-<section class="page" id="mic">
- <div class="game active"><h2>Mic Volume Meter</h2><p class="description">Your microphone controls the meter.</p>
-  <div class="center"><div class="big"><span id="volume">0</span>%</div><div class="meter"><div id="micBar"></div></div><p id="micLevel">Quiet</p><button class="primary" id="micStart">Enable Microphone</button><button class="secondary" id="micStop">Stop</button><p class="hint" id="micStatus">Microphone is off.</p></div>
- </div>
-</section>
-<section class="page" id="achievements">
- <div class="game active">
-  <div class="heading"><div><h2>Achievements</h2><p class="description">56 challenges. How many can you unlock?</p></div><b id="achievementPercent">0%</b></div>
-  <div class="progress-track"><div class="progress-fill" id="achievementProgress"></div></div>
-  <p class="hint" id="achievementProgressText">0 / 56 unlocked</p>
-  <div class="filterbar" id="achievementFilters"><button class="active" data-filter="all">All</button><button data-filter="locked">Locked</button><button data-filter="unlocked">Unlocked</button><button data-filter="secret">Secrets</button></div>
-  <div id="achievementList"></div>
-  <div id="secretHints" class="hints-panel" hidden>
-   <h3>Hints</h3><p class="hint">A few clues for curious players. They won't give everything away.</p>
-   <ul>
-    <li>Some discoveries happen outside the games themselves.</li>
-    <li>Pay attention to things you can interact with more than once.</li>
-    <li>Try exploring different corners of the arcade.</li>
-    <li>Small actions can sometimes have bigger consequences.</li>
-    <li>Not every challenge is about getting a high score.</li>
-    <li>Some secrets reward patience and curiosity.</li>
-    <li>Your progress across multiple games can matter.</li>
-    <li>Look for patterns in the way the arcade responds to you.</li>
-   </ul>
+
+<main>
+
+<section id="home" class="page active">
+  <div class="panel">
+    <h2>Welcome to Mini Arcade!</h2>
+    <p class="muted">Choose a game to start playing.</p>
+    <div class="grid">
+      <div class="game-card" onclick="openGame('flappy')">
+        <h3>Flappy Bird</h3>
+        <p>Fly through the pipes.</p>
+      </div>
+
+      <div class="game-card" onclick="openGame('snake')">
+        <h3>Snake</h3>
+        <p>Collect food and grow.</p>
+      </div>
+
+      <div class="game-card" onclick="openGame('reaction')">
+        <h3>Reaction Test</h3>
+        <p>Test your reaction speed.</p>
+      </div>
+
+      <div class="game-card" onclick="openGame('clickrush')">
+        <h3>Click Rush</h3>
+        <p>Click as quickly as possible.</p>
+      </div>
+
+      <div class="game-card" onclick="openGame('memory')">
+        <h3>Memory Match</h3>
+        <p>Find matching pairs.</p>
+      </div>
+
+      <div class="game-card" onclick="openGame('mic')">
+        <h3>Mic Meter</h3>
+        <p>Explore microphone input.</p>
+      </div>
+    </div>
   </div>
- </div>
 </section>
-<section class="page" id="settings">
- <div class="game active"><h2>Settings</h2><p class="description">Customize your arcade experience.</p>
-  <div class="controls"><button class="secondary" id="soundToggle">Sound: ON</button><button class="secondary" id="resetAll">Reset All Progress</button></div>
-  <p class="hint">Your records and achievements are saved in this browser.</p>
-  <p class="hint">Microphone audio is processed locally. It is never recorded or uploaded by this game.</p>
-  <p class="hint">For microphone access, use HTTPS or localhost.</p>
- </div>
+
+<section id="achievements" class="page">
+  <div class="panel">
+    <h2>Achievements</h2>
+    <p id="achievementCount" class="muted">0 unlocked</p>
+    <div id="achievementList"></div>
+  </div>
 </section>
+
+<section id="stats" class="page">
+  <div class="panel">
+    <h2>Arcade Statistics</h2>
+    <div id="statsContent"></div>
+  </div>
+</section>
+
+<section id="dev" class="page">
+  <div class="panel">
+    <h2>Developer Panel</h2>
+    <p class="muted">Testing controls and game cheats.</p>
+    <div id="devContent"></div>
+  </div>
+</section>
+
+<section id="game" class="page">
+  <div class="panel">
+    <button onclick="goHome()">← Back to Arcade</button>
+    <h2 id="gameTitle">Game</h2>
+    <div id="gameContent"></div>
+  </div>
+</section>
+
 </main>
-<div class="notice" id="notice" role="status" aria-live="polite"><strong id="noticeTitle">Achievement unlocked!</strong><small id="noticeDescription"></small><div class="rarity" id="noticeRarity"></div></div>
-<footer>MINI ARCADE 4.1 · ULTIMATE REMASTER</footer>
+
+<footer>
+  MINI ARCADE 4.1
+</footer>
+
 <script>
 "use strict";
-const $=id=>document.getElementById(id);
-const STORAGE="mini_arcade_4";
-let sound=true,currentPage="home",audio=null;
-const defaultData={
- records:{flappy:0,snake:0,reaction:0,clicker:0,memory:0},
- achievements:[],
- stats:{gamesPlayed:0,totalClicks:0,micUsed:false,hardMemory:false,gamesVisited:[],soundToggles:0,titleTaps:0,settingsVisits:0,memoryWins:0,flappyRuns:0}
+
+/* =================================
+   SHARED ARCADE SYSTEM
+================================= */
+
+const SAVE_KEY = "mini_arcade_4";
+
+const defaultData = {
+  achievements: [],
+  stats: {
+    gamesPlayed: 0,
+    flappyBest: 0,
+    snakeBest: 0,
+    reactionBest: 0,
+    clickBest: 0,
+    memoryBest: 0
+  },
+  cheats: {}
 };
-function cloneDefault(){return JSON.parse(JSON.stringify(defaultData))}
-function loadData(){
- try{
-  const raw=JSON.parse(localStorage.getItem(STORAGE));
-  if(!raw)return cloneDefault();
-  const stats={...defaultData.stats,...(raw.stats||{})};
-  if(!Array.isArray(stats.gamesVisited))stats.gamesVisited=[];
-  return {records:{...defaultData.records,...(raw.records||{})},achievements:Array.isArray(raw.achievements)?raw.achievements:[],stats};
- }catch{return cloneDefault()}
+
+let saveData;
+
+try {
+  saveData = {
+    ...defaultData,
+    ...JSON.parse(localStorage.getItem(SAVE_KEY) || "{}")
+  };
+
+  saveData.stats = {
+    ...defaultData.stats,
+    ...(saveData.stats || {})
+  };
+
+  saveData.cheats = saveData.cheats || {};
+  saveData.achievements = saveData.achievements || [];
+
+} catch(error) {
+  saveData = structuredClone(defaultData);
 }
-let data=loadData();
-function saveData(){try{localStorage.setItem(STORAGE,JSON.stringify(data))}catch{console.warn("Progress could not be saved.")}}
-function beep(freq=500,duration=.07){
- if(!sound)return;
- try{
-  audio=audio||new(window.AudioContext||window.webkitAudioContext)();
-  if(audio.state==="suspended")audio.resume();
-  const osc=audio.createOscillator(),gain=audio.createGain();
-  osc.frequency.value=freq;gain.gain.value=.035;osc.connect(gain);gain.connect(audio.destination);osc.start();
-  gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);osc.stop(audio.currentTime+duration);
- }catch{}
+
+function saveGame() {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
 }
-const achievementDefs=[
- ["first","First Steps","Play your first game.","common"],
- ["flappy1","Takeoff","Score 1 in Flappy Bird.","common"],
- ["flappy5","Getting Air","Score 5 in Flappy Bird.","common"],
- ["flappy10","Flying High","Score 10 in Flappy Bird.","rare"],
- ["flappy20","Sky Captain","Score 20 in Flappy Bird.","epic"],
- ["flappy30","Cloud Chaser","Score 30 in Flappy Bird.","epic"],
- ["flappy50","Bird Legend","Score 50 in Flappy Bird.","legendary"],
- ["flappy100","Impossible Flight","Score 100 in Flappy Bird.","legendary"],
- ["flappyNoHit","Clean Flight","Pass 10 pipes in one run.","rare"],
- ["flappyRestart","Second Wind","Play Flappy Bird 5 times.","common"],
- ["snake1","Snack Time","Score 1 in Snake.","common"],
- ["snake5","Growing","Score 5 in Snake.","common"],
- ["snake10","Snake Master","Score 10 in Snake.","rare"],
- ["snake20","Long Snake","Score 20 in Snake.","epic"],
- ["snake30","Garden Legend","Score 30 in Snake.","epic"],
- ["snake50","Serpentine","Score 50 in Snake.","legendary"],
- ["snake75","Never Ending","Score 75 in Snake.","legendary"],
- ["snakeLevel5","Level Climber","Reach Snake level 5.","rare"],
- ["snakeRestart","Fresh Start","Play Snake 5 times.","common"],
- ["fast","Quick Reflexes","React in under 250 ms.","rare"],
- ["fast200","Speedy","React in under 200 ms.","epic"],
- ["fast150","Superhuman","React in under 150 ms.","legendary"],
- ["fast300","Under 300","React in under 300 ms.","common"],
- ["reaction5","Reflex Routine","Complete 5 reaction tests.","common"],
- ["reaction10","Reflex Expert","Complete 10 reaction tests.","rare"],
- ["click10","Warm Fingers","Get 10 clicks in one round.","common"],
- ["click25","Rapid Fire","Get 25 clicks in one round.","rare"],
- ["click50","Click Machine","Get 50 clicks in one round.","epic"],
- ["click75","Click Storm","Get 75 clicks in one round.","legendary"],
- ["click100","Finger Frenzy","Get 100 clicks in one round.","legendary"],
- ["clickTotal500","Click Collector","Reach 500 total clicks.","epic"],
- ["memory","Memory Master","Complete Memory Match.","rare"],
- ["memoryEasy","Easy Does It","Complete Easy Memory Match.","common"],
- ["memoryHard","Brain Power","Complete Hard Memory Match.","epic"],
- ["memoryFast","Sharp Memory","Complete Memory in under 60 seconds.","epic"],
- ["memoryMoves","Efficient Mind","Complete Memory in 20 moves or fewer.","legendary"],
- ["memory5","Pair Finder","Complete Memory Match 5 times.","epic"],
- ["mic","Sound Check","Activate the microphone.","common"],
- ["micLoud","Volume Up","Reach a high microphone volume.","rare"],
- ["mic3","Mic Regular","Activate the microphone 3 times.","rare"],
- ["allRecords","Record Breaker","Set a record in all five score games.","epic"],
- ["explorer","Arcade Explorer","Play all six games.","rare"],
- ["games10","Dedicated Player","Play 10 games.","rare"],
- ["games25","Arcade Regular","Play 25 games.","epic"],
- ["games50","Arcade Veteran","Play 50 games.","legendary"],
- ["firstFive","Five for Five","Unlock 5 achievements.","common"],
- ["ten","Double Digits","Unlock 10 achievements.","rare"],
- ["twentyFive","Quarter Century","Unlock 25 achievements.","epic"],
- ["forty","Almost There","Unlock 40 achievements.","legendary"],
- ["completion","The Completionist","Unlock every other achievement.","secret"],
- ["mystery","Behind the Curtain","Discover a hidden achievement.","secret"],
- ["secretSound","Sound Explorer","Toggle the sound setting 3 times.","secret"],
- ["secretTitle","Title Enthusiast","Tap the MINI ARCADE title 5 times.","secret"],
- ["secretTour","Arcade Tourist","Visit 3 different games.","secret"],
- ["secretMemory","Perfect Pairing","Complete Easy Memory Match.","secret"],
- ["secretSettings","Settings Regular","Visit the Settings page 5 times.","secret"],
- ["secretFlappy","Triple Takeoff","Start Flappy Bird 3 times.","secret"]
+
+function setCheat(name,value) {
+  saveData.cheats[name] = Boolean(value);
+  saveGame();
+}
+
+function cheatEnabled(name) {
+  return saveData.cheats[name] === true;
+}
+
+function unlockAchievement(id) {
+  if(saveData.achievements.includes(id)) return;
+
+  saveData.achievements.push(id);
+  saveGame();
+  renderAchievements();
+}
+
+function updateStat(name,value) {
+  saveData.stats[name] = Math.max(
+    Number(saveData.stats[name] || 0),
+    Number(value || 0)
+  );
+
+  saveGame();
+  renderStats();
+}
+
+/* =================================
+   NAVIGATION
+================================= */
+
+function openPage(page) {
+  document.querySelectorAll(".page").forEach(section => {
+    section.classList.remove("active");
+  });
+
+  const target = document.getElementById(page);
+
+  if(target) target.classList.add("active");
+
+  document.querySelectorAll("#navigation button").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.page === page
+    );
+  });
+
+  if(page === "achievements") renderAchievements();
+  if(page === "stats") renderStats();
+  if(page === "dev") renderDevPanel();
+}
+
+document.querySelectorAll("#navigation button").forEach(button => {
+  button.addEventListener("click", () => {
+    openPage(button.dataset.page);
+  });
+});
+
+function goHome() {
+  stopCurrentGame();
+  openPage("home");
+}
+
+function openGame(name) {
+  stopCurrentGame();
+
+  currentGame = name;
+
+  document.querySelectorAll(".page").forEach(section => {
+    section.classList.remove("active");
+  });
+
+  document.getElementById("game").classList.add("active");
+
+  document.getElementById("gameTitle").textContent =
+    gameNames[name] || "Game";
+
+  document.querySelectorAll("#navigation button").forEach(button => {
+    button.classList.remove("active");
+  });
+
+  startGame(name);
+}
+
+/* =================================
+   GAME REGISTRY
+================================= */
+
+const gameNames = {
+  flappy: "Flappy Bird",
+  snake: "Snake",
+  reaction: "Reaction Test",
+  clickrush: "Click Rush",
+  memory: "Memory Match",
+  mic: "Mic Meter"
+};
+
+let currentGame = null;
+
+function stopCurrentGame() {
+  if(typeof stopFlappy === "function") stopFlappy();
+  if(typeof stopSnake === "function") stopSnake();
+  if(typeof stopReaction === "function") stopReaction();
+  if(typeof stopClickRush === "function") stopClickRush();
+  if(typeof stopMemory === "function") stopMemory();
+  if(typeof stopMic === "function") stopMic();
+}
+
+function startGame(name) {
+  saveData.stats.gamesPlayed++;
+  saveGame();
+
+  const starters = {
+    flappy: startFlappy,
+    snake: startSnake,
+    reaction: startReaction,
+    clickrush: startClickRush,
+    memory: startMemory,
+    mic: startMic
+  };
+
+  if(starters[name]) starters[name]();
+}
+
+/* =================================
+   ACHIEVEMENTS
+================================= */
+
+const achievements = [
+  ["first_game","First Steps","Play your first game."],
+  ["flappy_1","First Flight","Score 1 point in Flappy Bird."],
+  ["flappy_10","Sky Traveller","Score 10 points in Flappy Bird."],
+  ["snake_1","Snack Time","Collect your first Snake food."],
+  ["snake_10","Growing Strong","Collect 10 Snake foods."],
+  ["reaction_fast","Quick Reflexes","Get a reaction time below 300ms."],
+  ["click_100","Click Machine","Reach 100 clicks."],
+  ["memory_win","Sharp Memory","Complete Memory Match."],
+  ["mic_used","Sound Explorer","Use the microphone meter."]
 ];
-const achievementMap=Object.fromEntries(achievementDefs.map(a=>[a[0],a]));
-const TOTAL_ACHIEVEMENTS=achievementDefs.length;
-let noticeTimer=null,achievementFilter="all";
 
-function showNotice(id){
- const a=achievementMap[id];
- if(!a)return;
- $("noticeTitle").textContent="Achievement unlocked: "+a[1];
- $("noticeDescription").textContent=a[2];
- $("noticeRarity").textContent=a[3];
- $("noticeRarity").className="rarity "+a[3];
- $("notice").classList.add("show");
- clearTimeout(noticeTimer);
- noticeTimer=setTimeout(()=>$("notice").classList.remove("show"),4500);
-}
-function unlock(id){
- if(!achievementMap[id]||data.achievements.includes(id))return false;
- data.achievements.push(id);
- saveData();
- showNotice(id);
- beep(900,.18);
- refreshUI();
- checkMeta();
- return true;
-}
-function checkMeta(){
- const unlocked=new Set(data.achievements);
- const otherAchievements=achievementDefs.filter(a=>a[0]!=="completion");
- if(unlocked.size>=5)unlock("firstFive");
- if(unlocked.size>=10)unlock("ten");
- if(unlocked.size>=25)unlock("twentyFive");
- if(unlocked.size>=40)unlock("forty");
- if(otherAchievements.every(a=>unlocked.has(a[0])))unlock("completion");
-}
-function gamePlayed(gameId){
- data.stats.gamesPlayed++;
- if(gameId&&!data.stats.gamesVisited.includes(gameId))data.stats.gamesVisited.push(gameId);
- unlock("first");
- if(data.stats.gamesPlayed>=10)unlock("games10");
- if(data.stats.gamesPlayed>=25)unlock("games25");
- if(data.stats.gamesPlayed>=50)unlock("games50");
- if(data.stats.gamesVisited.length>=3)unlock("secretTour");
- if(data.stats.gamesVisited.length>=6)unlock("explorer");
- saveData();
-}
-function updateRecord(key,value,lower=false){
- const old=data.records[key]||0;
- const next=lower?(old===0?value:Math.min(old,value)):Math.max(old,value);
- const changed=next!==old;data.records[key]=next;saveData();refreshUI();return changed;
-}
-function checkRecords(){if(["flappy","snake","reaction","clicker","memory"].every(k=>data.records[k]>0))unlock("allRecords")}
-function refreshUI(){
- const count=data.achievements.length;
- $("records").textContent=Object.values(data.records).filter(v=>v>0).length;
- $("achievementCount").textContent=count+"/"+TOTAL_ACHIEVEMENTS;
- $("soundStatus").textContent=sound?"ON":"OFF";$("soundToggle").textContent="Sound: "+(sound?"ON":"OFF");
- $("fb").textContent=data.records.flappy;$("sb").textContent=data.records.snake;
- $("rb").textContent=data.records.reaction?data.records.reaction+" ms":"---";$("cb").textContent=data.records.clicker;
- const percent=Math.round(count/TOTAL_ACHIEVEMENTS*100);
- $("achievementPercent").textContent=percent+"%";$("achievementProgress").style.width=percent+"%";
- $("achievementProgressText").textContent=count+" / "+TOTAL_ACHIEVEMENTS+" unlocked";
- $("homeProgress").style.width=percent+"%";$("homeProgressText").textContent=count+" of "+TOTAL_ACHIEVEMENTS+" achievements unlocked.";
- $("homeRecords").innerHTML=Object.entries(data.records).map(([k,v])=>"<div>"+k.toUpperCase()+": <b>"+(v||"Not played")+"</b></div>").join("");
- renderAchievements();
-}
-function renderAchievements(){
- const list=$("achievementList");if(!list)return;
- const visible=achievementDefs.filter(a=>{
-  const done=data.achievements.includes(a[0]);
-  if(achievementFilter==="locked")return !done&&a[3]!=="secret";
-  if(achievementFilter==="unlocked")return done;
-  if(achievementFilter==="secret")return a[3]==="secret";
-  return done||a[3]!=="secret";
- });
- list.innerHTML="";
- $("secretHints").hidden=achievementFilter!=="secret";
- if(!visible.length)list.innerHTML='<div class="empty">Nothing to show here yet.</div>';
- else visible.forEach(a=>{
-  const done=data.achievements.includes(a[0]),hidden=a[3]==="secret"&&!done;
-  const el=document.createElement("div");el.className="achievement"+(done?"":" locked");el.dataset.achievement=a[0];
-  const icon=document.createElement("div");icon.className="achievement-icon";icon.textContent=hidden?"?":done?"★":"◇";
-  const info=document.createElement("div");info.className="achievement-info";
-  const name=document.createElement("strong");name.textContent=hidden?"Secret Achievement":a[1];
-  const desc=document.createElement("small");desc.textContent=hidden?"Unlock this achievement to reveal its secret.":a[2];
-  const rarity=document.createElement("div");rarity.className="rarity "+a[3];rarity.textContent=a[3];
-  info.append(name,desc,rarity);el.append(icon,info);list.appendChild(el);
- });
-}
-$("achievementList").addEventListener("click",e=>{
- const card=e.target.closest("[data-achievement]");if(!card)return;
- const id=card.dataset.achievement,def=achievementMap[id];
- if(def&&def[3]==="secret"&&!data.achievements.includes(id))unlock("mystery");
-});
-$("achievementFilters").addEventListener("click",e=>{
- const b=e.target.closest("button[data-filter]");if(!b)return;
- achievementFilter=b.dataset.filter;
- document.querySelectorAll("#achievementFilters button").forEach(x=>x.classList.toggle("active",x===b));
- renderAchievements();
-});
-function toggleSound(){
- sound=!sound;data.stats.soundToggles++;
- if(data.stats.soundToggles>=3)unlock("secretSound");
- saveData();refreshUI();
-}
-$("soundToggle").onclick=toggleSound;
-$("resetAll").onclick=()=>{
- if(!confirm("Delete all scores and achievements? This cannot be undone."))return;
- stopAll();data=cloneDefault();saveData();refreshUI();
-};
-$("arcadeTitle").addEventListener("click",()=>{
- data.stats.titleTaps++;
- if(data.stats.titleTaps>=5)unlock("secretTitle");
- saveData();
-});
-refreshUI();
+function renderAchievements() {
+  const list = document.getElementById("achievementList");
 
-// NAVIGATION AND LIFECYCLE
-function stopAll(){stopFlappy();stopSnake();stopReaction();stopClick();pauseMemory();stopMic()}
-function openPage(id){
- stopAll();currentPage=id;
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
- $(id).classList.add("active");
- if(id==="settings"){
-  data.stats.settingsVisits++;
-  if(data.stats.settingsVisits>=5)unlock("secretSettings");
-  saveData();
- }
- if(id==="flappy")drawFlappy();
- if(id==="snake")drawSnake();
- if(id==="memory"){if(!memoryCards.length)resetMemory();else resumeMemory()}
- if(id==="achievements")renderAchievements();
-}
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>openPage(b.dataset.page));
-document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openPage(b.dataset.open));
+  if(!list) return;
 
-// FLAPPY BIRD
-const fc=$("fc"),fx=fc.getContext("2d",{alpha:false});
-const FW=700,FH=400;
-let bird=null,pipes=[],fscore=0,fstate="idle",fraf=0,lastF=0;
-let cloudOffset=0,flappyRuns=Number(data.stats.flappyRuns)||0,flappyMax=0;
-const FGRAVITY=1050,FLAP_VELOCITY=-330,PIPE_SPEED=185,PIPE_WIDTH=65,PIPE_GAP=150;
-function makePipe(x){return{x,gap:100+Math.random()*190,passed:false}}
-function startFlappy(){
- stopFlappy();
- bird={x:145,y:180,v:0};pipes=[makePipe(480),makePipe(745),makePipe(1010)];
- fscore=0;flappyMax=0;fstate="playing";lastF=0;cloudOffset=0;
- flappyRuns++;data.stats.flappyRuns=flappyRuns;saveData();
- $("fs").textContent=0;$("flapState").textContent="Playing";
- if(flappyRuns>=5)unlock("flappyRestart");
- if(flappyRuns>=3)unlock("secretFlappy");
- gamePlayed("flappy");beep(500);fraf=requestAnimationFrame(flapFrame);
-}
-function flap(){if(fstate!=="playing")return;bird.v=FLAP_VELOCITY;beep(650,.035)}
-function stopFlappy(){if(fraf)cancelAnimationFrame(fraf);fraf=0;if(fstate==="playing")fstate="paused"}
-function pauseFlappy(){
- if(fstate==="playing"){fstate="paused";if(fraf)cancelAnimationFrame(fraf);fraf=0;$("flapState").textContent="Paused";drawFlappy()}
- else if(fstate==="paused"){fstate="playing";lastF=0;$("flapState").textContent="Playing";fraf=requestAnimationFrame(flapFrame)}
-}
-function endFlappy(){
- fstate="over";if(fraf)cancelAnimationFrame(fraf);fraf=0;$("flapState").textContent="Game over";
- updateRecord("flappy",fscore);
- [[1,"flappy1"],[5,"flappy5"],[10,"flappy10"],[20,"flappy20"],[30,"flappy30"],[50,"flappy50"],[100,"flappy100"]].forEach(([n,id])=>{if(fscore>=n)unlock(id)});
- if(flappyMax>=10)unlock("flappyNoHit");checkRecords();drawFlappy();beep(150,.2);
-}
-function drawFlappy(){
- fx.clearRect(0,0,FW,FH);const sky=fx.createLinearGradient(0,0,0,FH);
- sky.addColorStop(0,"#183c61");sky.addColorStop(1,"#8bb6bd");fx.fillStyle=sky;fx.fillRect(0,0,FW,FH);
- fx.fillStyle="#ffffff55";
- for(let i=0;i<5;i++){const x=(i*180-cloudOffset%180+750)%750,y=60+(i%3)*45;fx.beginPath();fx.arc(x,y,19,0,Math.PI*2);fx.arc(x+25,y,24,0,Math.PI*2);fx.arc(x+50,y,17,0,Math.PI*2);fx.fill()}
- pipes.forEach(p=>{
-  const top=p.gap-PIPE_GAP/2,bottom=p.gap+PIPE_GAP/2;fx.fillStyle="#36b979";
-  fx.fillRect(p.x,0,PIPE_WIDTH,top);fx.fillRect(p.x,bottom,PIPE_WIDTH,FH-bottom);
-  fx.fillStyle="#21865d";fx.fillRect(p.x-5,top-15,PIPE_WIDTH+10,15);fx.fillRect(p.x-5,bottom,PIPE_WIDTH+10,15);
- });
- fx.fillStyle="#a17a50";fx.fillRect(0,375,FW,25);fx.fillStyle="#64bd76";fx.fillRect(0,375,FW,8);
- if(bird){
-  fx.save();fx.translate(bird.x,bird.y);fx.rotate(Math.max(-.55,Math.min(.85,bird.v/650)));
-  fx.fillStyle="#ffda69";fx.beginPath();fx.arc(0,0,17,0,Math.PI*2);fx.fill();
-  fx.fillStyle="white";fx.beginPath();fx.arc(7,-6,6,0,Math.PI*2);fx.fill();
-  fx.fillStyle="#172238";fx.beginPath();fx.arc(9,-6,2.5,0,Math.PI*2);fx.fill();
-  fx.fillStyle="#ff895e";fx.beginPath();fx.moveTo(15,0);fx.lineTo(29,5);fx.lineTo(15,9);fx.fill();fx.restore();
- }
- if(fstate!=="playing"){
-  fx.fillStyle="#081322bb";fx.fillRect(0,0,FW,FH);fx.fillStyle="white";fx.textAlign="center";fx.font="bold 30px Arial";
-  fx.fillText(fstate==="over"?"GAME OVER":fstate==="paused"?"PAUSED":"FLAPPY BIRD",FW/2,180);
-  fx.font="16px Arial";fx.fillText(fstate==="paused"?"Press Pause to resume":"Tap Start to play",FW/2,215);
- }
-}
-function flapFrame(timestamp){
- if(fstate!=="playing")return;if(!lastF)lastF=timestamp;
- const dt=Math.min((timestamp-lastF)/1000,.035);lastF=timestamp;
- bird.v+=FGRAVITY*dt;bird.y+=bird.v*dt;cloudOffset+=28*dt;
- pipes.forEach(p=>{
-  p.x-=PIPE_SPEED*dt;
-  if(!p.passed&&p.x+PIPE_WIDTH<bird.x){p.passed=true;fscore++;flappyMax++;$("fs").textContent=fscore;beep(800,.035)}
- });
- if(pipes.length&&pipes[pipes.length-1].x<FW-100)pipes.push(makePipe(pipes[pipes.length-1].x+265));
- pipes=pipes.filter(p=>p.x>-PIPE_WIDTH-10);
- let hit=bird.y<15||bird.y>360;
- for(const p of pipes)if(bird.x+13>p.x&&bird.x-13<p.x+PIPE_WIDTH&&(bird.y-13<p.gap-PIPE_GAP/2||bird.y+13>p.gap+PIPE_GAP/2))hit=true;
- if(hit){endFlappy();return}drawFlappy();fraf=requestAnimationFrame(flapFrame);
-}
-$("flapStart").onclick=startFlappy;$("flapButton").onclick=flap;$("flapPause").onclick=pauseFlappy;
-fc.addEventListener("pointerdown",e=>{e.preventDefault();flap()});drawFlappy();
+  list.innerHTML = "";
 
-// SNAKE
-const sc=$("sc"),sx=sc.getContext("2d");
-let snake=[],food=null,dx=1,dy=0,nextX=1,nextY=0;
-let snakeScore=0,snakeLoop=null,snakePlaying=false,snakeRuns=0;
-function startSnake(){
- stopSnake();snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];dx=1;dy=0;nextX=1;nextY=0;
- snakeScore=0;$("ss").textContent=0;$("snakeLevel").textContent=1;placeFood();snakePlaying=true;
- snakeRuns++;gamePlayed("snake");if(snakeRuns>=5)unlock("snakeRestart");
- snakeLoop=setInterval(snakeStep,115);drawSnake();
-}
-function stopSnake(){snakePlaying=false;clearInterval(snakeLoop);snakeLoop=null}
-function placeFood(){
- const free=[];for(let y=0;y<20;y++)for(let x=0;x<20;x++)if(!snake.some(p=>p.x===x&&p.y===y))free.push({x,y});
- food=free.length?free[Math.floor(Math.random()*free.length)]:null;
- if(!food){stopSnake();updateRecord("snake",snakeScore);checkRecords()}
-}
-function setDirection(x,y){if(!snakePlaying||(x===-dx&&y===-dy))return;nextX=x;nextY=y}
-function snakeStep(){
- dx=nextX;dy=nextY;const head={x:snake[0].x+dx,y:snake[0].y+dy};
- const eating=food&&head.x===food.x&&head.y===food.y,body=eating?snake:snake.slice(0,-1);
- if(head.x<0||head.y<0||head.x>=20||head.y>=20||body.some(p=>p.x===head.x&&p.y===head.y)){stopSnake();finishSnake();drawSnake();return}
- snake.unshift(head);
- if(eating){
-  snakeScore++;$("ss").textContent=snakeScore;const level=1+Math.floor(snakeScore/5);$("snakeLevel").textContent=level;
-  if(level>=5)unlock("snakeLevel5");placeFood();beep(700,.04);clearInterval(snakeLoop);snakeLoop=setInterval(snakeStep,Math.max(55,115-snakeScore*2));
- }else snake.pop();drawSnake();
-}
-function finishSnake(){
- updateRecord("snake",snakeScore);
- [[1,"snake1"],[5,"snake5"],[10,"snake10"],[20,"snake20"],[30,"snake30"],[50,"snake50"],[75,"snake75"]].forEach(([n,id])=>{if(snakeScore>=n)unlock(id)});
- checkRecords();beep(150,.2);
-}
-function drawSnake(){
- sx.fillStyle="#101a2b";sx.fillRect(0,0,400,400);sx.strokeStyle="#1b2a42";
- for(let i=0;i<=20;i++){sx.beginPath();sx.moveTo(i*20,0);sx.lineTo(i*20,400);sx.stroke();sx.beginPath();sx.moveTo(0,i*20);sx.lineTo(400,i*20);sx.stroke()}
- if(food){sx.fillStyle="#ff7683";sx.beginPath();sx.arc(food.x*20+10,food.y*20+10,8,0,Math.PI*2);sx.fill()}
- snake.forEach((p,i)=>{sx.fillStyle=i===0?"#91f5d0":"#43bb94";sx.fillRect(p.x*20+2,p.y*20+2,16,16)});
-}
-document.querySelectorAll("[data-dir]").forEach(b=>{
- const dirs={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]},[x,y]=dirs[b.dataset.dir];
- b.addEventListener("pointerdown",e=>{e.preventDefault();setDirection(x,y)});
-});
-document.addEventListener("keydown",e=>{
- if(currentPage==="flappy"&&e.code==="Space"){e.preventDefault();if(fstate==="playing")flap();else if(fstate==="paused")pauseFlappy();return}
- if(currentPage!=="snake")return;
- const dirs={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
- if(dirs[e.key]){e.preventDefault();setDirection(...dirs[e.key])}
-});
-let swipe=null;
-sc.addEventListener("pointerdown",e=>{swipe={x:e.clientX,y:e.clientY}});
-sc.addEventListener("pointerup",e=>{
- if(!swipe)return;const x=e.clientX-swipe.x,y=e.clientY-swipe.y;
- if(Math.max(Math.abs(x),Math.abs(y))>15){if(Math.abs(x)>Math.abs(y))setDirection(x>0?1:-1,0);else setDirection(0,y>0?1:-1)}
- swipe=null;
-});
-$("snakeStart").onclick=startSnake;drawSnake();
+  for(const [id,name,description] of achievements) {
+    const unlocked = saveData.achievements.includes(id);
 
-// REACTION TEST
-let reactionState="idle",reactionTimer=null,reactionStarted=0,reactionRuns=0;
-function stopReaction(){clearTimeout(reactionTimer);reactionTimer=null;reactionState="idle"}
-function startReaction(){
- stopReaction();reactionState="wait";gamePlayed("reaction");reactionRuns++;
- $("reactionZone").className="tapzone red";$("reactionZone").textContent="WAIT...";
- $("reactionResult").textContent="...";$("reactionMessage").textContent="Wait for green!";
- if(reactionRuns>=5)unlock("reaction5");if(reactionRuns>=10)unlock("reaction10");
- reactionTimer=setTimeout(()=>{
-  if(reactionState!=="wait")return;reactionState="go";reactionStarted=performance.now();
-  $("reactionZone").className="tapzone green";$("reactionZone").textContent="TAP NOW!";
- },1500+Math.random()*3500);
-}
-function reactionClick(){
- if(reactionState==="wait"){
-  stopReaction();$("reactionZone").className="tapzone";$("reactionZone").textContent="FALSE START";
-  $("reactionResult").textContent="Too early!";$("reactionMessage").textContent="Wait for green next time.";beep(180);return;
- }
- if(reactionState==="go"){
-  const result=Math.round(performance.now()-reactionStarted);stopReaction();
-  $("reactionZone").className="tapzone";$("reactionZone").textContent="TRY AGAIN";
-  $("reactionResult").textContent=result+" ms";$("reactionMessage").textContent=result<250?"Lightning fast!":"Nice reaction!";
-  updateRecord("reaction",result,true);
-  if(result<300)unlock("fast300");if(result<250)unlock("fast");if(result<200)unlock("fast200");if(result<150)unlock("fast150");
-  checkRecords();beep(700);
- }
-}
-$("reactionStart").onclick=startReaction;$("reactionZone").onclick=reactionClick;
+    const item = document.createElement("div");
+    item.className = "cheat-row";
 
-// CLICK RUSH
-let clickTimer=null,clickRunning=false,clickCount=0,clickEnd=0,clickRuns=0;
-function stopClick(){clearInterval(clickTimer);clickTimer=null;clickRunning=false;$("clickZone").disabled=true}
-function startClick(){
- stopClick();clickCount=0;clickRunning=true;clickRuns++;gamePlayed("clicker");clickEnd=performance.now()+10000;
- $("cs").textContent=0;$("ct").textContent="10.0";$("cps").textContent=0;
- $("clickZone").disabled=false;$("clickMessage").textContent="GO!";
- clickTimer=setInterval(()=>{
-  const left=Math.max(0,clickEnd-performance.now());$("ct").textContent=(left/1000).toFixed(1);
-  $("cps").textContent=(clickCount/Math.max(.01,10-left/1000)).toFixed(1);
-  if(left<=0){
-   stopClick();$("clickMessage").textContent="Finished! "+clickCount+" clicks.";updateRecord("clicker",clickCount);
-   [[10,"click10"],[25,"click25"],[50,"click50"],[75,"click75"],[100,"click100"]].forEach(([n,id])=>{if(clickCount>=n)unlock(id)});
-   checkRecords();beep(700);
+    const info = document.createElement("div");
+
+    const heading = document.createElement("strong");
+    heading.textContent = name;
+
+    const detail = document.createElement("small");
+    detail.textContent = description;
+
+    info.append(heading,detail);
+
+    const status = document.createElement("span");
+    status.textContent = unlocked ? "UNLOCKED" : "LOCKED";
+    status.className = unlocked ? "success" : "muted";
+
+    item.append(info,status);
+    list.appendChild(item);
   }
- },40);
-}
-function addClick(){
- if(!clickRunning||performance.now()>=clickEnd)return;clickCount++;data.stats.totalClicks++;
- $("cs").textContent=clickCount;if(data.stats.totalClicks>=500)unlock("clickTotal500");if(clickCount%10===0)saveData();
-}
-$("clickStart").onclick=startClick;$("clickZone").onclick=addClick;
 
-// MEMORY MATCH
-const symbols=["★","◆","●","▲","☀","♫","♣","♥","✿","⬟"];
-let memoryCards=[],firstCard=null,memoryLocked=false,moves=0,pairs=0;
-let memoryTimer=null,memorySeconds=0,memoryStarted=false,memoryComplete=false,memoryRuns=0,memoryMismatchTimer=null;
-function pauseMemory(){
- if(memoryTimer){clearInterval(memoryTimer);memoryTimer=null}
- if(memoryMismatchTimer){clearTimeout(memoryMismatchTimer);memoryMismatchTimer=null}
+  document.getElementById("achievementCount").textContent =
+    saveData.achievements.length +
+    " / " + achievements.length + " unlocked";
 }
-function resumeMemory(){
- if(memoryStarted&&!memoryComplete&&!memoryTimer)memoryTimer=setInterval(()=>{memorySeconds++;$("memoryTime").textContent=memorySeconds},1000);
-}
-function resetMemory(){
- pauseMemory();const count=Number($("memoryDifficulty").value),chosen=symbols.slice(0,count),shuffled=[...chosen,...chosen];
- for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]}
- memoryCards=shuffled.map((symbol,id)=>({symbol,id,open:false,matched:false}));
- firstCard=null;memoryLocked=false;moves=0;pairs=0;memorySeconds=0;memoryStarted=false;memoryComplete=false;
- $("moves").textContent=0;$("pairs").textContent="0 / "+count;$("memoryTime").textContent=0;$("memoryMessage").textContent="Find the pairs!";renderMemory();
-}
-function renderMemory(){
- const grid=$("memoryGrid");grid.innerHTML="";grid.style.gridTemplateColumns="repeat(4,minmax(50px,85px))";
- memoryCards.forEach((c,i)=>{
-  const b=document.createElement("button");b.className="memory-card"+(c.open?" open":"")+(c.matched?" matched":"");
-  b.textContent=c.open||c.matched?c.symbol:"?";b.disabled=c.matched||memoryLocked||c.open;
-  b.setAttribute("aria-label",c.open||c.matched?c.symbol:"Hidden card");b.onclick=()=>flipMemory(i);grid.appendChild(b);
- });
-}
-function flipMemory(i){
- const c=memoryCards[i];if(memoryLocked||c.open||c.matched||memoryComplete)return;
- if(!memoryStarted){memoryStarted=true;memoryRuns++;gamePlayed("memory");resumeMemory()}
- c.open=true;renderMemory();if(firstCard===null){firstCard=i;return}
- moves++;$("moves").textContent=moves;const old=firstCard;firstCard=null;
- if(memoryCards[old].symbol===c.symbol){
-  memoryCards[old].matched=true;c.matched=true;pairs++;$("pairs").textContent=pairs+" / "+Number($("memoryDifficulty").value);
-  beep(750);renderMemory();
-  if(pairs===Number($("memoryDifficulty").value)){
-   memoryComplete=true;pauseMemory();$("memoryMessage").textContent="YOU WON! "+moves+" moves in "+memorySeconds+" seconds.";
-   updateRecord("memory",moves,true);unlock("memory");data.stats.memoryWins++;
-   if(Number($("memoryDifficulty").value)===6){unlock("memoryEasy");unlock("secretMemory")}
-   if(Number($("memoryDifficulty").value)===10){unlock("memoryHard");data.stats.hardMemory=true;saveData()}
-   if(data.stats.memoryWins>=5)unlock("memory5");
-   if(memorySeconds<60)unlock("memoryFast");if(moves<=20)unlock("memoryMoves");checkRecords();
+
+/* =================================
+   STATISTICS
+================================= */
+
+function renderStats() {
+  const container = document.getElementById("statsContent");
+
+  if(!container) return;
+
+  container.innerHTML = "";
+
+  for(const [name,value] of Object.entries(saveData.stats)) {
+    const item = document.createElement("div");
+    item.className = "cheat-row";
+
+    const label = document.createElement("strong");
+    label.textContent = name.replace(/([A-Z])/g," $1");
+
+    const number = document.createElement("span");
+    number.textContent = value;
+
+    item.append(label,number);
+    container.appendChild(item);
   }
- }else{
-  memoryLocked=true;beep(250);renderMemory();
-  memoryMismatchTimer=setTimeout(()=>{
-   memoryMismatchTimer=null;if(!memoryCards.length)return;
-   if(memoryCards[old])memoryCards[old].open=false;if(memoryCards[i])memoryCards[i].open=false;
-   memoryLocked=false;renderMemory();
-  },750);
- }
 }
-$("memoryReset").onclick=resetMemory;$("memoryDifficulty").onchange=resetMemory;
 
-// MICROPHONE
-let micStream=null,micContext=null,micAnalyser=null,micRAF=null,micGeneration=0;
-let micRuns=0,micPeak=0;
-async function startMic(){
- stopMic();const generation=micGeneration;
- if(!navigator.mediaDevices?.getUserMedia){$("micStatus").textContent="Microphone needs HTTPS or localhost.";return}
- $("micStatus").textContent="Requesting permission...";
- try{
-  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}});
-  if(generation!==micGeneration){stream.getTracks().forEach(t=>t.stop());return}
-  micStream=stream;micContext=new(window.AudioContext||window.webkitAudioContext)();await micContext.resume();
-  micAnalyser=micContext.createAnalyser();micAnalyser.fftSize=1024;micAnalyser.smoothingTimeConstant=.7;
-  micContext.createMediaStreamSource(stream).connect(micAnalyser);const samples=new Uint8Array(micAnalyser.fftSize);
-  $("micStatus").textContent="Microphone active!";micRuns++;data.stats.micUsed=true;saveData();gamePlayed("mic");unlock("mic");
-  if(micRuns>=3)unlock("mic3");
-  function measure(){
-   if(!micAnalyser||generation!==micGeneration)return;micAnalyser.getByteTimeDomainData(samples);
-   let sum=0;for(const sample of samples){const v=(sample-128)/128;sum+=v*v}
-   const rms=Math.sqrt(sum/samples.length),volume=Math.min(100,Math.round(Math.pow(rms*260,.85)));
-   $("volume").textContent=volume;$("micBar").style.width=volume+"%";
-   $("micLevel").textContent=volume<5?"Very quiet":volume<30?"Quiet":volume<65?"Medium":"Loud!";
-   micPeak=Math.max(micPeak,volume);if(micPeak>=70)unlock("micLoud");micRAF=requestAnimationFrame(measure);
-  }
-  measure();
- }catch(error){
-  if(generation===micGeneration){stopMic();$("micStatus").textContent=error.name==="NotAllowedError"?"Permission denied. Allow microphone access in browser settings.":"Microphone unavailable: "+error.message}
- }
+/* =================================
+   SHARED GAME HELPERS
+================================= */
+
+function createButton(text,callback) {
+  const button = document.createElement("button");
+  button.textContent = text;
+  button.addEventListener("click",callback);
+  return button;
 }
-function stopMic(){
- micGeneration++;if(micRAF)cancelAnimationFrame(micRAF);micRAF=null;
- if(micStream)micStream.getTracks().forEach(t=>t.stop());micStream=null;
- if(micContext&&micContext.state!=="closed")micContext.close();micContext=null;micAnalyser=null;
- $("volume").textContent=0;$("micBar").style.width="0%";$("micLevel").textContent="Quiet";$("micStatus").textContent="Microphone is off.";
+
+function createCanvas(width,height) {
+  const canvas = document.createElement("canvas");
+
+  canvas.width = width;
+  canvas.height = height;
+
+  document.getElementById("gameContent").appendChild(canvas);
+
+  return canvas;
 }
-$("micStart").onclick=startMic;$("micStop").onclick=stopMic;
-// ==========================================
-// DEVELOPER PANEL - MINI ARCADE 4.1
-// ==========================================
 
-(function createDevPanel(){
- const style=document.createElement("style");
- style.textContent=`
- #devPanel .dev-section{
-  background:linear-gradient(145deg,#192944,#101a2c);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:17px;
-  margin:14px 0;
- }
- #devPanel .dev-buttons{
-  display:flex;flex-wrap:wrap;gap:9px;margin-top:13px;
- }
- #devPanel button,#devPanel select{
-  border:1px solid var(--line);border-radius:10px;
-  padding:10px 13px;background:#293c59;color:white;
- }
- #devPanel button:hover{border-color:var(--accent)}
- #devPanel .dev-danger{background:#713647;border-color:#a34b61}
- #devPanel .dev-success{background:#17654f;border-color:#27896b}
- #devPanel .dev-status{color:var(--accent);font-size:12px;margin-top:12px}
- #devPanel input{
-  width:100%;max-width:180px;padding:10px;
-  border-radius:9px;border:1px solid var(--line);
-  background:#080d19;color:white;
- }
- `;
- document.head.appendChild(style);
+function createInfo(text) {
+  const element = document.createElement("p");
+  element.className = "muted";
+  element.textContent = text;
 
- const nav=document.querySelector(".nav");
- const navButton=document.createElement("button");
- navButton.dataset.page="dev";
- navButton.textContent="Dev Panel";
- nav.appendChild(navButton);
- navButton.onclick=()=>openPage("dev");
+  document.getElementById("gameContent").appendChild(element);
 
- const page=document.createElement("section");
- page.className="page";
- page.id="dev";
- page.innerHTML=`
- <div id="devPanel">
-  <h2>Developer Panel</h2>
-  <p class="description">MINI ARCADE internal testing tools. Changes are saved to your browser.</p>
+  return element;
+}
 
-  <div class="dev-section">
-   <h3>Achievement Cheats</h3>
-   <p class="hint">Control your achievement collection.</p>
-   <div class="dev-buttons">
-    <button class="dev-success" id="devAll">Unlock All 56</button>
-    <button id="devSecrets">Unlock All Secrets</button>
-    <button id="devFive">Unlock 5 Achievements</button>
-    <button class="dev-danger" id="devResetAchievements">Reset Achievements</button>
-   </div>
-   <p class="hint">Individual achievement:</p>
-   <select id="devAchievement"></select>
-   <button id="devIndividual">Unlock Selected</button>
-  </div>
+function createControls(...buttons) {
+  const container = document.createElement("div");
+  container.className = "stats";
 
-  <div class="dev-section">
-   <h3>Flappy Bird Cheats</h3>
-   <p class="hint">Set a score or unlock the game's achievements.</p>
-   <input id="devFlappyScore" type="number" min="0" value="100">
-   <div class="dev-buttons">
-    <button id="devFlappyScoreBtn">Set Score</button>
-    <button id="devFlappyAll">Unlock Flappy Achievements</button>
-    <button id="devFlappyRestart">Unlock Restart Secret</button>
-   </div>
-  </div>
+  buttons.forEach(button => container.appendChild(button));
 
-  <div class="dev-section">
-   <h3>Snake Cheats</h3>
-   <input id="devSnakeScore" type="number" min="0" value="75">
-   <div class="dev-buttons">
-    <button id="devSnakeScoreBtn">Set Score</button>
-    <button id="devSnakeAll">Unlock Snake Achievements</button>
-    <button id="devSnakeLevel">Unlock Level 5</button>
-    <button id="devSnakeRestart">Unlock Restart</button>
-   </div>
-  </div>
+  document.getElementById("gameContent").appendChild(container);
 
-  <div class="dev-section">
-   <h3>Reaction Test Cheats</h3>
-   <input id="devReactionScore" type="number" min="1" value="100">
-   <div class="dev-buttons">
-    <button id="devReactionScoreBtn">Set Reaction Record</button>
-    <button id="devReactionAll">Unlock Reaction Achievements</button>
-   </div>
-  </div>
+  return container;
+}
 
-  <div class="dev-section">
-   <h3>Click Rush Cheats</h3>
-   <input id="devClickScore" type="number" min="0" value="100">
-   <div class="dev-buttons">
-    <button id="devClickScoreBtn">Set Click Record</button>
-    <button id="devClickAll">Unlock Click Achievements</button>
-    <button id="devClickTotal">Unlock 500 Total Clicks</button>
-   </div>
-  </div>
+/* =================================
+   GAME FUNCTION PLACEHOLDERS
+   Implemented in following parts.
+================================= */
 
-  <div class="dev-section">
-   <h3>Memory Match Cheats</h3>
-   <div class="dev-buttons">
-    <button id="devMemoryEasy">Complete Easy</button>
-    <button id="devMemoryNormal">Complete Normal</button>
-    <button id="devMemoryHard">Complete Hard</button>
-    <button id="devMemoryAll">Unlock All Memory Achievements</button>
-   </div>
-  </div>
+function startFlappy() {}
+function stopFlappy() {}
 
-  <div class="dev-section">
-   <h3>Mic Meter Cheats</h3>
-   <div class="dev-buttons">
-    <button id="devMicAll">Unlock Mic Achievements</button>
-    <button id="devMicUsed">Mark Mic as Used</button>
-   </div>
-   <p class="hint">These cheats do not request microphone permission.</p>
-  </div>
+function startSnake() {}
+function stopSnake() {}
 
-  <div class="dev-section">
-   <h3>Arcade Statistics</h3>
-   <div class="dev-buttons">
-    <button id="devGames10">10 Games Played</button>
-    <button id="devGames25">25 Games Played</button>
-    <button id="devGames50">50 Games Played</button>
-    <button id="devExplorer">Unlock Explorer</button>
-    <button id="devAllRecords">Unlock Record Breaker</button>
-   </div>
-  </div>
+function startReaction() {}
+function stopReaction() {}
 
-  <div class="dev-section">
-   <h3>Developer Utilities</h3>
-   <div class="dev-buttons">
-    <button id="devRefresh">Refresh Panel</button>
-    <button class="dev-danger" id="devResetAll">Reset Entire Arcade</button>
-   </div>
-   <p class="dev-status" id="devStatus">Developer panel ready.</p>
-  </div>
- </div>`;
- document.querySelector("main").appendChild(page);
+function startClickRush() {}
+function stopClickRush() {}
 
- function status(message){
-  $("devStatus").textContent="> "+message;
- }
- function grant(ids){
-  ids.forEach(id=>{
-   if(achievementMap[id]&&!data.achievements.includes(id)){
-    data.achievements.push(id);
-   }
-  });
-  saveData();
-  refreshUI();
-  checkMeta();
-  refreshUI();
- }
- function grantAll(){
-  grant(achievementDefs.filter(a=>a[0]!=="completion").map(a=>a[0]));
-  grant(["completion"]);
-  status("All achievements unlocked!");
- }
- function grantSecrets(){
-  grant(achievementDefs.filter(a=>a[3]==="secret"&&a[0]!=="completion").map(a=>a[0]));
-  status("Secret achievements unlocked!");
- }
- function number(id,min=0){
-  return Math.max(min,Math.floor(Number($(id).value)||0));
- }
+function startMemory() {}
+function stopMemory() {}
 
- // Achievement dropdown
- achievementDefs.forEach(a=>{
-  const option=document.createElement("option");
-  option.value=a[0];
-  option.textContent=a[1]+" ("+a[0]+")";
-  $("devAchievement").appendChild(option);
- });
+function startMic() {}
+function stopMic() {}
 
- $("devAll").onclick=grantAll;
- $("devSecrets").onclick=grantSecrets;
- $("devFive").onclick=()=>grant(["firstFive"]);
- $("devIndividual").onclick=()=>{
-  const id=$("devAchievement").value;
-  grant([id]);
-  status("Unlocked "+achievementMap[id][1]);
- };
- $("devResetAchievements").onclick=()=>{
-  if(!confirm("Reset all achievements?"))return;
-  data.achievements=[];
-  saveData();refreshUI();
-  status("Achievements reset.");
- };
+/* =================================
+   INITIALIZATION
+================================= */
 
- // Flappy
- const flappyIds=[
-  "flappy1","flappy5","flappy10","flappy20",
-  "flappy30","flappy50","flappy100"
- ];
- $("devFlappyScoreBtn").onclick=()=>{
-  const score=number("devFlappyScore");
-  updateRecord("flappy",score);
-  grant(flappyIds.filter((id,i)=>score>=[1,5,10,20,30,50,100][i]));
-  status("Flappy score set to "+score);
- };
- $("devFlappyAll").onclick=()=>{
-  grant([...flappyIds,"flappyNoHit","flappyRestart","secretFlappy"]);
-  data.stats.flappyRuns=Math.max(5,data.stats.flappyRuns);
-  flappyRuns=Math.max(5,flappyRuns);
-  saveData();refreshUI();
-  status("All Flappy achievements unlocked.");
- };
- $("devFlappyRestart").onclick=()=>{
-  data.stats.flappyRuns=Math.max(3,data.stats.flappyRuns);
-  flappyRuns=Math.max(3,flappyRuns);
-  grant(["secretFlappy"]);
-  saveData();
-  status("Triple Takeoff unlocked.");
- };
+unlockAchievement("first_game");
+renderAchievements();
+renderStats();
+saveGame();
 
- // Snake
- const snakeIds=[
-  "snake1","snake5","snake10","snake20",
-  "snake30","snake50","snake75"
- ];
- $("devSnakeScoreBtn").onclick=()=>{
-  const score=number("devSnakeScore");
-  updateRecord("snake",score);
-  grant(snakeIds.filter((id,i)=>score>=[1,5,10,20,30,50,75][i]));
-  if(score>=20)grant(["snakeLevel5"]);
-  status("Snake score set to "+score);
- };
- $("devSnakeAll").onclick=()=>{
-  grant([...snakeIds,"snakeLevel5","snakeRestart"]);
-  snakeRuns=Math.max(5,snakeRuns);
-  status("All Snake achievements unlocked.");
- };
- $("devSnakeLevel").onclick=()=>{
-  grant(["snakeLevel5"]);
-  status("Snake Level Climber unlocked.");
- };
- $("devSnakeRestart").onclick=()=>{
-  snakeRuns=Math.max(5,snakeRuns);
-  grant(["snakeRestart"]);
-  status("Fresh Start unlocked.");
- };
-
- // Reaction
- $("devReactionScoreBtn").onclick=()=>{
-  const score=number("devReactionScore",1);
-  updateRecord("reaction",score,true);
-  grant(["fast300","fast","fast200","fast150"].filter((id,i)=>score<[300,250,200,150][i]));
-  checkRecords();
-  status("Reaction record updated.");
- };
- $("devReactionAll").onclick=()=>{
-  grant(["fast300","fast","fast200","fast150","reaction5","reaction10"]);
-  reactionRuns=Math.max(10,reactionRuns);
-  status("All Reaction achievements unlocked.");
- };
-
- // Click Rush
- const clickIds=["click10","click25","click50","click75","click100"];
- $("devClickScoreBtn").onclick=()=>{
-  const score=number("devClickScore");
-  updateRecord("clicker",score);
-  grant(clickIds.filter((id,i)=>score>=[10,25,50,75,100][i]));
-  status("Click Rush record set to "+score);
- };
- $("devClickAll").onclick=()=>{
-  grant([...clickIds,"clickTotal500"]);
-  data.stats.totalClicks=Math.max(500,data.stats.totalClicks);
-  saveData();refreshUI();
-  status("All Click Rush achievements unlocked.");
- };
- $("devClickTotal").onclick=()=>{
-  data.stats.totalClicks=Math.max(500,data.stats.totalClicks);
-  grant(["clickTotal500"]);
-  saveData();
-  status("500 total clicks reached.");
- };
-
- // Memory
- function memoryCheat(mode){
-  const ids=["memory"];
-  if(mode==="easy")ids.push("memoryEasy","secretMemory");
-  if(mode==="hard")ids.push("memoryHard");
-  if(mode==="normal")ids.push("memoryFast","memoryMoves");
-  data.stats.memoryWins=Math.max(5,data.stats.memoryWins);
-  if(mode==="hard")data.stats.hardMemory=true;
-  grant(ids);
-  saveData();
-  status("Memory "+mode+" completion granted.");
- }
- $("devMemoryEasy").onclick=()=>memoryCheat("easy");
- $("devMemoryNormal").onclick=()=>memoryCheat("normal");
- $("devMemoryHard").onclick=()=>memoryCheat("hard");
- $("devMemoryAll").onclick=()=>{
-  grant(["memory","memoryEasy","memoryHard","memoryFast","memoryMoves","memory5","secretMemory"]);
-  data.stats.memoryWins=Math.max(5,data.stats.memoryWins);
-  data.stats.hardMemory=true;
-  saveData();
-  status("All Memory achievements unlocked.");
- };
-
- // Mic
- $("devMicAll").onclick=()=>{
-  data.stats.micUsed=true;
-  micRuns=Math.max(3,micRuns);
-  grant(["mic","micLoud","mic3"]);
-  saveData();
-  status("All Mic achievements unlocked.");
- };
- $("devMicUsed").onclick=()=>{
-  data.stats.micUsed=true;
-  grant(["mic"]);
-  saveData();
-  status("Mic marked as used.");
- };
-
- // Statistics
- $("devGames10").onclick=()=>{
-  data.stats.gamesPlayed=Math.max(10,data.stats.gamesPlayed);
-  grant(["games10"]);
-  saveData();status("10 games played.");
- };
- $("devGames25").onclick=()=>{
-  data.stats.gamesPlayed=Math.max(25,data.stats.gamesPlayed);
-  grant(["games10","games25"]);
-  saveData();status("25 games played.");
- };
- $("devGames50").onclick=()=>{
-  data.stats.gamesPlayed=Math.max(50,data.stats.gamesPlayed);
-  grant(["games10","games25","games50"]);
-  saveData();status("50 games played.");
- };
- $("devExplorer").onclick=()=>{
-  data.stats.gamesVisited=["flappy","snake","reaction","clicker","memory","mic"];
-  grant(["secretTour","explorer"]);
-  saveData();status("Arcade Explorer unlocked.");
- };
- $("devAllRecords").onclick=()=>{
-  Object.keys(data.records).forEach(k=>{
-   if(!data.records[k])data.records[k]=1;
-  });
-  grant(["allRecords"]);
-  saveData();refreshUI();
-  status("Record Breaker unlocked.");
- };
-
- // Utilities
- $("devRefresh").onclick=()=>{
-  refreshUI();
-  status("Panel refreshed.");
- };
- $("devResetAll").onclick=()=>{
-  if(!confirm("Delete ALL arcade progress, records, and achievements?"))return;
-  stopAll();
-  data=cloneDefault();
-  sound=true;
-  flappyRuns=0;
-  snakeRuns=0;
-  reactionRuns=0;
-  clickRuns=0;
-  memoryRuns=0;
-  micRuns=0;
-  saveData();
-  refreshUI();
-  resetMemory();
-  status("Entire arcade progress reset.");
- };
-
-})();
-// INITIALIZATION AND CLEANUP
-window.addEventListener("pagehide",stopAll);
-document.addEventListener("visibilitychange",()=>{if(document.hidden)stopAll()});
-resetMemory();refreshUI();
 </script>
 </body>
 </html>
+
+/* =================================
+   FLAPPY BIRD + CHEATS
+================================= */
+
+let flappy = null;
+
+const FLAPPY_CHEATS = {
+  passPipes: false,
+  invincible: false,
+  freezePipes: false,
+  autoFly: false
+};
+
+let flappyKeyHandler = null;
+
+function startFlappy() {
+  stopFlappy();
+
+  const area = document.getElementById("gameContent");
+  area.innerHTML = "";
+
+  flappy = {
+    score: 0,
+    birdY: 200,
+    velocity: 0,
+    pipes: [],
+    frame: 0,
+    running: true,
+    over: false,
+    animation: null
+  };
+
+  const canvas = createCanvas(400, 500);
+  const ctx = canvas.getContext("2d");
+  const scoreLabel = createInfo("Score: 0");
+
+  function jump() {
+    if (!flappy || flappy.over) return;
+    flappy.velocity = -6.5;
+  }
+
+  flappyKeyHandler = event => {
+    if (event.code === "Space" && currentGame === "flappy") {
+      event.preventDefault();
+      jump();
+    }
+  };
+
+  window.addEventListener("keydown", flappyKeyHandler);
+  canvas.addEventListener("pointerdown", jump);
+
+  createControls(
+    createButton("FLAP", jump),
+    createButton("RESTART", startFlappy)
+  );
+
+  function addPipe() {
+    const top = 50 + Math.random() * 220;
+    flappy.pipes.push({
+      x: 420,
+      top,
+      bottom: top + 145,
+      scored: false
+    });
+  }
+
+  function finish() {
+    if (!flappy || flappy.over) return;
+
+    flappy.over = true;
+    cancelAnimationFrame(flappy.animation);
+
+    ctx.fillStyle = "rgba(0,0,0,.7)";
+    ctx.fillRect(0, 0, 400, 500);
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.font = "28px Arial";
+    ctx.fillText("GAME OVER", 200, 230);
+    ctx.font = "18px Arial";
+    ctx.fillText("Score: " + flappy.score, 200, 265);
+    ctx.textAlign = "left";
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, 400, 500);
+
+    ctx.fillStyle = "#10233e";
+    ctx.fillRect(0, 0, 400, 500);
+
+    ctx.fillStyle = "#4ade80";
+
+    for (const pipe of flappy.pipes) {
+      ctx.fillRect(pipe.x, 0, 55, pipe.top);
+      ctx.fillRect(pipe.x, pipe.bottom, 55, 500 - pipe.bottom);
+    }
+
+    ctx.fillStyle = "#65a8ff";
+    ctx.beginPath();
+    ctx.arc(80, flappy.birdY, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + flappy.score, 15, 30);
+  }
+
+  function update() {
+    if (!flappy || flappy.over) return;
+
+    flappy.frame++;
+
+    if (flappy.frame % 100 === 0) addPipe();
+
+    if (FLAPPY_CHEATS.autoFly) {
+      const pipe = flappy.pipes.find(p => p.x > 80);
+
+      if (pipe) {
+        const target = (pipe.top + pipe.bottom) / 2;
+        flappy.birdY += (target - flappy.birdY) * 0.08;
+      }
+
+      flappy.velocity = 0;
+    } else {
+      flappy.velocity += 0.38;
+      flappy.birdY += flappy.velocity;
+    }
+
+    if (!FLAPPY_CHEATS.freezePipes) {
+      flappy.pipes.forEach(pipe => pipe.x -= 2.5);
+    }
+
+    flappy.pipes = flappy.pipes.filter(pipe => pipe.x > -60);
+
+    for (const pipe of flappy.pipes) {
+      const horizontal = 92 > pipe.x && 68 < pipe.x + 55;
+      const vertical =
+        flappy.birdY - 12 < pipe.top ||
+        flappy.birdY + 12 > pipe.bottom;
+
+      if (
+        horizontal &&
+        vertical &&
+        !FLAPPY_CHEATS.passPipes &&
+        !FLAPPY_CHEATS.invincible
+      ) {
+        finish();
+        return;
+      }
+
+      if (!pipe.scored && pipe.x + 55 < 80) {
+        pipe.scored = true;
+        flappy.score++;
+        scoreLabel.textContent = "Score: " + flappy.score;
+        updateStat("flappyBest", flappy.score);
+
+        if (flappy.score >= 1) unlockAchievement("flappy_1");
+        if (flappy.score >= 10) unlockAchievement("flappy_10");
+      }
+    }
+
+    if (
+      !FLAPPY_CHEATS.passPipes &&
+      !FLAPPY_CHEATS.invincible &&
+      (flappy.birdY < 0 || flappy.birdY > 500)
+    ) {
+      finish();
+      return;
+    }
+
+    draw();
+    flappy.animation = requestAnimationFrame(update);
+  }
+
+  update();
+}
+
+function stopFlappy() {
+  if (flappy?.animation) {
+    cancelAnimationFrame(flappy.animation);
+  }
+
+  if (flappyKeyHandler) {
+    window.removeEventListener("keydown", flappyKeyHandler);
+    flappyKeyHandler = null;
+  }
+
+  if (flappy) flappy.running = false;
+  flappy = null;
+}
+
+/* =================================
+   SNAKE + CHEATS
+================================= */
+
+let snake = null;
+
+const SNAKE_CHEATS = {
+  godmode: false,
+  passWalls: false,
+  passSelf: false,
+  fast: false
+};
+
+let snakeKeyHandler = null;
+
+function startSnake() {
+  stopSnake();
+
+  const area = document.getElementById("gameContent");
+  area.innerHTML = "";
+
+  const size = 20;
+  const canvas = createCanvas(400, 400);
+  const ctx = canvas.getContext("2d");
+
+  snake = {
+    body: [{x:10,y:10}],
+    direction: {x:1,y:0},
+    food: {x:15,y:10},
+    score: 0,
+    running: true,
+    timer: null
+  };
+
+  const scoreLabel = createInfo("Score: 0");
+
+  function setDirection(x,y) {
+    if (snake.direction.x === -x && snake.direction.y === -y) return;
+    snake.direction = {x,y};
+  }
+
+  snakeKeyHandler = event => {
+    if (!snake || currentGame !== "snake") return;
+
+    const keys = {
+      ArrowUp: [0,-1],
+      ArrowDown: [0,1],
+      ArrowLeft: [-1,0],
+      ArrowRight: [1,0],
+      w: [0,-1],
+      s: [0,1],
+      a: [-1,0],
+      d: [1,0]
+    };
+
+    if (keys[event.key]) {
+      event.preventDefault();
+      setDirection(...keys[event.key]);
+    }
+  };
+
+  window.addEventListener("keydown", snakeKeyHandler);
+
+  createControls(
+    createButton("↑", () => setDirection(0,-1)),
+    createButton("↓", () => setDirection(0,1)),
+    createButton("←", () => setDirection(-1,0)),
+    createButton("→", () => setDirection(1,0)),
+    createButton("RESTART", startSnake)
+  );
+
+  function placeFood() {
+    snake.food = {
+      x: Math.floor(Math.random() * 20),
+      y: Math.floor(Math.random() * 20)
+    };
+  }
+
+  function endGame() {
+    snake.running = false;
+    clearInterval(snake.timer);
+
+    ctx.fillStyle = "white";
+    ctx.font = "25px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER", 200, 200);
+    ctx.textAlign = "left";
+  }
+
+  function draw() {
+    ctx.fillStyle = "#07111f";
+    ctx.fillRect(0,0,400,400);
+
+    ctx.fillStyle = "#4ade80";
+    snake.body.forEach(part => {
+      ctx.fillRect(part.x * size,part.y * size,size-2,size-2);
+    });
+
+    ctx.fillStyle = "#fb7185";
+    ctx.fillRect(
+      snake.food.x * size,
+      snake.food.y * size,
+      size-2,size-2
+    );
+  }
+
+  function tick() {
+    if (!snake || !snake.running) return;
+
+    const head = {
+      x: snake.body[0].x + snake.direction.x,
+      y: snake.body[0].y + snake.direction.y
+    };
+
+    if (SNAKE_CHEATS.passWalls) {
+      head.x = (head.x + 20) % 20;
+      head.y = (head.y + 20) % 20;
+    } else if (
+      head.x < 0 || head.x >= 20 ||
+      head.y < 0 || head.y >= 20
+    ) {
+      if (!SNAKE_CHEATS.godmode) return endGame();
+      head.x = Math.max(0,Math.min(19,head.x));
+      head.y = Math.max(0,Math.min(19,head.y));
+    }
+
+    const ate = head.x === snake.food.x && head.y === snake.food.y;
+
+    const bodyToCheck = ate
+      ? snake.body
+      : snake.body.slice(0,-1);
+
+    const collision = bodyToCheck.some(
+      part => part.x === head.x && part.y === head.y
+    );
+
+    if (
+      collision &&
+      !SNAKE_CHEATS.passSelf &&
+      !SNAKE_CHEATS.godmode
+    ) {
+      return endGame();
+    }
+
+    snake.body.unshift(head);
+
+    if (ate) {
+      snake.score++;
+      scoreLabel.textContent = "Score: " + snake.score;
+      updateStat("snakeBest",snake.score);
+
+      if (snake.score >= 1) unlockAchievement("snake_1");
+      if (snake.score >= 10) unlockAchievement("snake_10");
+
+      placeFood();
+    } else {
+      snake.body.pop();
+    }
+
+    draw();
+  }
+
+  function schedule() {
+    if (!snake) return;
+
+    clearInterval(snake.timer);
+
+    snake.timer = setInterval(
+      tick,
+      SNAKE_CHEATS.fast ? 55 : 120
+    );
+  }
+
+  snake.schedule = schedule;
+
+  draw();
+  schedule();
+}
+
+function stopSnake() {
+  if (snake?.timer) clearInterval(snake.timer);
+
+  if (snakeKeyHandler) {
+    window.removeEventListener("keydown",snakeKeyHandler);
+    snakeKeyHandler = null;
+  }
+
+  snake = null;
+}
+
+/* =================================
+   REACTION TEST
+================================= */
+
+let reaction = null;
+
+const REACTION_CHEATS = {
+  instant: false,
+  noFalseStarts: false
+};
+
+function startReaction() {
+  stopReaction();
+
+  const area = document.getElementById("gameContent");
+  area.innerHTML = "";
+
+  reaction = {
+    started: false,
+    ready: false,
+    startTime: 0,
+    timer: null
+  };
+
+  const message = createInfo("Press START when ready.");
+  const result = createInfo("");
+
+  const button = createButton("START", begin);
+  createControls(button);
+
+  function begin() {
+    clearTimeout(reaction.timer);
+
+    reaction.started = true;
+    reaction.ready = false;
+    message.textContent = "Wait for green...";
+
+    const delay = REACTION_CHEATS.instant
+      ? 0
+      : 1500 + Math.random() * 3000;
+
+    reaction.timer = setTimeout(() => {
+      if (!reaction) return;
+
+      reaction.ready = true;
+      reaction.startTime = performance.now();
+
+      message.textContent = "CLICK NOW!";
+      message.className = "success";
+    },delay);
+  }
+
+  button.onclick = () => {
+    if (!reaction.started) return begin();
+
+    if (!reaction.ready) {
+      if (!REACTION_CHEATS.noFalseStarts) {
+        result.textContent = "Too early! Try again.";
+      }
+      clearTimeout(reaction.timer);
+      reaction.started = false;
+      return;
+    }
+
+    const time = Math.round(
+      performance.now() - reaction.startTime
+    );
+
+    result.textContent = "Reaction time: " + time + " ms";
+
+    if (time < 300) unlockAchievement("reaction_fast");
+
+    updateStat(
+      "reactionBest",
+      saveData.stats.reactionBest === 0
+        ? 100000 - time
+        : Math.max(saveData.stats.reactionBest,100000-time)
+    );
+
+    reaction.started = false;
+    reaction.ready = false;
+    message.textContent = "Press START to try again.";
+    message.className = "muted";
+  };
+}
+
+function stopReaction() {
+  if (reaction?.timer) clearTimeout(reaction.timer);
+  reaction = null;
+}
+
+/* =================================
+   CLICK RUSH
+================================= */
+
+let clickRush = null;
+
+const CLICK_CHEATS = {
+  autoClick: false,
+  infiniteTime: false,
+  doublePoints: false
+};
+
+function startClickRush() {
+  stopClickRush();
+
+  const area = document.getElementById("gameContent");
+  area.innerHTML = "";
+
+  clickRush = {
+    score: 0,
+    time: 15,
+    running: true,
+    timer: null,
+    autoTimer: null
+  };
+
+  const scoreLabel = createInfo("Score: 0");
+  const timeLabel = createInfo("Time: 15");
+
+  const target = createButton("CLICK ME!", () => {
+    if (!clickRush?.running) return;
+
+    clickRush.score += CLICK_CHEATS.doublePoints ? 2 : 1;
+
+    scoreLabel.textContent = "Score: " + clickRush.score;
+
+    if (clickRush.score >= 100) {
+      unlockAchievement("click_100");
+    }
+  });
+
+  createControls(
+    target,
+    createButton("RESTART",startClickRush)
+  );
+
+  clickRush.timer = setInterval(() => {
+    if (!clickRush || !clickRush.running) return;
+
+    if (!CLICK_CHEATS.infiniteTime) {
+      clickRush.time--;
+      timeLabel.textContent = "Time: " + clickRush.time;
+
+      if (clickRush.time <= 0) {
+        clickRush.running = false;
+        clearInterval(clickRush.timer);
+        clearInterval(clickRush.autoTimer);
+
+        updateStat("clickBest",clickRush.score);
+        scoreLabel.textContent += " | Finished!";
+      }
+    }
+  },1000);
+
+  clickRush.autoTimer = setInterval(() => {
+    if (
+      clickRush?.running &&
+      CLICK_CHEATS.autoClick
+    ) {
+      target.click();
+    }
+  },100);
+}
+
+function stopClickRush() {
+  if (clickRush) {
+    clearInterval(clickRush.timer);
+    clearInterval(clickRush.autoTimer);
+  }
+
+  clickRush = null;
+}
+
+/* =================================
+   MEMORY MATCH
+================================= */
+
+let memory = null;
+
+const MEMORY_CHEATS = {
+  reveal: false,
+  freezeTimer: false,
+  autoComplete: false
+};
+
+function startMemory() {
+  stopMemory();
+
+  const area = document.getElementById("gameContent");
+  area.innerHTML = "";
+
+  memory = {
+    cards: [],
+    first: null,
+    locked: false,
+    matches: 0,
+    seconds: 60,
+    timer: null
+  };
+
+  const symbols = ["★","●","▲","◆","♥","♣","☀","♫"];
+  memory.cards = [...symbols,...symbols]
+    .sort(() => Math.random() - 0.5)
+    .map((symbol,index) => ({
+      id:index,
+      symbol,
+      matched:false,
+      revealed:false
+    }));
+
+  const status = createInfo("Matches: 0 / 8");
+  const timerLabel = createInfo("Time: 60");
+
+  const grid = document.createElement("div");
+  grid.className = "grid";
+  grid.style.gridTemplateColumns = "repeat(4,1fr)";
+  document.getElementById("gameContent").appendChild(grid);
+
+  function drawCards() {
+    grid.innerHTML = "";
+
+    memory.cards.forEach(card => {
+      const button = createButton(
+        card.matched || card.revealed || MEMORY_CHEATS.reveal
+          ? card.symbol
+          : "?",
+        () => revealCard(card)
+      );
+
+      button.style.minHeight = "65px";
+      button.style.fontSize = "22px";
+      button.disabled = card.matched;
+
+      grid.appendChild(button);
+    });
+  }
+
+  function revealCard(card) {
+    if (!memory || memory.locked || card.matched || card.revealed) return;
+
+    card.revealed = true;
+
+    if (!memory.first) {
+      memory.first = card;
+      drawCards();
+      return;
+    }
+
+    const first = memory.first;
+
+    if (first.symbol === card.symbol) {
+      first.matched = true;
+      card.matched = true;
+      memory.matches++;
+      memory.first = null;
+
+      status.textContent = "Matches: " + memory.matches + " / 8";
+
+      if (memory.matches === 8) {
+        clearInterval(memory.timer);
+        unlockAchievement("memory_win");
+        updateStat("memoryBest",memory.seconds);
+        status.textContent = "You won!";
+      }
+
+      drawCards();
+    } else {
+      memory.locked = true;
+      drawCards();
+
+      setTimeout(() => {
+        if (!memory) return;
+
+        first.revealed = false;
+        card.revealed = false;
+        memory.first = null;
+        memory.locked = false;
+
+        drawCards();
+      },800);
+    }
+  }
+
+  createControls(
+    createButton("RESTART",startMemory),
+    createButton("AUTO COMPLETE",() => {
+      if (!MEMORY_CHEATS.autoComplete) return;
+
+      memory.cards.forEach(card => {
+        card.matched = true;
+        card.revealed = true;
+      });
+
+      memory.matches = 8;
+      status.textContent = "You won!";
+      clearInterval(memory.timer);
+      unlockAchievement("memory_win");
+      drawCards();
+    })
+  );
+
+  memory.timer = setInterval(() => {
+    if (!memory || MEMORY_CHEATS.freezeTimer) return;
+
+    memory.seconds--;
+    timerLabel.textContent = "Time: " + memory.seconds;
+
+    if (memory.seconds <= 0) {
+      clearInterval(memory.timer);
+      status.textContent = "Time's up!";
+    }
+  },1000);
+
+  drawCards();
+}
+
+function stopMemory() {
+  if (memory?.timer) clearInterval(memory.timer);
+  memory = null;
+}
+
+/* =================================
+   MIC METER
+================================= */
+
+let mic = null;
+
+async function startMic() {
+  stopMic();
+
+  const area = document.getElementById("gameContent");
+  area.innerHTML = "";
+
+  const status = createInfo("Microphone permission is required.");
+  const meter = createInfo("Input level: 0%");
+  const canvas = createCanvas(400,150);
+  const ctx = canvas.getContext("2d");
+
+  const button = createButton("ENABLE MICROPHONE",async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio:true
+      });
+
+      if (!mic) return;
+
+      const audioContext = new AudioContext();
+      const source = audioContext.createMediaStreamSource(stream);
+      const analyser = audioContext.createAnalyser();
+
+      source.connect(analyser);
+      analyser.fftSize = 256;
+
+      mic.stream = stream;
+      mic.context = audioContext;
+      mic.analyser = analyser;
+      mic.data = new Uint8Array(analyser.frequencyBinCount);
+
+      status.textContent = "Microphone active.";
+      unlockAchievement("mic_used");
+
+      drawMic();
+    } catch(error) {
+      status.textContent = "Microphone permission unavailable.";
+    }
+  });
+
+  createControls(button);
+
+  mic = {
+    stream:null,
+    context:null,
+    analyser:null,
+    data:null,
+    animation:null
+  };
+
+  function drawMic() {
+    if (!mic?.analyser) return;
+
+    mic.analyser.getByteFrequencyData(mic.data);
+
+    const average =
+      mic.data.reduce((sum,value) => sum + value,0) /
+      mic.data.length;
+
+    const percent = Math.round(average / 255 * 100);
+
+    meter.textContent = "Input level: " + percent + "%";
+
+    ctx.clearRect(0,0,400,150);
+    ctx.fillStyle = "#10233e";
+    ctx.fillRect(0,0,400,150);
+
+    ctx.fillStyle = "#4ade80";
+    ctx.fillRect(20,50,percent * 3.6,45);
+
+    mic.animation = requestAnimationFrame(drawMic);
+  }
+}
+
+function stopMic() {
+  if (!mic) return;
+
+  cancelAnimationFrame(mic.animation);
+
+  mic.stream?.getTracks().forEach(track => track.stop());
+  mic.context?.close();
+
+  mic = null;
+}
+
+/* =================================
+   DEVELOPER PANEL
+================================= */
+
+function toggleCheat(object,key,label) {
+  object[key] = !object[key];
+
+  renderDevPanel();
+  saveGame();
+
+  if (key === "fast" && object === SNAKE_CHEATS && snake) {
+    snake.schedule?.();
+  }
+}
+
+function cheatButton(object,key,label) {
+  const button = document.createElement("button");
+
+  function refresh() {
+    const enabled = object[key];
+
+    button.textContent =
+      label + ": " + (enabled ? "ON" : "OFF");
+
+    button.className =
+      "toggle " + (enabled ? "on" : "off");
+  }
+
+  refresh();
+
+  button.onclick = () => {
+    toggleCheat(object,key,label);
+    refresh();
+  };
+
+  return button;
+}
+
+function devRow(title,description,button) {
+  const row = document.createElement("div");
+  row.className = "cheat-row";
+
+  const info = document.createElement("div");
+  const heading = document.createElement("strong");
+  heading.textContent = title;
+
+  const detail = document.createElement("small");
+  detail.textContent = description;
+
+  info.append(heading,detail);
+  row.append(info,button);
+
+  return row;
+}
+
+function renderDevPanel() {
+  const content = document.getElementById("devContent");
+  if (!content) return;
+
+  content.innerHTML = "";
+
+  function section(title) {
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    content.appendChild(heading);
+  }
+
+  function addCheat(title,description,object,key) {
+    content.appendChild(
+      devRow(
+        title,
+        description,
+        cheatButton(object,key,title)
+      )
+    );
+  }
+
+  section("Flappy Bird");
+
+  addCheat(
+    "Pass Through Pipes",
+    "Ignore pipe collisions.",
+    FLAPPY_CHEATS,
+    "passPipes"
+  );
+
+  addCheat(
+    "Invincibility",
+    "Ignore collision and boundary checks.",
+    FLAPPY_CHEATS,
+    "invincible"
+  );
+
+  addCheat(
+    "Freeze Pipes",
+    "Stop pipes from moving.",
+    FLAPPY_CHEATS,
+    "freezePipes"
+  );
+
+  addCheat(
+    "Auto Fly",
+    "Automatically follow pipe openings.",
+    FLAPPY_CHEATS,
+    "autoFly"
+  );
+
+  section("Snake");
+
+  addCheat(
+    "Godmode",
+    "Prevent collision game overs.",
+    SNAKE_CHEATS,
+    "godmode"
+  );
+
+  addCheat(
+    "Pass Through Walls",
+    "Wrap around the board.",
+    SNAKE_CHEATS,
+    "passWalls"
+  );
+
+  addCheat(
+    "Pass Through Self",
+    "Ignore body collisions.",
+    SNAKE_CHEATS,
+    "passSelf"
+  );
+
+  addCheat(
+    "Fast Mode",
+    "Increase movement speed.",
+    SNAKE_CHEATS,
+    "fast"
+  );
+
+  section("Reaction Test");
+
+  addCheat(
+    "Instant Reaction",
+    "Remove the waiting period.",
+    REACTION_CHEATS,
+    "instant"
+  );
+
+  addCheat(
+    "No False Starts",
+    "Ignore early clicks.",
+    REACTION_CHEATS,
+    "noFalseStarts"
+  );
+
+  section("Click Rush");
+
+  addCheat(
+    "Auto Click",
+    "Click automatically.",
+    CLICK_CHEATS,
+    "autoClick"
+  );
+
+  addCheat(
+    "Infinite Time",
+    "Stop the countdown.",
+    CLICK_CHEATS,
+    "infiniteTime"
+  );
+
+  addCheat(
+    "Double Points",
+    "Earn two points per click.",
+    CLICK_CHEATS,
+    "doublePoints"
+  );
+
+  section("Memory Match");
+
+  addCheat(
+    "Reveal All",
+    "Show every card.",
+    MEMORY_CHEATS,
+    "reveal"
+  );
+
+  addCheat(
+    "Freeze Timer",
+    "Stop the countdown.",
+    MEMORY_CHEATS,
+    "freezeTimer"
+  );
+
+  addCheat(
+    "Auto Complete",
+    "Enable the auto-complete button.",
+    MEMORY_CHEATS,
+    "autoComplete"
+  );
+
+  section("Achievement Controls");
+
+  content.appendChild(
+    devRow(
+      "Unlock All Achievements",
+      "Unlock all achievements in this version.",
+      createButton("UNLOCK",() => {
+        achievements.forEach(([id]) => {
+          if (!saveData.achievements.includes(id)) {
+            saveData.achievements.push(id);
+          }
+        });
+
+        saveGame();
+        renderAchievements();
+        renderDevPanel();
+      })
+    )
+  );
+
+  content.appendChild(
+    devRow(
+      "Reset Achievements",
+      "Remove all achievement progress.",
+      createButton("RESET",() => {
+        if (!confirm("Reset all achievements?")) return;
+
+        saveData.achievements = [];
+        saveGame();
+        renderAchievements();
+        renderDevPanel();
+      })
+    )
+  );
+
+  section("Arcade Controls");
+
+  content.appendChild(
+    devRow(
+      "Reset All Cheats",
+      "Turn every cheat OFF.",
+      createButton("RESET CHEATS",resetAllCheats)
+    )
+  );
+
+  content.appendChild(
+    devRow(
+      "Reset Statistics",
+      "Clear all game statistics.",
+      createButton("RESET STATS",() => {
+        if (!confirm("Reset statistics?")) return;
+
+        saveData.stats = {...defaultData.stats};
+        saveGame();
+        renderStats();
+      })
+    )
+  );
+
+  content.appendChild(
+    devRow(
+      "Reset Entire Arcade",
+      "Erase saved arcade progress.",
+      createButton("FULL RESET",() => {
+        if (!confirm("Erase all arcade progress?")) return;
+
+        localStorage.removeItem(SAVE_KEY);
+        location.reload();
+      })
+    )
+  );
+}
+
+function resetAllCheats() {
+  Object.values({
+    ...FLAPPY_CHEATS,
+    ...SNAKE_CHEATS,
+    ...REACTION_CHEATS,
+    ...CLICK_CHEATS,
+    ...MEMORY_CHEATS
+  });
+
+  for (const object of [
+    FLAPPY_CHEATS,
+    SNAKE_CHEATS,
+    REACTION_CHEATS,
+    CLICK_CHEATS,
+    MEMORY_CHEATS
+  ]) {
+    Object.keys(object).forEach(key => {
+      object[key] = false;
+    });
+  }
+
+  if (snake?.schedule) snake.schedule();
+
+  saveGame();
+  renderDevPanel();
+}
+
+/* =================================
+   FINAL INITIALIZATION
+================================= */
+
+renderAchievements();
+renderStats();
+renderDevPanel();
+saveGame();
