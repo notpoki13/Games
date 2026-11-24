@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#080d19">
-<title>MINI ARCADE 4.0</title>
+<title>MINI ARCADE 4.1</title>
 <style>
 :root{
  --bg:#080d19;--panel:#111b2e;--panel2:#192842;
@@ -20,50 +20,23 @@ body{
 }
 button,select{font:inherit;touch-action:manipulation}
 button{cursor:pointer}
-button:focus-visible,select:focus-visible{
- outline:3px solid var(--accent);outline-offset:3px
-}
+button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 header{text-align:center;padding:34px 14px 22px}
-header h1{
- font-size:clamp(38px,10vw,66px);margin:8px 0;
- letter-spacing:-3px;line-height:1
-}
+header h1{font-size:clamp(38px,10vw,66px);margin:8px 0;letter-spacing:-3px;line-height:1}
 header p{color:var(--muted);margin:10px 0}
-.version{
- color:var(--accent);font-size:11px;font-weight:900;
- letter-spacing:5px
-}
+.version{color:var(--accent);font-size:11px;font-weight:900;letter-spacing:5px}
 .container{max-width:1100px;margin:auto;padding:12px}
-.dashboard{
- display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
- gap:10px;margin:15px 0
-}
-.dashcard{
- background:linear-gradient(145deg,#172640,#101a2c);
- border:1px solid var(--line);border-radius:15px;
- padding:15px 8px;text-align:center
-}
+.dashboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:15px 0}
+.dashcard{background:linear-gradient(145deg,#172640,#101a2c);border:1px solid var(--line);border-radius:15px;padding:15px 8px;text-align:center}
 .dashcard b{font-size:25px;display:block}
 .dashcard span{font-size:10px;color:var(--muted);letter-spacing:1px}
-.nav{
- display:flex;gap:8px;overflow-x:auto;padding:12px 0 16px;
- scrollbar-width:none;position:sticky;top:0;z-index:5;
- background:#080d19eF;backdrop-filter:blur(12px)
-}
-.nav button{
- flex-shrink:0;background:var(--panel);color:white;
- border:1px solid var(--line);border-radius:12px;padding:11px 15px;
-}
+.nav{display:flex;gap:8px;overflow-x:auto;padding:12px 0 16px;scrollbar-width:none;position:sticky;top:0;z-index:5;background:#080d19eF;backdrop-filter:blur(12px)}
+.nav button{flex-shrink:0;background:var(--panel);color:white;border:1px solid var(--line);border-radius:12px;padding:11px 15px}
 .nav button.active{background:var(--accent);color:#071b17;border-color:var(--accent)}
 .page{display:none}
 .page.active{display:block;animation:appear .2s ease}
 @keyframes appear{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:none}}
-.game{
- display:none;background:linear-gradient(145deg,#192944,#101a2c);
- border:1px solid var(--line);border-radius:20px;
- padding:21px;margin:12px 0 25px;
- box-shadow:0 16px 45px #0005
-}
+.game{display:none;background:linear-gradient(145deg,#192944,#101a2c);border:1px solid var(--line);border-radius:20px;padding:21px;margin:12px 0 25px;box-shadow:0 16px 45px #0005}
 .game.active{display:block}
 .heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 h2{margin:0;font-size:25px}
@@ -71,112 +44,60 @@ h3{margin:0}
 .description,.hint{color:var(--muted);font-size:13px;line-height:1.6}
 .stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);margin:15px 0;font-size:14px}
 .stats b{color:white}
-.primary,.secondary{
- border:0;border-radius:12px;padding:12px 17px;font-weight:850;
- transition:transform .12s,filter .12s
-}
+.primary,.secondary{border:0;border-radius:12px;padding:12px 17px;font-weight:850;transition:transform .12s,filter .12s}
 .primary{background:var(--accent);color:#071b17}
 .secondary{background:#2b3d5b;color:white}
 .primary:active,.secondary:active{transform:scale(.97)}
 button:disabled{opacity:.5;cursor:not-allowed}
-canvas{
- display:block;width:100%;max-width:700px;height:auto;
- aspect-ratio:7/4;margin:15px auto;border-radius:14px;
- border:1px solid #405575;touch-action:none;
-}
+canvas{display:block;width:100%;max-width:700px;height:auto;aspect-ratio:7/4;margin:15px auto;border-radius:14px;border:1px solid #405575;touch-action:none}
 .controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px auto}
 .center{text-align:center;padding:15px 5px}
 .big{font-size:clamp(35px,9vw,60px);font-weight:950}
-.tapzone{
- width:100%;min-height:155px;border:0;border-radius:17px;
- background:#293c59;color:white;font-size:24px;font-weight:900
-}
+.tapzone{width:100%;min-height:155px;border:0;border-radius:17px;background:#293c59;color:white;font-size:24px;font-weight:900}
 .green{background:#16805f!important}
 .red{background:#a13e50!important}
-.cards{
- display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
- gap:12px;margin:18px 0
-}
-.gamecard{
- text-align:left;padding:19px;border-radius:17px;
- background:linear-gradient(145deg,#192b47,#111b2e);
- border:1px solid var(--line);color:white;min-height:135px;
- transition:transform .15s,border-color .15s
-}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0}
+.gamecard{text-align:left;padding:19px;border-radius:17px;background:linear-gradient(145deg,#192b47,#111b2e);border:1px solid var(--line);color:white;min-height:135px;transition:transform .15s,border-color .15s}
 .gamecard:hover{transform:translateY(-3px);border-color:var(--accent)}
 .gamecard strong{display:block;font-size:18px;margin-bottom:8px}
 .gamecard span{color:var(--muted);font-size:12px;line-height:1.5}
 .section-title{margin:24px 0 10px}
-.achievement{
- padding:14px;background:var(--panel2);border:1px solid var(--line);
- border-radius:13px;margin:9px 0;text-align:left;
- display:flex;align-items:center;gap:12px
-}
+.achievement{padding:14px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;margin:9px 0;text-align:left;display:flex;align-items:center;gap:12px}
 .achievement.locked{opacity:.55}
-.achievement-icon{
- width:43px;height:43px;flex-shrink:0;border-radius:12px;
- display:grid;place-items:center;background:#263b59;font-size:20px
-}
+.achievement-icon{width:43px;height:43px;flex-shrink:0;border-radius:12px;display:grid;place-items:center;background:#263b59;font-size:20px}
 .achievement strong{display:block;font-size:14px}
 .achievement small{color:var(--muted);font-size:12px;line-height:1.5}
 .achievement-info{flex:1;min-width:0}
 .rarity{font-size:9px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
 .common{color:#c0cbdc}.rare{color:#69b9ff}.epic{color:#c39aff}
 .legendary{color:var(--gold)}.secret{color:#ff91b5}
-.progress-track{
- height:9px;background:#293b56;border-radius:20px;
- overflow:hidden;margin:12px 0
-}
-.progress-fill{
- height:100%;width:0;background:linear-gradient(90deg,#53cda8,#8df0ce);
- border-radius:20px;transition:width .3s
-}
+.progress-track{height:9px;background:#293b56;border-radius:20px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#53cda8,#8df0ce);border-radius:20px;transition:width .3s}
 .filterbar{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
-.filterbar button{
- background:#293b56;color:white;border:1px solid var(--line);
- padding:8px 12px;border-radius:10px;font-size:12px
-}
+.filterbar button{background:#293b56;color:white;border:1px solid var(--line);padding:8px 12px;border-radius:10px;font-size:12px}
 .filterbar button.active{background:var(--accent);color:#071b17}
-.grid{
- display:grid;grid-template-columns:repeat(4,minmax(50px,85px));
- justify-content:center;gap:9px;margin:20px auto
-}
-.memory-card{
- aspect-ratio:1;border-radius:12px;background:#293c59;
- color:white;border:1px solid #49607e;font-size:28px
-}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(50px,85px));justify-content:center;gap:9px;margin:20px auto}
+.memory-card{aspect-ratio:1;border-radius:12px;background:#293c59;color:white;border:1px solid #49607e;font-size:28px}
 .memory-card.open{background:#386c73}
 .memory-card.matched{background:#24654e}
-.dpad{
- display:grid;grid-template-columns:55px 55px 55px;
- grid-template-rows:50px 50px 50px;gap:6px;
- justify-content:center;margin:15px auto
-}
-.dpad button{
- background:#293c59;color:white;border:1px solid #455a78;
- border-radius:12px;font-size:22px
-}
+.dpad{display:grid;grid-template-columns:55px 55px 55px;grid-template-rows:50px 50px 50px;gap:6px;justify-content:center;margin:15px auto}
+.dpad button{background:#293c59;color:white;border:1px solid #455a78;border-radius:12px;font-size:22px}
 .dpad .up{grid-column:2}
 .dpad .left{grid-column:1;grid-row:2}
 .dpad .down{grid-column:2;grid-row:2}
 .dpad .right{grid-column:3;grid-row:2}
-.meter{
- max-width:550px;height:18px;background:#293b56;
- border-radius:20px;overflow:hidden;margin:18px auto
-}
+.meter{max-width:550px;height:18px;background:#293b56;border-radius:20px;overflow:hidden;margin:18px auto}
 #micBar{height:100%;width:0;background:linear-gradient(90deg,#5be1b5,#e8d36d,#ff7180);transition:width .06s}
-.notice{
- position:fixed;z-index:20;left:50%;bottom:22px;
- transform:translate(-50%,20px);opacity:0;pointer-events:none;
- background:#1b304b;border:1px solid #52708f;border-radius:15px;
- padding:14px 18px;box-shadow:0 10px 40px #0008;
- width:min(90%,360px);transition:.25s
-}
+.notice{position:fixed;z-index:20;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#1b304b;border:1px solid #52708f;border-radius:15px;padding:14px 18px;box-shadow:0 10px 40px #0008;width:min(90%,360px);transition:.25s}
 .notice.show{opacity:1;transform:translate(-50%,0)}
 .notice strong{display:block}
 .notice small{color:var(--muted)}
 .notice .rarity{margin-top:4px}
 .empty{text-align:center;color:var(--muted);padding:30px 10px}
+.hints-panel{margin-top:24px;padding:17px;border:1px solid #684b72;background:linear-gradient(145deg,#29213d,#171b30);border-radius:16px}
+.hints-panel h3{color:#ffb1d0;margin-bottom:7px}
+.hints-panel ul{padding-left:20px;margin:10px 0 0}
+.hints-panel li{color:var(--muted);font-size:13px;line-height:1.8;margin:5px 0}
 footer{text-align:center;padding:28px;color:#71829e;font-size:12px}
 @media(max-width:520px){
  .game{padding:14px}
@@ -193,16 +114,16 @@ footer{text-align:center;padding:28px;color:#71829e;font-size:12px}
 <body>
 <header>
  <div class="version">ULTIMATE REMASTER</div>
- <h1>MINI ARCADE</h1>
+ <h1 id="arcadeTitle">MINI ARCADE</h1>
  <p>Your personal browser gaming universe.</p>
- <p class="hint">VERSION 4.0</p>
+ <p class="hint">VERSION 4.1</p>
 </header>
 
 <main class="container">
 <div class="dashboard">
  <div class="dashcard"><b>6</b><span>GAMES</span></div>
  <div class="dashcard"><b id="records">0</b><span>RECORDS</span></div>
- <div class="dashcard"><b id="achievementCount">0/50</b><span>ACHIEVEMENTS</span></div>
+ <div class="dashcard"><b id="achievementCount">0/56</b><span>ACHIEVEMENTS</span></div>
  <div class="dashcard"><b id="soundStatus">ON</b><span>SOUND</span></div>
 </div>
 
@@ -233,7 +154,7 @@ footer{text-align:center;padding:28px;color:#71829e;font-size:12px}
  <div id="homeRecords" class="achievement"></div>
  <h2 class="section-title">Achievement Progress</h2>
  <div class="progress-track"><div class="progress-fill" id="homeProgress"></div></div>
- <p class="hint" id="homeProgressText">0 of 50 achievements unlocked.</p>
+ <p class="hint" id="homeProgressText">0 of 56 achievements unlocked.</p>
 </section>
 
 <section class="page" id="flappy">
@@ -350,11 +271,11 @@ footer{text-align:center;padding:28px;color:#71829e;font-size:12px}
 <section class="page" id="achievements">
  <div class="game active">
   <div class="heading">
-   <div><h2>Achievements</h2><p class="description">50 challenges. How many can you unlock?</p></div>
+   <div><h2>Achievements</h2><p class="description">56 challenges. How many can you unlock?</p></div>
    <b id="achievementPercent">0%</b>
   </div>
   <div class="progress-track"><div class="progress-fill" id="achievementProgress"></div></div>
-  <p class="hint" id="achievementProgressText">0 / 50 unlocked</p>
+  <p class="hint" id="achievementProgressText">0 / 56 unlocked</p>
   <div class="filterbar" id="achievementFilters">
    <button class="active" data-filter="all">All</button>
    <button data-filter="locked">Locked</button>
@@ -362,6 +283,20 @@ footer{text-align:center;padding:28px;color:#71829e;font-size:12px}
    <button data-filter="secret">Secrets</button>
   </div>
   <div id="achievementList"></div>
+  <div id="secretHints" class="hints-panel" hidden>
+   <h3>Hints</h3>
+   <p class="hint">A few clues for curious players. They won't give everything away.</p>
+   <ul>
+    <li>Some discoveries happen outside the games themselves.</li>
+    <li>Pay attention to things you can interact with more than once.</li>
+    <li>Try exploring different corners of the arcade.</li>
+    <li>Small actions can sometimes have bigger consequences.</li>
+    <li>Not every challenge is about getting a high score.</li>
+    <li>Some secrets reward patience and curiosity.</li>
+    <li>Your progress across multiple games can matter.</li>
+    <li>Look for patterns in the way the arcade responds to you.</li>
+   </ul>
+  </div>
  </div>
 </section>
 
@@ -385,30 +320,39 @@ footer{text-align:center;padding:28px;color:#71829e;font-size:12px}
  <small id="noticeDescription"></small>
  <div class="rarity" id="noticeRarity"></div>
 </div>
-<footer>MINI ARCADE 4.0 · ULTIMATE REMASTER</footer>
+<footer>MINI ARCADE 4.1 · ULTIMATE REMASTER</footer>
 
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
 const STORAGE="mini_arcade_4";
 let sound=true,currentPage="home",audio=null;
+
 const defaultData={
  records:{flappy:0,snake:0,reaction:0,clicker:0,memory:0},
- achievements:[],stats:{gamesPlayed:0,totalClicks:0,micUsed:false,hardMemory:false}
+ achievements:[],
+ stats:{
+  gamesPlayed:0,totalClicks:0,micUsed:false,hardMemory:false,
+  gamesVisited:[],soundToggles:0,titleTaps:0,settingsVisits:0,
+  memoryWins:0
+ }
 };
 function cloneDefault(){return JSON.parse(JSON.stringify(defaultData))}
 function loadData(){
  try{
   const raw=JSON.parse(localStorage.getItem(STORAGE));
   if(!raw)return cloneDefault();
+  const stats={...defaultData.stats,...(raw.stats||{})};
+  if(!Array.isArray(stats.gamesVisited))stats.gamesVisited=[];
   return {
    records:{...defaultData.records,...(raw.records||{})},
    achievements:Array.isArray(raw.achievements)?raw.achievements:[],
-   stats:{...defaultData.stats,...(raw.stats||{})}
+   stats
   };
  }catch{return cloneDefault()}
 }
 let data=loadData();
+
 function saveData(){
  try{localStorage.setItem(STORAGE,JSON.stringify(data))}
  catch{console.warn("Progress could not be saved.")}
@@ -426,6 +370,7 @@ function beep(freq=500,duration=.07){
   osc.stop(audio.currentTime+duration);
  }catch{}
 }
+
 const achievementDefs=[
  ["first","First Steps","Play your first game.","common"],
  ["flappy1","Takeoff","Score 1 in Flappy Bird.","common"],
@@ -476,15 +421,27 @@ const achievementDefs=[
  ["ten","Double Digits","Unlock 10 achievements.","rare"],
  ["twentyFive","Quarter Century","Unlock 25 achievements.","epic"],
  ["forty","Almost There","Unlock 40 achievements.","legendary"],
- ["completion","The Completionist","Unlock all 50 achievements.","secret"],
- ["mystery","Behind the Curtain","Discover a hidden achievement.","secret"]
+
+ // Secret achievements. Their details are hidden in the game interface.
+ ["completion","The Completionist","Unlock every other achievement.","secret"],
+ ["mystery","Behind the Curtain","Discover a hidden achievement.","secret"],
+ ["secretSound","???","A hidden discovery.","secret"],
+ ["secretTitle","???","A hidden discovery.","secret"],
+ ["secretTour","???","A hidden discovery.","secret"],
+ ["secretMemory","???","A hidden discovery.","secret"],
+ ["secretSettings","???","A hidden discovery.","secret"],
+ ["secretFlappy","???","A hidden discovery.","secret"]
 ];
+
 const achievementMap=Object.fromEntries(achievementDefs.map(a=>[a[0],a]));
+const TOTAL_ACHIEVEMENTS=achievementDefs.length;
 let noticeTimer=null,achievementFilter="all";
+
 function showNotice(id){
  const a=achievementMap[id];if(!a)return;
- $("noticeTitle").textContent="Achievement unlocked: "+a[1];
- $("noticeDescription").textContent=a[2];
+ const secret=a[3]==="secret";
+ $("noticeTitle").textContent=secret?"Secret achievement unlocked!":"Achievement unlocked: "+a[1];
+ $("noticeDescription").textContent=secret?"A hidden achievement has been discovered.":a[2];
  $("noticeRarity").textContent=a[3];
  $("noticeRarity").className="rarity "+a[3];
  $("notice").classList.add("show");
@@ -505,14 +462,19 @@ function checkMeta(){
  if(n>=10)unlock("ten");
  if(n>=25)unlock("twentyFive");
  if(n>=40)unlock("forty");
- if(n>=50)unlock("completion");
+ if(n>=TOTAL_ACHIEVEMENTS-1)unlock("completion");
 }
-function gamePlayed(){
+function gamePlayed(gameId){
  data.stats.gamesPlayed++;
+ if(gameId&&!data.stats.gamesVisited.includes(gameId)){
+  data.stats.gamesVisited.push(gameId);
+ }
  unlock("first");
  if(data.stats.gamesPlayed>=10)unlock("games10");
  if(data.stats.gamesPlayed>=25)unlock("games25");
  if(data.stats.gamesPlayed>=50)unlock("games50");
+ if(data.stats.gamesVisited.length>=3)unlock("secretTour");
+ if(data.stats.gamesVisited.length>=6)unlock("explorer");
  saveData();
 }
 function updateRecord(key,value,lower=false){
@@ -526,25 +488,22 @@ function updateRecord(key,value,lower=false){
 function checkRecords(){
  if(["flappy","snake","reaction","clicker","memory"].every(k=>data.records[k]>0))unlock("allRecords");
 }
-function checkExplorer(){
- if(data.stats.gamesPlayed>=6)unlock("explorer");
-}
 function refreshUI(){
  const count=data.achievements.length;
  $("records").textContent=Object.values(data.records).filter(v=>v>0).length;
- $("achievementCount").textContent=count+"/50";
+ $("achievementCount").textContent=count+"/"+TOTAL_ACHIEVEMENTS;
  $("soundStatus").textContent=sound?"ON":"OFF";
  $("soundToggle").textContent="Sound: "+(sound?"ON":"OFF");
  $("fb").textContent=data.records.flappy;
  $("sb").textContent=data.records.snake;
  $("rb").textContent=data.records.reaction?data.records.reaction+" ms":"---";
  $("cb").textContent=data.records.clicker;
- const percent=Math.round(count/50*100);
+ const percent=Math.round(count/TOTAL_ACHIEVEMENTS*100);
  $("achievementPercent").textContent=percent+"%";
  $("achievementProgress").style.width=percent+"%";
- $("achievementProgressText").textContent=count+" / 50 unlocked";
+ $("achievementProgressText").textContent=count+" / "+TOTAL_ACHIEVEMENTS+" unlocked";
  $("homeProgress").style.width=percent+"%";
- $("homeProgressText").textContent=count+" of 50 achievements unlocked.";
+ $("homeProgressText").textContent=count+" of "+TOTAL_ACHIEVEMENTS+" achievements unlocked.";
  $("homeRecords").innerHTML=Object.entries(data.records).map(([k,v])=>
   "<div>"+k.toUpperCase()+": <b>"+(v||"Not played")+"</b></div>"
  ).join("");
@@ -560,43 +519,66 @@ function renderAchievements(){
   return done||a[3]!=="secret";
  });
  list.innerHTML="";
- if(!visible.length){list.innerHTML='<div class="empty">Nothing to show here yet.</div>';return}
- visible.forEach(a=>{
-  const done=data.achievements.includes(a[0]);
-  const hidden=a[3]==="secret"&&!done;
-  const el=document.createElement("div");
-  el.className="achievement"+(done?"":" locked");
-  const icon=document.createElement("div");
-  icon.className="achievement-icon";
-  icon.textContent=hidden?"?":done?"★":"◇";
-  const info=document.createElement("div");
-  info.className="achievement-info";
-  const name=document.createElement("strong");
-  name.textContent=hidden?"Secret Achievement":a[1];
-  const desc=document.createElement("small");
-  desc.textContent=hidden?"Unlock this achievement to reveal its secret.":a[2];
-  const rarity=document.createElement("div");
-  rarity.className="rarity "+a[3];
-  rarity.textContent=a[3];
-  info.append(name,desc,rarity);
-  el.append(icon,info);
-  list.appendChild(el);
- });
+ $("secretHints").hidden=achievementFilter!=="secret";
+ if(!visible.length){
+  list.innerHTML='<div class="empty">Nothing to show here yet.</div>';
+ }else{
+  visible.forEach(a=>{
+   const done=data.achievements.includes(a[0]);
+   const hidden=a[3]==="secret"&&!done;
+   const el=document.createElement("div");
+   el.className="achievement"+(done?"":" locked");
+   el.dataset.achievement=a[0];
+   const icon=document.createElement("div");
+   icon.className="achievement-icon";
+   icon.textContent=hidden?"?":done?"★":"◇";
+   const info=document.createElement("div");
+   info.className="achievement-info";
+   const name=document.createElement("strong");
+   name.textContent=hidden?"Secret Achievement":a[1];
+   const desc=document.createElement("small");
+   desc.textContent=hidden?"Unlock this achievement to reveal its secret.":a[2];
+   const rarity=document.createElement("div");
+   rarity.className="rarity "+a[3];
+   rarity.textContent=a[3];
+   info.append(name,desc,rarity);
+   el.append(icon,info);
+   list.appendChild(el);
+  });
+ }
 }
+$("achievementList").addEventListener("click",e=>{
+ const card=e.target.closest("[data-achievement]");
+ if(!card)return;
+ const id=card.dataset.achievement;
+ const def=achievementMap[id];
+ if(def&&def[3]==="secret"&&!data.achievements.includes(id)){
+  unlock("mystery");
+ }
+});
 $("achievementFilters").addEventListener("click",e=>{
  const b=e.target.closest("button[data-filter]");if(!b)return;
  achievementFilter=b.dataset.filter;
  document.querySelectorAll("#achievementFilters button").forEach(x=>x.classList.toggle("active",x===b));
  renderAchievements();
 });
-function toggleSound(){sound=!sound;refreshUI()}
+function toggleSound(){
+ sound=!sound;
+ data.stats.soundToggles++;
+ if(data.stats.soundToggles>=3)unlock("secretSound");
+ saveData();refreshUI();
+}
 $("soundToggle").onclick=toggleSound;
 $("resetAll").onclick=()=>{
  if(!confirm("Delete all scores and achievements? This cannot be undone."))return;
  stopAll();data=cloneDefault();saveData();refreshUI();
 };
+$("arcadeTitle").addEventListener("click",()=>{
+ data.stats.titleTaps++;
+ if(data.stats.titleTaps>=5)unlock("secretTitle");
+ saveData();
+});
 refreshUI();
-
 
 // NAVIGATION AND LIFECYCLE
 function stopAll(){
@@ -607,6 +589,11 @@ function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
  $(id).classList.add("active");
+ if(id==="settings"){
+  data.stats.settingsVisits++;
+  if(data.stats.settingsVisits>=5)unlock("secretSettings");
+  saveData();
+ }
  if(id==="flappy")drawFlappy();
  if(id==="snake")drawSnake();
  if(id==="memory"){
@@ -618,25 +605,23 @@ function openPage(id){
 document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>openPage(b.dataset.page));
 document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openPage(b.dataset.open));
 
-
-// FLAPPY BIRD: DELTA-TIME ENGINE
+// FLAPPY BIRD
 const fc=$("fc"),fx=fc.getContext("2d",{alpha:false});
 const FW=700,FH=400;
 let bird=null,pipes=[],fscore=0,fstate="idle",fraf=0,lastF=0;
 let cloudOffset=0,flappyRuns=0,flappyMax=0;
 const FGRAVITY=1050,FLAP_VELOCITY=-330,PIPE_SPEED=185,PIPE_WIDTH=65,PIPE_GAP=150;
-function makePipe(x){
- return {x,gap:100+Math.random()*190,passed:false};
-}
+function makePipe(x){return {x,gap:100+Math.random()*190,passed:false}}
 function startFlappy(){
  stopFlappy();
  bird={x:145,y:180,v:0};
  pipes=[makePipe(480),makePipe(745),makePipe(1010)];
- fscore=0;fstate="playing";lastF=0;cloudOffset=0;
+ fscore=0;flappyMax=0;fstate="playing";lastF=0;cloudOffset=0;
  flappyRuns++;
  $("fs").textContent=0;$("flapState").textContent="Playing";
  if(flappyRuns>=5)unlock("flappyRestart");
- gamePlayed();checkExplorer();beep(500);
+ if(flappyRuns>=3)unlock("secretFlappy");
+ gamePlayed("flappy");beep(500);
  fraf=requestAnimationFrame(flapFrame);
 }
 function flap(){
@@ -722,7 +707,7 @@ function flapFrame(timestamp){
   p.x-=PIPE_SPEED*dt;
   if(!p.passed&&p.x+PIPE_WIDTH<bird.x){
    p.passed=true;fscore++;
-   flappyMax=Math.max(flappyMax,fscore);
+   flappyMax++;
    $("fs").textContent=fscore;beep(800,.035);
   }
  });
@@ -744,7 +729,6 @@ $("flapPause").onclick=pauseFlappy;
 fc.addEventListener("pointerdown",e=>{e.preventDefault();flap()});
 drawFlappy();
 
-
 // SNAKE
 const sc=$("sc"),sx=sc.getContext("2d");
 let snake=[],food=null,dx=1,dy=0,nextX=1,nextY=0;
@@ -755,7 +739,7 @@ function startSnake(){
  dx=1;dy=0;nextX=1;nextY=0;
  snakeScore=0;$("ss").textContent=0;$("snakeLevel").textContent=1;
  placeFood();snakePlaying=true;
- snakeRuns++;gamePlayed();
+ snakeRuns++;gamePlayed("snake");
  if(snakeRuns>=5)unlock("snakeRestart");
  snakeLoop=setInterval(snakeStep,115);drawSnake();
 }
@@ -843,12 +827,11 @@ sc.addEventListener("pointerup",e=>{
 $("snakeStart").onclick=startSnake;
 drawSnake();
 
-
 // REACTION TEST
 let reactionState="idle",reactionTimer=null,reactionStarted=0,reactionRuns=0;
 function stopReaction(){clearTimeout(reactionTimer);reactionTimer=null;reactionState="idle"}
 function startReaction(){
- stopReaction();reactionState="wait";gamePlayed();reactionRuns++;
+ stopReaction();reactionState="wait";gamePlayed("reaction");reactionRuns++;
  $("reactionZone").className="tapzone red";
  $("reactionZone").textContent="WAIT...";
  $("reactionResult").textContent="...";
@@ -887,7 +870,6 @@ function reactionClick(){
 $("reactionStart").onclick=startReaction;
 $("reactionZone").onclick=reactionClick;
 
-
 // CLICK RUSH
 let clickTimer=null,clickRunning=false,clickCount=0,clickEnd=0,clickRuns=0;
 function stopClick(){
@@ -896,7 +878,7 @@ function stopClick(){
 }
 function startClick(){
  stopClick();clickCount=0;clickRunning=true;clickRuns++;
- gamePlayed();
+ gamePlayed("clicker");
  clickEnd=performance.now()+10000;
  $("cs").textContent=0;$("ct").textContent="10.0";$("cps").textContent=0;
  $("clickZone").disabled=false;$("clickMessage").textContent="GO!";
@@ -923,13 +905,14 @@ function addClick(){
 $("clickStart").onclick=startClick;
 $("clickZone").onclick=addClick;
 
-
 // MEMORY MATCH
 const symbols=["★","◆","●","▲","☀","♫","♣","♥","✿","⬟"];
 let memoryCards=[],firstCard=null,memoryLocked=false,moves=0,pairs=0;
 let memoryTimer=null,memorySeconds=0,memoryStarted=false,memoryComplete=false,memoryRuns=0;
+let memoryMismatchTimer=null;
 function pauseMemory(){
  if(memoryTimer){clearInterval(memoryTimer);memoryTimer=null}
+ if(memoryMismatchTimer){clearTimeout(memoryMismatchTimer);memoryMismatchTimer=null}
 }
 function resumeMemory(){
  if(memoryStarted&&!memoryComplete&&!memoryTimer){
@@ -971,7 +954,7 @@ function flipMemory(i){
  const c=memoryCards[i];
  if(memoryLocked||c.open||c.matched||memoryComplete)return;
  if(!memoryStarted){
-  memoryStarted=true;memoryRuns++;gamePlayed();resumeMemory();
+  memoryStarted=true;memoryRuns++;gamePlayed("memory");resumeMemory();
  }
  c.open=true;renderMemory();
  if(firstCard===null){firstCard=i;return}
@@ -985,24 +968,31 @@ function flipMemory(i){
    memoryComplete=true;pauseMemory();
    $("memoryMessage").textContent="YOU WON! "+moves+" moves in "+memorySeconds+" seconds.";
    updateRecord("memory",moves,true);unlock("memory");
-   if(Number($("memoryDifficulty").value)===6)unlock("memoryEasy");
-   if(Number($("memoryDifficulty").value)===10){unlock("memoryHard");data.stats.hardMemory=true;saveData()}
+   data.stats.memoryWins++;
+   if(Number($("memoryDifficulty").value)===6){
+    unlock("memoryEasy");unlock("secretMemory");
+   }
+   if(Number($("memoryDifficulty").value)===10){
+    unlock("memoryHard");data.stats.hardMemory=true;saveData();
+   }
+   if(data.stats.memoryWins>=5)unlock("memory5");
    if(memorySeconds<60)unlock("memoryFast");
    if(moves<=20)unlock("memoryMoves");
    checkRecords();
   }
  }else{
   memoryLocked=true;beep(250);renderMemory();
-  setTimeout(()=>{
+  memoryMismatchTimer=setTimeout(()=>{
+   memoryMismatchTimer=null;
    if(!memoryCards.length)return;
-   memoryCards[old].open=false;c.open=false;
+   if(memoryCards[old])memoryCards[old].open=false;
+   if(memoryCards[i])memoryCards[i].open=false;
    memoryLocked=false;renderMemory();
   },750);
  }
 }
 $("memoryReset").onclick=resetMemory;
 $("memoryDifficulty").onchange=resetMemory;
-
 
 // MICROPHONE
 let micStream=null,micContext=null,micAnalyser=null,micRAF=null,micGeneration=0;
@@ -1028,6 +1018,7 @@ async function startMic(){
   const samples=new Uint8Array(micAnalyser.fftSize);
   $("micStatus").textContent="Microphone active!";
   micRuns++;data.stats.micUsed=true;saveData();
+  gamePlayed("mic");
   unlock("mic");
   if(micRuns>=3)unlock("mic3");
   function measure(){
@@ -1069,12 +1060,12 @@ function stopMic(){
 $("micStart").onclick=startMic;
 $("micStop").onclick=stopMic;
 
-
 // INITIALIZATION AND CLEANUP
 window.addEventListener("pagehide",stopAll);
 document.addEventListener("visibilitychange",()=>{
  if(document.hidden)stopAll();
 });
+resetMemory();
 refreshUI();
 </script>
 </body>
