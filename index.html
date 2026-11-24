@@ -675,7 +675,378 @@ function stopMic(){
  $("volume").textContent=0;$("micBar").style.width="0%";$("micLevel").textContent="Quiet";$("micStatus").textContent="Microphone is off.";
 }
 $("micStart").onclick=startMic;$("micStop").onclick=stopMic;
+// ==========================================
+// DEVELOPER PANEL - MINI ARCADE 4.1
+// ==========================================
 
+(function createDevPanel(){
+ const style=document.createElement("style");
+ style.textContent=`
+ #devPanel .dev-section{
+  background:linear-gradient(145deg,#192944,#101a2c);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:17px;
+  margin:14px 0;
+ }
+ #devPanel .dev-buttons{
+  display:flex;flex-wrap:wrap;gap:9px;margin-top:13px;
+ }
+ #devPanel button,#devPanel select{
+  border:1px solid var(--line);border-radius:10px;
+  padding:10px 13px;background:#293c59;color:white;
+ }
+ #devPanel button:hover{border-color:var(--accent)}
+ #devPanel .dev-danger{background:#713647;border-color:#a34b61}
+ #devPanel .dev-success{background:#17654f;border-color:#27896b}
+ #devPanel .dev-status{color:var(--accent);font-size:12px;margin-top:12px}
+ #devPanel input{
+  width:100%;max-width:180px;padding:10px;
+  border-radius:9px;border:1px solid var(--line);
+  background:#080d19;color:white;
+ }
+ `;
+ document.head.appendChild(style);
+
+ const nav=document.querySelector(".nav");
+ const navButton=document.createElement("button");
+ navButton.dataset.page="dev";
+ navButton.textContent="Dev Panel";
+ nav.appendChild(navButton);
+
+ const page=document.createElement("section");
+ page.className="page";
+ page.id="dev";
+ page.innerHTML=`
+ <div id="devPanel">
+  <h2>Developer Panel</h2>
+  <p class="description">MINI ARCADE internal testing tools. Changes are saved to your browser.</p>
+
+  <div class="dev-section">
+   <h3>Achievement Cheats</h3>
+   <p class="hint">Control your achievement collection.</p>
+   <div class="dev-buttons">
+    <button class="dev-success" id="devAll">Unlock All 56</button>
+    <button id="devSecrets">Unlock All Secrets</button>
+    <button id="devFive">Unlock 5 Achievements</button>
+    <button class="dev-danger" id="devResetAchievements">Reset Achievements</button>
+   </div>
+   <p class="hint">Individual achievement:</p>
+   <select id="devAchievement"></select>
+   <button id="devIndividual">Unlock Selected</button>
+  </div>
+
+  <div class="dev-section">
+   <h3>Flappy Bird Cheats</h3>
+   <p class="hint">Set a score or unlock the game's achievements.</p>
+   <input id="devFlappyScore" type="number" min="0" value="100">
+   <div class="dev-buttons">
+    <button id="devFlappyScoreBtn">Set Score</button>
+    <button id="devFlappyAll">Unlock Flappy Achievements</button>
+    <button id="devFlappyRestart">Unlock Restart Secret</button>
+   </div>
+  </div>
+
+  <div class="dev-section">
+   <h3>Snake Cheats</h3>
+   <input id="devSnakeScore" type="number" min="0" value="75">
+   <div class="dev-buttons">
+    <button id="devSnakeScoreBtn">Set Score</button>
+    <button id="devSnakeAll">Unlock Snake Achievements</button>
+    <button id="devSnakeLevel">Unlock Level 5</button>
+    <button id="devSnakeRestart">Unlock Restart</button>
+   </div>
+  </div>
+
+  <div class="dev-section">
+   <h3>Reaction Test Cheats</h3>
+   <input id="devReactionScore" type="number" min="1" value="100">
+   <div class="dev-buttons">
+    <button id="devReactionScoreBtn">Set Reaction Record</button>
+    <button id="devReactionAll">Unlock Reaction Achievements</button>
+   </div>
+  </div>
+
+  <div class="dev-section">
+   <h3>Click Rush Cheats</h3>
+   <input id="devClickScore" type="number" min="0" value="100">
+   <div class="dev-buttons">
+    <button id="devClickScoreBtn">Set Click Record</button>
+    <button id="devClickAll">Unlock Click Achievements</button>
+    <button id="devClickTotal">Unlock 500 Total Clicks</button>
+   </div>
+  </div>
+
+  <div class="dev-section">
+   <h3>Memory Match Cheats</h3>
+   <div class="dev-buttons">
+    <button id="devMemoryEasy">Complete Easy</button>
+    <button id="devMemoryNormal">Complete Normal</button>
+    <button id="devMemoryHard">Complete Hard</button>
+    <button id="devMemoryAll">Unlock All Memory Achievements</button>
+   </div>
+  </div>
+
+  <div class="dev-section">
+   <h3>Mic Meter Cheats</h3>
+   <div class="dev-buttons">
+    <button id="devMicAll">Unlock Mic Achievements</button>
+    <button id="devMicUsed">Mark Mic as Used</button>
+   </div>
+   <p class="hint">These cheats do not request microphone permission.</p>
+  </div>
+
+  <div class="dev-section">
+   <h3>Arcade Statistics</h3>
+   <div class="dev-buttons">
+    <button id="devGames10">10 Games Played</button>
+    <button id="devGames25">25 Games Played</button>
+    <button id="devGames50">50 Games Played</button>
+    <button id="devExplorer">Unlock Explorer</button>
+    <button id="devAllRecords">Unlock Record Breaker</button>
+   </div>
+  </div>
+
+  <div class="dev-section">
+   <h3>Developer Utilities</h3>
+   <div class="dev-buttons">
+    <button id="devRefresh">Refresh Panel</button>
+    <button class="dev-danger" id="devResetAll">Reset Entire Arcade</button>
+   </div>
+   <p class="dev-status" id="devStatus">Developer panel ready.</p>
+  </div>
+ </div>`;
+ document.querySelector("main").appendChild(page);
+
+ function status(message){
+  $("devStatus").textContent="> "+message;
+ }
+ function grant(ids){
+  ids.forEach(id=>{
+   if(achievementMap[id]&&!data.achievements.includes(id)){
+    data.achievements.push(id);
+   }
+  });
+  saveData();
+  refreshUI();
+  checkMeta();
+  refreshUI();
+ }
+ function grantAll(){
+  grant(achievementDefs.filter(a=>a[0]!=="completion").map(a=>a[0]));
+  grant(["completion"]);
+  status("All achievements unlocked!");
+ }
+ function grantSecrets(){
+  grant(achievementDefs.filter(a=>a[3]==="secret"&&a[0]!=="completion").map(a=>a[0]));
+  status("Secret achievements unlocked!");
+ }
+ function number(id,min=0){
+  return Math.max(min,Math.floor(Number($(id).value)||0));
+ }
+
+ // Achievement dropdown
+ achievementDefs.forEach(a=>{
+  const option=document.createElement("option");
+  option.value=a[0];
+  option.textContent=a[1]+" ("+a[0]+")";
+  $("devAchievement").appendChild(option);
+ });
+
+ $("devAll").onclick=grantAll;
+ $("devSecrets").onclick=grantSecrets;
+ $("devFive").onclick=()=>grant(["firstFive"]);
+ $("devIndividual").onclick=()=>{
+  const id=$("devAchievement").value;
+  grant([id]);
+  status("Unlocked "+achievementMap[id][1]);
+ };
+ $("devResetAchievements").onclick=()=>{
+  if(!confirm("Reset all achievements?"))return;
+  data.achievements=[];
+  saveData();refreshUI();
+  status("Achievements reset.");
+ };
+
+ // Flappy
+ const flappyIds=[
+  "flappy1","flappy5","flappy10","flappy20",
+  "flappy30","flappy50","flappy100"
+ ];
+ $("devFlappyScoreBtn").onclick=()=>{
+  const score=number("devFlappyScore");
+  updateRecord("flappy",score);
+  grant(flappyIds.filter((id,i)=>score>=[1,5,10,20,30,50,100][i]));
+  status("Flappy score set to "+score);
+ };
+ $("devFlappyAll").onclick=()=>{
+  grant([...flappyIds,"flappyNoHit","flappyRestart","secretFlappy"]);
+  data.stats.flappyRuns=Math.max(5,data.stats.flappyRuns);
+  flappyRuns=Math.max(5,flappyRuns);
+  saveData();refreshUI();
+  status("All Flappy achievements unlocked.");
+ };
+ $("devFlappyRestart").onclick=()=>{
+  data.stats.flappyRuns=Math.max(3,data.stats.flappyRuns);
+  flappyRuns=Math.max(3,flappyRuns);
+  grant(["secretFlappy"]);
+  saveData();
+  status("Triple Takeoff unlocked.");
+ };
+
+ // Snake
+ const snakeIds=[
+  "snake1","snake5","snake10","snake20",
+  "snake30","snake50","snake75"
+ ];
+ $("devSnakeScoreBtn").onclick=()=>{
+  const score=number("devSnakeScore");
+  updateRecord("snake",score);
+  grant(snakeIds.filter((id,i)=>score>=[1,5,10,20,30,50,75][i]));
+  if(score>=20)grant(["snakeLevel5"]);
+  status("Snake score set to "+score);
+ };
+ $("devSnakeAll").onclick=()=>{
+  grant([...snakeIds,"snakeLevel5","snakeRestart"]);
+  snakeRuns=Math.max(5,snakeRuns);
+  status("All Snake achievements unlocked.");
+ };
+ $("devSnakeLevel").onclick=()=>{
+  grant(["snakeLevel5"]);
+  status("Snake Level Climber unlocked.");
+ };
+ $("devSnakeRestart").onclick=()=>{
+  snakeRuns=Math.max(5,snakeRuns);
+  grant(["snakeRestart"]);
+  status("Fresh Start unlocked.");
+ };
+
+ // Reaction
+ $("devReactionScoreBtn").onclick=()=>{
+  const score=number("devReactionScore",1);
+  updateRecord("reaction",score,true);
+  grant(["fast300","fast","fast200","fast150"].filter((id,i)=>score<[300,250,200,150][i]));
+  checkRecords();
+  status("Reaction record updated.");
+ };
+ $("devReactionAll").onclick=()=>{
+  grant(["fast300","fast","fast200","fast150","reaction5","reaction10"]);
+  reactionRuns=Math.max(10,reactionRuns);
+  status("All Reaction achievements unlocked.");
+ };
+
+ // Click Rush
+ const clickIds=["click10","click25","click50","click75","click100"];
+ $("devClickScoreBtn").onclick=()=>{
+  const score=number("devClickScore");
+  updateRecord("clicker",score);
+  grant(clickIds.filter((id,i)=>score>=[10,25,50,75,100][i]));
+  status("Click Rush record set to "+score);
+ };
+ $("devClickAll").onclick=()=>{
+  grant([...clickIds,"clickTotal500"]);
+  data.stats.totalClicks=Math.max(500,data.stats.totalClicks);
+  saveData();refreshUI();
+  status("All Click Rush achievements unlocked.");
+ };
+ $("devClickTotal").onclick=()=>{
+  data.stats.totalClicks=Math.max(500,data.stats.totalClicks);
+  grant(["clickTotal500"]);
+  saveData();
+  status("500 total clicks reached.");
+ };
+
+ // Memory
+ function memoryCheat(mode){
+  const ids=["memory"];
+  if(mode==="easy")ids.push("memoryEasy","secretMemory");
+  if(mode==="hard")ids.push("memoryHard");
+  if(mode==="normal")ids.push("memoryFast","memoryMoves");
+  data.stats.memoryWins=Math.max(5,data.stats.memoryWins);
+  if(mode==="hard")data.stats.hardMemory=true;
+  grant(ids);
+  saveData();
+  status("Memory "+mode+" completion granted.");
+ }
+ $("devMemoryEasy").onclick=()=>memoryCheat("easy");
+ $("devMemoryNormal").onclick=()=>memoryCheat("normal");
+ $("devMemoryHard").onclick=()=>memoryCheat("hard");
+ $("devMemoryAll").onclick=()=>{
+  grant(["memory","memoryEasy","memoryHard","memoryFast","memoryMoves","memory5","secretMemory"]);
+  data.stats.memoryWins=Math.max(5,data.stats.memoryWins);
+  data.stats.hardMemory=true;
+  saveData();
+  status("All Memory achievements unlocked.");
+ };
+
+ // Mic
+ $("devMicAll").onclick=()=>{
+  data.stats.micUsed=true;
+  micRuns=Math.max(3,micRuns);
+  grant(["mic","micLoud","mic3"]);
+  saveData();
+  status("All Mic achievements unlocked.");
+ };
+ $("devMicUsed").onclick=()=>{
+  data.stats.micUsed=true;
+  grant(["mic"]);
+  saveData();
+  status("Mic marked as used.");
+ };
+
+ // Statistics
+ $("devGames10").onclick=()=>{
+  data.stats.gamesPlayed=Math.max(10,data.stats.gamesPlayed);
+  grant(["games10"]);
+  saveData();status("10 games played.");
+ };
+ $("devGames25").onclick=()=>{
+  data.stats.gamesPlayed=Math.max(25,data.stats.gamesPlayed);
+  grant(["games10","games25"]);
+  saveData();status("25 games played.");
+ };
+ $("devGames50").onclick=()=>{
+  data.stats.gamesPlayed=Math.max(50,data.stats.gamesPlayed);
+  grant(["games10","games25","games50"]);
+  saveData();status("50 games played.");
+ };
+ $("devExplorer").onclick=()=>{
+  data.stats.gamesVisited=["flappy","snake","reaction","clicker","memory","mic"];
+  grant(["secretTour","explorer"]);
+  saveData();status("Arcade Explorer unlocked.");
+ };
+ $("devAllRecords").onclick=()=>{
+  Object.keys(data.records).forEach(k=>{
+   if(!data.records[k])data.records[k]=1;
+  });
+  grant(["allRecords"]);
+  saveData();refreshUI();
+  status("Record Breaker unlocked.");
+ };
+
+ // Utilities
+ $("devRefresh").onclick=()=>{
+  refreshUI();
+  status("Panel refreshed.");
+ };
+ $("devResetAll").onclick=()=>{
+  if(!confirm("Delete ALL arcade progress, records, and achievements?"))return;
+  stopAll();
+  data=cloneDefault();
+  sound=true;
+  flappyRuns=0;
+  snakeRuns=0;
+  reactionRuns=0;
+  clickRuns=0;
+  memoryRuns=0;
+  micRuns=0;
+  saveData();
+  refreshUI();
+  resetMemory();
+  status("Entire arcade progress reset.");
+ };
+
+})();
 // INITIALIZATION AND CLEANUP
 window.addEventListener("pagehide",stopAll);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stopAll()});
