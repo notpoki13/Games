@@ -3,467 +3,756 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mini Arcade</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#090e1c">
+<title>MINI ARCADE 2.0</title>
+
 <style>
+:root{
+ --bg:#090e1c;--panel:#141e33;--panel2:#1d2b46;
+ --text:#f1f5ff;--muted:#99abc5;
+ --accent:#69e3c0;--line:#30415e;
+}
 *{box-sizing:border-box}
 body{
- margin:0;background:#0b1020;color:white;
- font-family:Arial,sans-serif;text-align:center;
+ margin:0;background:radial-gradient(ellipse at top,#1b3154,var(--bg) 65%);
+ color:var(--text);font-family:system-ui,Arial,sans-serif;
+ min-height:100vh;
 }
-header{padding:25px}
-header h1{font-size:38px;margin:5px}
-header p{color:#9eacc5}
-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:10px}
-button{
- cursor:pointer;border:0;border-radius:10px;
- padding:12px 17px;font-weight:bold;
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+header{text-align:center;padding:28px 15px 15px}
+header h1{font-size:clamp(32px,8vw,55px);margin:0;letter-spacing:-2px}
+header p{color:var(--muted);margin:7px}
+.version{font-size:11px;color:var(--accent);letter-spacing:3px;font-weight:900}
+.container{max-width:1050px;margin:auto;padding:12px}
+.nav{
+ display:flex;gap:8px;overflow-x:auto;padding:10px 0 18px;
+ scrollbar-width:none;
 }
-nav button,.secondary{background:#243550;color:white}
-nav button.active,.primary{background:#76e4c2;color:#071a19}
+.nav button{
+ flex-shrink:0;background:var(--panel);color:white;
+ border:1px solid var(--line);border-radius:12px;padding:12px 16px;
+}
+.nav button.active{background:var(--accent);color:#071b17}
 .game{
- display:none;max-width:800px;margin:15px auto;
- padding:20px;background:#151e33;
- border:1px solid #30415f;border-radius:20px;
+ display:none;background:linear-gradient(145deg,#192741,#111a2c);
+ border:1px solid var(--line);border-radius:20px;
+ padding:20px;margin-bottom:20px;
+ box-shadow:0 15px 40px #0004;
 }
 .game.active{display:block}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h2{margin:0;font-size:25px}
+.description{color:var(--muted);font-size:13px}
+.primary,.secondary{
+ border:0;border-radius:11px;padding:11px 17px;font-weight:800;
+}
+.primary{background:var(--accent);color:#071b17}
+.secondary{background:#2a3c59;color:white}
+.stats{
+ display:flex;gap:17px;flex-wrap:wrap;color:var(--muted);
+ margin:15px 0;font-size:14px;
+}
+.stats b{color:white}
 canvas{
- width:100%;max-width:650px;background:#101a2c;
- border-radius:12px;touch-action:manipulation;
+ display:block;width:100%;max-width:700px;height:auto;
+ margin:15px auto;border-radius:14px;
+ border:1px solid #405575;touch-action:none;
 }
-.stats{color:#9eacc5;margin:15px}
-.big{font-size:45px;font-weight:bold;margin:20px}
-#reactionZone,#clickZone{
- width:100%;min-height:190px;font-size:25px;
- background:#243550;color:white;
+.center{text-align:center;padding:15px 5px}
+.big{font-size:clamp(35px,9vw,60px);font-weight:900}
+.hint{font-size:13px;color:var(--muted);line-height:1.5}
+.controls{
+ display:flex;justify-content:center;gap:9px;
+ flex-wrap:wrap;margin:14px auto;
 }
-.green{background:#176b58!important}
-.red{background:#8b3945!important}
+.control{
+ width:55px;height:50px;background:#293c59;color:white;
+ border:1px solid #455a78;border-radius:13px;font-size:22px;
+}
+.dpad{
+ display:grid;grid-template-columns:55px 55px 55px;
+ grid-template-rows:50px 50px 50px;
+ gap:6px;justify-content:center;margin:15px auto;
+}
+.dpad button{background:#293c59;color:white;border:1px solid #455a78;border-radius:12px;font-size:22px}
+.dpad .up{grid-column:2}
+.dpad .left{grid-column:1;grid-row:2}
+.dpad .down{grid-column:2;grid-row:2}
+.dpad .right{grid-column:3;grid-row:2}
+.tapzone{
+ width:100%;min-height:160px;border:0;border-radius:17px;
+ background:#293c59;color:white;font-size:24px;font-weight:900;
+}
+.green{background:#16805f!important}
+.red{background:#a13e50!important}
 .grid{
- display:grid;grid-template-columns:repeat(3,90px);
- justify-content:center;gap:10px;margin:20px;
+ display:grid;grid-template-columns:repeat(4,minmax(55px,85px));
+ justify-content:center;gap:9px;margin:20px auto;
 }
-.cell{height:90px;font-size:35px;background:#243550;color:white}
-#memoryGrid{
- display:grid;grid-template-columns:repeat(4,65px);
- justify-content:center;gap:8px;
+.card{
+ aspect-ratio:1;border-radius:12px;background:#293c59;
+ color:white;border:1px solid #49607e;font-size:29px;
 }
-.card{height:65px;font-size:25px;background:#243550;color:white}
-.meter{height:18px;background:#30415f;border-radius:20px;overflow:hidden;margin:20px}
-#micBar{height:100%;width:0;background:#76e4c2}
-footer{padding:30px;color:#71829e}
+.card.open{background:#386c73}
+.card.matched{background:#24654e}
+.meter{
+ max-width:550px;height:17px;background:#293b56;
+ border-radius:20px;overflow:hidden;margin:18px auto;
+}
+#micBar{
+ height:100%;width:0;
+ background:linear-gradient(90deg,#5be1b5,#e8d36d,#ff7180);
+ transition:width .06s;
+}
+.dashboard{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+ gap:10px;margin:15px 0;
+}
+.dashcard{
+ padding:15px;background:var(--panel);border:1px solid var(--line);
+ border-radius:14px;text-align:center;
+}
+.dashcard b{font-size:23px;display:block}
+.dashcard span{color:var(--muted);font-size:12px}
+footer{text-align:center;padding:25px;color:#71829e;font-size:12px}
+@media(max-width:480px){
+ .game{padding:14px}
+ .nav button{padding:11px 13px}
+ .stats{gap:11px}
+}
 </style>
 </head>
+
 <body>
 
 <header>
-<h1>MINI ARCADE</h1>
-<p>Welcome to your own browser gaming hub!</p>
+ <div class="version">ARCADE EXPERIENCE</div>
+ <h1>MINI ARCADE</h1>
+ <p>Your own collection of browser games.</p>
+ <p class="hint">VERSION 2.0</p>
 </header>
 
-<nav>
-<button class="active" onclick="showGame('flappy',this)">Flappy Bird</button>
-<button onclick="showGame('snake',this)">Snake</button>
-<button onclick="showGame('reaction',this)">Reaction Test</button>
-<button onclick="showGame('clicker',this)">Click Rush</button>
-<button onclick="showGame('memory',this)">Memory Match</button>
-<button onclick="showGame('mic',this)">Mic Meter</button>
+<main class="container">
+
+<section class="dashboard">
+ <div class="dashcard"><b id="totalGames">6</b><span>Games</span></div>
+ <div class="dashcard"><b id="totalRecords">0</b><span>Records saved</span></div>
+ <div class="dashcard"><b id="soundStatus">ON</b><span>Sound</span></div>
+ <div class="dashcard"><b>2.0</b><span>Version</span></div>
+</section>
+
+<div class="controls">
+ <button class="secondary" onclick="toggleSound()" id="soundButton">Sound: ON</button>
+ <button class="secondary" onclick="resetRecords()">Reset Records</button>
+</div>
+
+<nav class="nav">
+ <button class="active" onclick="openGame('flappy',this)">🐤 Flappy</button>
+ <button onclick="openGame('snake',this)">🐍 Snake</button>
+ <button onclick="openGame('reaction',this)">⚡ Reaction</button>
+ <button onclick="openGame('clicker',this)">👆 Click Rush</button>
+ <button onclick="openGame('memory',this)">🧠 Memory</button>
+ <button onclick="openGame('mic',this)">🎙 Mic Meter</button>
 </nav>
 
 <!-- FLAPPY BIRD -->
+
 <section class="game active" id="flappy">
-<h2>Flappy Bird</h2>
-<div class="stats">Score: <b id="fs">0</b> | Best: <b id="fb">0</b></div>
-<button class="primary" onclick="startFlappy()">Start Game</button>
-<p>Tap the canvas or press SPACE to fly!</p>
-<canvas id="fc" width="600" height="350"></canvas>
+ <div class="heading">
+  <div><h2>Flappy Bird</h2><p class="description">Fly through the pipes!</p></div>
+  <button class="primary" onclick="startFlappy()">Start / Restart</button>
+ </div>
+ <div class="stats">
+  <span>Score: <b id="fs">0</b></span>
+  <span>Best: <b id="fb">0</b></span>
+ </div>
+ <canvas id="fc" width="700" height="400"></canvas>
+ <div class="controls">
+  <button class="primary" onclick="flap()">FLAP!</button>
+  <button class="secondary" onclick="pauseFlappy()">Pause</button>
+ </div>
+ <p class="hint">Tap the screen, press Space, or use FLAP.</p>
 </section>
 
 <!-- SNAKE -->
+
 <section class="game" id="snake">
-<h2>Snake</h2>
-<div class="stats">Score: <b id="ss">0</b></div>
-<button class="primary" onclick="startSnake()">Start Game</button>
-<p>Use arrow keys to move.</p>
-<canvas id="sc" width="400" height="400"></canvas>
+ <div class="heading">
+  <div><h2>Snake</h2><p class="description">Eat the food and grow!</p></div>
+  <button class="primary" onclick="startSnake()">Restart</button>
+ </div>
+ <div class="stats">
+  <span>Score: <b id="ss">0</b></span>
+  <span>Best: <b id="sb">0</b></span>
+ </div>
+ <canvas id="sc" width="400" height="400"></canvas>
+ <div class="dpad">
+  <button class="up" onclick="setDirection(0,-1)">↑</button>
+  <button class="left" onclick="setDirection(-1,0)">←</button>
+  <button class="down" onclick="setDirection(0,1)">↓</button>
+  <button class="right" onclick="setDirection(1,0)">→</button>
+ </div>
+ <p class="hint">Mobile: use the D-pad or swipe on the game. Desktop: arrow keys.</p>
 </section>
 
 <!-- REACTION -->
+
 <section class="game" id="reaction">
-<h2>Reaction Test</h2>
-<p>Wait until the screen turns green!</p>
-<button class="primary" onclick="startReaction()">Start Test</button>
-<button id="reactionZone" onclick="reactionClick()">WAIT...</button>
-<div class="big" id="reactionResult">---</div>
+ <div class="heading"><h2>Reaction Test</h2></div>
+ <p class="description">Test how quickly you can react.</p>
+ <div class="stats">
+  <span>Best: <b id="rb">---</b></span>
+ </div>
+ <button class="primary" onclick="startReaction()">Start Test</button>
+ <div class="center">
+  <button class="tapzone" id="reactionZone" onclick="reactionClick()">READY?</button>
+  <div class="big" id="reactionResult">---</div>
+  <p class="hint" id="reactionMessage">Wait for green!</p>
+ </div>
 </section>
 
 <!-- CLICK RUSH -->
+
 <section class="game" id="clicker">
-<h2>Click Rush</h2>
-<p>Get as many clicks as possible in 10 seconds!</p>
-<div class="stats">
-Time: <b id="ct">10</b> |
-Clicks: <b id="cs">0</b>
-</div>
-<button class="primary" onclick="startClick()">Start Round</button>
-<button id="clickZone" onclick="addClick()" disabled>CLICK!</button>
+ <h2>Click Rush</h2>
+ <p class="description">10 seconds. Maximum clicks. Go!</p>
+ <div class="stats">
+  <span>Time: <b id="ct">10.0</b></span>
+  <span>Clicks: <b id="cs">0</b></span>
+  <span>CPS: <b id="cps">0</b></span>
+  <span>Best: <b id="cb">0</b></span>
+ </div>
+ <button class="primary" onclick="startClick()">Start Round</button>
+ <div class="center">
+  <button class="tapzone" id="clickZone" onclick="addClick()" disabled>CLICK!</button>
+ </div>
+ <p class="hint" id="clickMessage">Get ready!</p>
 </section>
 
 <!-- MEMORY -->
+
 <section class="game" id="memory">
-<h2>Memory Match</h2>
-<p>Find all matching pairs!</p>
-<div class="stats">Moves: <b id="moves">0</b></div>
-<div id="memoryGrid"></div>
-<button class="primary" onclick="resetMemory()">Shuffle</button>
+ <h2>Memory Match</h2>
+ <p class="description">Find all matching pairs.</p>
+ <div class="controls">
+  <select id="memoryDifficulty" onchange="resetMemory()" class="secondary">
+   <option value="6">Easy: 6 pairs</option>
+   <option value="8" selected>Normal: 8 pairs</option>
+   <option value="10">Hard: 10 pairs</option>
+  </select>
+  <button class="primary" onclick="resetMemory()">Shuffle</button>
+ </div>
+ <div class="stats">
+  <span>Moves: <b id="moves">0</b></span>
+  <span>Pairs: <b id="pairs">0</b></span>
+  <span>Time: <b id="memoryTime">0</b>s</span>
+ </div>
+ <div class="grid" id="memoryGrid"></div>
+ <p class="hint" id="memoryMessage">Find the pairs!</p>
 </section>
 
 <!-- MICROPHONE -->
+
 <section class="game" id="mic">
-<h2>Microphone Volume Meter</h2>
-<div class="big"><span id="volume">0</span>%</div>
-<div class="meter"><div id="micBar"></div></div>
-<button class="primary" onclick="startMic()">Enable Microphone</button>
-<button class="secondary" onclick="stopMic()">Stop</button>
-<p id="micStatus">Microphone is off.</p>
+ <h2>Mic Volume Meter</h2>
+ <p class="description">Your voice controls the volume meter.</p>
+ <div class="center">
+  <div class="big"><span id="volume">0</span>%</div>
+  <div class="meter"><div id="micBar"></div></div>
+  <p id="micLevel">Quiet</p>
+  <button class="primary" onclick="startMic()">Enable Microphone</button>
+  <button class="secondary" onclick="stopMic()">Stop</button>
+  <p class="hint" id="micStatus">Microphone is off.</p>
+ </div>
 </section>
 
-<footer>MINI ARCADE | Version 1.0</footer>
+</main>
+
+<footer>MINI ARCADE 2.0 · Built with HTML, CSS & JavaScript</footer>
 
 <script>
-// GAME NAVIGATION
+// SHARED SYSTEMS
+
+const $=id=>document.getElementById(id);
+let soundEnabled=true;
+let audio=null;
+
+function beep(freq=500,duration=.08){
+ if(!soundEnabled)return;
+ try{
+  audio=audio||new AudioContext();
+  const osc=audio.createOscillator();
+  const gain=audio.createGain();
+  osc.frequency.value=freq;
+  gain.gain.value=.045;
+  osc.connect(gain);gain.connect(audio.destination);
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);
+  osc.stop(audio.currentTime+duration);
+ }catch(e){}
+}
+
+function getBest(key){
+ return Number(localStorage.getItem("ma_"+key)||0);
+}
+function saveBest(key,value,lower=false){
+ const old=getBest(key);
+ const next=lower?(old===0?value:Math.min(old,value)):Math.max(old,value);
+ localStorage.setItem("ma_"+key,next);
+ updateDashboard();
+ return next;
+}
+function updateDashboard(){
+ let keys=["flappy","snake","reaction","clicker","memory"];
+ let count=keys.filter(k=>getBest(k)>0).length;
+ $("totalRecords").textContent=count;
+ $("fb").textContent=getBest("flappy");
+ $("sb").textContent=getBest("snake");
+ $("rb").textContent=getBest("reaction")?getBest("reaction")+" ms":"---";
+ $("cb").textContent=getBest("clicker");
+}
+function toggleSound(){
+ soundEnabled=!soundEnabled;
+ $("soundButton").textContent="Sound: "+(soundEnabled?"ON":"OFF");
+ $("soundStatus").textContent=soundEnabled?"ON":"OFF";
+}
+function resetRecords(){
+ if(!confirm("Reset all arcade records?"))return;
+ ["flappy","snake","reaction","clicker","memory"].forEach(k=>localStorage.removeItem("ma_"+k));
+ updateDashboard();
+}
 let currentGame="flappy";
 
-function showGame(id,button){
+function openGame(id,button){
  stopFlappy();
  stopSnake();
  stopMic();
 
  document.querySelectorAll(".game").forEach(g=>g.classList.remove("active"));
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
 
- document.getElementById(id).classList.add("active");
+ $(id).classList.add("active");
  button.classList.add("active");
  currentGame=id;
 }
+updateDashboard();
 
-// FLAPPY BIRD
-const fc=document.getElementById("fc");
-const fx=fc.getContext("2d");
 
-let bird,pipes,score,playing=false,flapLoop;
+// FLAPPY BIRD 2.0
+
+const fc=$("fc"),fx=fc.getContext("2d");
+let bird,pipes,fscore=0,fstate="idle",fraf=0,lastTime=0;
+let fcloud=0;
 
 function startFlappy(){
- stopFlappy();
- bird={x:100,y:160,v:0};
- pipes=[{x:600,gap:170}];
- score=0;
- playing=true;
- document.getElementById("fs").textContent=0;
- flapLoop=setInterval(updateFlappy,25);
+ cancelAnimationFrame(fraf);
+ bird={x:145,y:180,velocity:0};
+ pipes=[];
+ fscore=0;
+ fstate="playing";
+ lastTime=0;
+ for(let i=0;i<3;i++)pipes.push({
+  x:450+i*270,gap:125+Math.random()*150,passed:false
+ });
+ $("fs").textContent=0;
+ fraf=requestAnimationFrame(flapFrame);
+ beep(500);
 }
-
-function stopFlappy(){
- playing=false;
- clearInterval(flapLoop);
-}
-
 function flap(){
- if(playing) bird.v=-6;
+ if(fstate==="playing"){
+  bird.velocity=-7;
+  beep(650,.04);
+ }
 }
+function pauseFlappy(){
+ if(fstate==="playing"){
+  fstate="paused";cancelAnimationFrame(fraf);
+  drawFlappy();
+ }else if(fstate==="paused"){
+  fstate="playing";lastTime=0;
+  fraf=requestAnimationFrame(flapFrame);
+ }
+}
+function stopFlappy(){
+ if(fstate==="playing"||fstate==="paused"){
+  fstate="idle";cancelAnimationFrame(fraf);
+ }
+}
+function endFlappy(){
+ fstate="over";
+ cancelAnimationFrame(fraf);
+ saveBest("flappy",fscore);
+ drawFlappy();
+ beep(150,.2);
+}
+function drawFlappy(){
+ const w=700,h=400;
+ fx.clearRect(0,0,w,h);
+ let sky=fx.createLinearGradient(0,0,0,h);
+ sky.addColorStop(0,"#183c61");
+ sky.addColorStop(1,"#8bb6bd");
+ fx.fillStyle=sky;fx.fillRect(0,0,w,h);
 
-fc.onclick=flap;
+ // Clouds
+ fx.fillStyle="#ffffff55";
+ for(let i=0;i<5;i++){
+  let x=(i*180-fcloud%180+750)%750;
+  fx.beginPath();fx.arc(x,65+i%3*45,20,0,7);
+  fx.arc(x+25,65+i%3*45,25,0,7);
+  fx.arc(x+50,65+i%3*45,18,0,7);
+  fx.fill();
+ }
+ // Pipes
+ pipes.forEach(p=>{
+  let top=p.gap-72,bottom=p.gap+72;
+  fx.fillStyle="#36b979";
+  fx.fillRect(p.x,0,65,top);
+  fx.fillRect(p.x,bottom,65,h-bottom);
+  fx.fillStyle="#21865d";
+  fx.fillRect(p.x-5,top-15,75,15);
+  fx.fillRect(p.x-5,bottom,75,15);
+ });
+ // Ground
+ fx.fillStyle="#a17a50";fx.fillRect(0,375,700,25);
+ fx.fillStyle="#64bd76";fx.fillRect(0,375,700,8);
+
+ // Bird
+ if(bird){
+  fx.save();
+  fx.translate(bird.x,bird.y);
+  fx.rotate(Math.min(.7,Math.max(-.5,bird.velocity*.07)));
+  fx.fillStyle="#ffda69";
+  fx.beginPath();fx.arc(0,0,17,0,7);fx.fill();
+  fx.fillStyle="#fff";
+  fx.beginPath();fx.arc(7,-6,6,0,7);fx.fill();
+  fx.fillStyle="#172238";
+  fx.beginPath();fx.arc(9,-6,2.5,0,7);fx.fill();
+  fx.fillStyle="#ff895e";
+  fx.beginPath();fx.moveTo(15,0);fx.lineTo(29,5);fx.lineTo(15,9);fx.fill();
+  fx.restore();
+ }
+ if(fstate!=="playing"){
+  fx.fillStyle="#081322bb";fx.fillRect(0,0,w,h);
+  fx.fillStyle="white";fx.textAlign="center";
+  fx.font="bold 30px Arial";
+  fx.fillText(fstate==="over"?"GAME OVER":fstate==="paused"?"PAUSED":"FLAPPY BIRD",350,180);
+  fx.font="16px Arial";
+  fx.fillText(fstate==="over"?"Press Restart to play again":"Tap Start to begin",350,215);
+ }
+}
+function flapFrame(t){
+ if(fstate!=="playing")return;
+ let dt=Math.min((t-lastTime)/16.67||1,2);
+ lastTime=t;
+ bird.velocity+=.34*dt;
+ bird.y+=bird.velocity*dt;
+ fcloud+=dt;
+
+ pipes.forEach(p=>{
+  p.x-=3.1*dt;
+  if(!p.passed&&p.x+65<bird.x){
+   p.passed=true;fscore++;
+   $("fs").textContent=fscore;beep(800,.06);
+  }
+ });
+ if(pipes[pipes.length-1].x<350){
+  pipes.push({x:700,gap:105+Math.random()*165,passed:false});
+ }
+ pipes=pipes.filter(p=>p.x>-80);
+
+ let collision=bird.y<15||bird.y>360;
+ for(let p of pipes){
+  if(bird.x+13>p.x&&bird.x-13<p.x+65&&
+  (bird.y-13<p.gap-72||bird.y+13>p.gap+72))collision=true;
+ }
+ if(collision){endFlappy();return;}
+ drawFlappy();
+ fraf=requestAnimationFrame(flapFrame);
+}
+fc.addEventListener("pointerdown",e=>{e.preventDefault();flap()});
 document.addEventListener("keydown",e=>{
- if(e.code==="Space" && currentGame==="flappy"){
- e.preventDefault();flap();
+ if(currentGame==="flappy"&&e.code==="Space"){
+  e.preventDefault();flap();
  }
 });
+drawFlappy();
 
-function updateFlappy(){
- if(!playing)return;
 
- bird.v+=0.3;
- bird.y+=bird.v;
+// SNAKE 2.0
 
- pipes.forEach(p=>p.x-=3);
-
- if(pipes[pipes.length-1].x<350){
- pipes.push({x:600,gap:80+Math.random()*190});
- }
-
- if(pipes[0].x<-60)pipes.shift();
-
- for(let p of pipes){
- if(bird.x+12>p.x&&bird.x-12<p.x+55){
- if(bird.y-12<p.gap-65||bird.y+12>p.gap+65){
- stopFlappy();return;
- }
- }
- if(p.x+55<bird.x&&!p.counted){
- p.counted=true;score++;
- document.getElementById("fs").textContent=score;
- }
- }
-
- if(bird.y<0||bird.y>330){
- stopFlappy();return;
- }
-
- fx.fillStyle="#172d49";
- fx.fillRect(0,0,600,350);
-
- fx.fillStyle="#48bd83";
- pipes.forEach(p=>{
- fx.fillRect(p.x,0,55,p.gap-65);
- fx.fillRect(p.x,p.gap+65,55,350);
- });
-
- fx.fillStyle="#f5d46b";
- fx.beginPath();
- fx.arc(bird.x,bird.y,12,0,Math.PI*2);
- fx.fill();
-}
-
-// SNAKE
-const sc=document.getElementById("sc");
-const sx=sc.getContext("2d");
-let snake,food,dx,dy,snakeLoop,snakePlaying=false,snakeScore=0;
+const sc=$("sc"),sx=sc.getContext("2d");
+let snake,food,dx=1,dy=0,nextX=1,nextY=0;
+let snakeScore=0,snakeLoop=null,snakePlaying=false;
 
 function startSnake(){
  stopSnake();
- snake=[{x:10,y:10},{x:9,y:10}];
- dx=1;dy=0;
+ snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+ dx=1;dy=0;nextX=1;nextY=0;
  snakeScore=0;
+ $("ss").textContent=0;
  placeFood();
  snakePlaying=true;
- snakeLoop=setInterval(updateSnake,110);
+ snakeLoop=setInterval(snakeStep,115);
+ drawSnake();
 }
-
 function stopSnake(){
- snakePlaying=false;
- clearInterval(snakeLoop);
+ snakePlaying=false;clearInterval(snakeLoop);
 }
-
 function placeFood(){
+ do{
  food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};
+ }while(snake.some(p=>p.x===food.x&&p.y===food.y));
 }
-
-document.addEventListener("keydown",e=>{
- if(currentGame!=="snake")return;
- if(e.key==="ArrowUp"&&dy!==1){dx=0;dy=-1}
- if(e.key==="ArrowDown"&&dy!==-1){dx=0;dy=1}
- if(e.key==="ArrowLeft"&&dx!==1){dx=-1;dy=0}
- if(e.key==="ArrowRight"&&dx!==-1){dx=1;dy=0}
-});
-
-function updateSnake(){
+function setDirection(x,y){
+ if(x===-dx&&y===-dy)return;
+ nextX=x;nextY=y;
+}
+function snakeStep(){
+ dx=nextX;dy=nextY;
  let head={x:snake[0].x+dx,y:snake[0].y+dy};
-
  if(head.x<0||head.y<0||head.x>=20||head.y>=20||
  snake.some(p=>p.x===head.x&&p.y===head.y)){
- stopSnake();return;
+ stopSnake();saveBest("snake",snakeScore);beep(150,.2);return;
  }
-
  snake.unshift(head);
-
  if(head.x===food.x&&head.y===food.y){
- snakeScore++;
- document.getElementById("ss").textContent=snakeScore;
- placeFood();
+  snakeScore++;
+  $("ss").textContent=snakeScore;
+  placeFood();beep(700,.05);
+  if(snakeLoop){clearInterval(snakeLoop);snakeLoop=setInterval(snakeStep,Math.max(55,115-snakeScore*2));}
  }else snake.pop();
-
- sx.fillStyle="#101a2c";
- sx.fillRect(0,0,400,400);
-
- sx.fillStyle="#ff707b";
- sx.fillRect(food.x*20,food.y*20,20,20);
-
- sx.fillStyle="#76e4c2";
- snake.forEach(p=>sx.fillRect(p.x*20,p.y*20,19,19));
+ drawSnake();
 }
+function drawSnake(){
+ sx.fillStyle="#101a2b";sx.fillRect(0,0,400,400);
+ sx.strokeStyle="#1b2a42";
+ for(let i=0;i<=20;i++){
+  sx.beginPath();sx.moveTo(i*20,0);sx.lineTo(i*20,400);sx.stroke();
+  sx.beginPath();sx.moveTo(0,i*20);sx.lineTo(400,i*20);sx.stroke();
+ }
+ if(food){
+  sx.fillStyle="#ff7683";
+  sx.beginPath();sx.arc(food.x*20+10,food.y*20+10,8,0,7);sx.fill();
+ }
+ if(snake)snake.forEach((p,i)=>{
+  sx.fillStyle=i===0?"#91f5d0":"#43bb94";
+  sx.fillRect(p.x*20+2,p.y*20+2,16,16);
+ });
+}
+document.addEventListener("keydown",e=>{
+ if(currentGame!=="snake")return;
+ const keys={
+ ArrowUp:[0,-1],ArrowDown:[0,1],
+ ArrowLeft:[-1,0],ArrowRight:[1,0]
+ };
+ if(keys[e.key]){e.preventDefault();setDirection(...keys[e.key]);}
+});
+let touchStart=null;
+sc.addEventListener("touchstart",e=>{
+ const t=e.changedTouches[0];touchStart={x:t.clientX,y:t.clientY};
+},{passive:true});
+sc.addEventListener("touchend",e=>{
+ if(!touchStart)return;
+ const t=e.changedTouches[0],x=t.clientX-touchStart.x,y=t.clientY-touchStart.y;
+ if(Math.max(Math.abs(x),Math.abs(y))>20){
+  if(Math.abs(x)>Math.abs(y))setDirection(x>0?1:-1,0);
+  else setDirection(0,y>0?1:-1);
+ }
+ touchStart=null;
+},{passive:true});
+drawSnake();
 
-// REACTION TEST
-let reactionState="idle",reactionStartTime=0,reactionTimer;
 
+// REACTION TEST 2.0
+
+let reactionState="idle",reactionTimer=null,reactionStarted=0;
 function startReaction(){
  clearTimeout(reactionTimer);
  reactionState="wait";
- const zone=document.getElementById("reactionZone");
- zone.textContent="WAIT...";
- zone.className="red";
- document.getElementById("reactionResult").textContent="...";
+ $("reactionZone").className="tapzone red";
+ $("reactionZone").textContent="WAIT...";
+ $("reactionResult").textContent="...";
+ $("reactionMessage").textContent="Wait for the green signal!";
  reactionTimer=setTimeout(()=>{
- reactionState="go";
- reactionStartTime=performance.now();
- zone.textContent="CLICK NOW!";
- zone.className="green";
- },1500+Math.random()*3000);
+  if(reactionState!=="wait")return;
+  reactionState="go";
+  reactionStarted=performance.now();
+  $("reactionZone").className="tapzone green";
+  $("reactionZone").textContent="TAP NOW!";
+ },1500+Math.random()*3500);
 }
-
 function reactionClick(){
- const zone=document.getElementById("reactionZone");
-
  if(reactionState==="wait"){
- clearTimeout(reactionTimer);
- reactionState="idle";
- zone.textContent="Too early!";
- zone.className="";
- return;
- }
-
- if(reactionState==="go"){
- let result=Math.round(performance.now()-reactionStartTime);
- document.getElementById("reactionResult").textContent=result+" ms";
- zone.textContent="Try again";
- zone.className="";
- reactionState="idle";
+  clearTimeout(reactionTimer);
+  reactionState="idle";
+  $("reactionZone").className="tapzone";
+  $("reactionZone").textContent="TOO EARLY!";
+  $("reactionResult").textContent="False start!";
+  $("reactionMessage").textContent="Wait for green before tapping.";
+  beep(180);
+ }else if(reactionState==="go"){
+  let result=Math.round(performance.now()-reactionStarted);
+  reactionState="idle";
+  $("reactionZone").className="tapzone";
+  $("reactionZone").textContent="TRY AGAIN";
+  $("reactionResult").textContent=result+" ms";
+  $("reactionMessage").textContent="Great reaction!";
+  saveBest("reaction",result,true);
+  beep(700);
  }
 }
 
-// CLICK RUSH
-let clicks=0,clickTime=10,clickTimer,clickPlaying=false;
+// CLICK RUSH 2.0
 
+let clicks=0,clickRunning=false,clickTimer=null,clickEnd=0;
 function startClick(){
  clearInterval(clickTimer);
- clicks=0;clickTime=10;clickPlaying=true;
- document.getElementById("cs").textContent=0;
- document.getElementById("ct").textContent=10;
- document.getElementById("clickZone").disabled=false;
-
+ clicks=0;clickRunning=true;
+ clickEnd=Date.now()+10000;
+ $("cs").textContent=0;$("cps").textContent=0;
+ $("ct").textContent="10.0";
+ $("clickZone").disabled=false;
+ $("clickMessage").textContent="GO!";
  clickTimer=setInterval(()=>{
- clickTime-=0.1;
- document.getElementById("ct").textContent=Math.max(0,clickTime).toFixed(1);
- if(clickTime<=0){
- clearInterval(clickTimer);
- clickPlaying=false;
- document.getElementById("clickZone").disabled=true;
- }
- },100);
+  let left=Math.max(0,clickEnd-Date.now());
+  $("ct").textContent=(left/1000).toFixed(1);
+  $("cps").textContent=(clicks/Math.max(.01,(10-left/1000))).toFixed(1);
+  if(left<=0){
+   clearInterval(clickTimer);
+   clickRunning=false;
+   $("clickZone").disabled=true;
+   $("clickMessage").textContent="Finished! You scored "+clicks+" clicks.";
+   saveBest("clicker",clicks);
+   beep(700);
+  }
+ },50);
 }
-
 function addClick(){
- if(!clickPlaying)return;
+ if(!clickRunning)return;
  clicks++;
- document.getElementById("cs").textContent=clicks;
+ $("cs").textContent=clicks;
 }
 
-// MEMORY MATCH
-const symbols=["★","◆","●","▲","☀","♫"];
-let memoryCards=[],firstCard=null,locked=false,moves=0;
+// MEMORY MATCH 2.0
+
+const memorySymbols=["★","◆","●","▲","☀","♫","♣","♥","✿","⬟"];
+let memoryCards=[],firstCard=null,memoryLocked=false,moves=0,pairs=0;
+let memoryTimer=null,memorySeconds=0;
 
 function resetMemory(){
- memoryCards=[...symbols,...symbols].sort(()=>Math.random()-.5);
- firstCard=null;locked=false;moves=0;
- document.getElementById("moves").textContent=0;
- drawMemory();
+ clearInterval(memoryTimer);
+ let count=Number($("memoryDifficulty").value);
+ memoryCards=[...memorySymbols.slice(0,count),...memorySymbols.slice(0,count)]
+ .sort(()=>Math.random()-.5)
+ .map(s=>({symbol:s,open:false,matched:false}));
+ firstCard=null;memoryLocked=false;moves=0;pairs=0;memorySeconds=0;
+ $("moves").textContent=0;$("pairs").textContent="0 / "+count;
+ $("memoryTime").textContent=0;
+ $("memoryMessage").textContent="Find all the pairs!";
+ renderMemory();
+ memoryTimer=setInterval(()=>{
+  if(pairs===count){clearInterval(memoryTimer);return;}
+  memorySeconds++;
+  $("memoryTime").textContent=memorySeconds;
+ },1000);
 }
-
-function drawMemory(){
- const grid=document.getElementById("memoryGrid");
- grid.innerHTML="";
- memoryCards.forEach((symbol,i)=>{
- const b=document.createElement("button");
- b.className="card";
- b.textContent=symbol.open?symbol:"?";
- b.onclick=()=>flipMemory(i,b);
- grid.appendChild(b);
+function renderMemory(){
+ const grid=$("memoryGrid");grid.innerHTML="";
+ grid.style.gridTemplateColumns="repeat(4,minmax(55px,85px))";
+ memoryCards.forEach((c,i)=>{
+  let b=document.createElement("button");
+  b.className="card"+(c.open?" open":"")+(c.matched?" matched":"");
+  b.textContent=c.open||c.matched?c.symbol:"?";
+  b.disabled=c.matched;
+  b.onclick=()=>flipMemory(i);
+  grid.appendChild(b);
  });
 }
-
-function flipMemory(i,button){
- if(locked||memoryCards[i].open)return;
-
- memoryCards[i].open=true;
- button.textContent=memoryCards[i];
-
- if(firstCard===null){
- firstCard=i;
- return;
+function flipMemory(i){
+ let c=memoryCards[i];
+ if(memoryLocked||c.open||c.matched)return;
+ c.open=true;renderMemory();
+ if(firstCard===null){firstCard=i;return;}
+ moves++;$("moves").textContent=moves;
+ let previous=firstCard;firstCard=null;
+ if(memoryCards[previous].symbol===c.symbol){
+  memoryCards[previous].matched=true;c.matched=true;
+  pairs++;
+  $("pairs").textContent=pairs+" / "+Number($("memoryDifficulty").value);
+  beep(750);
+  renderMemory();
+  if(pairs===Number($("memoryDifficulty").value)){
+   clearInterval(memoryTimer);
+   $("memoryMessage").textContent="YOU WON! Completed in "+moves+" moves and "+memorySeconds+" seconds.";
+   saveBest("memory",moves,true);
+  }
+ }else{
+  memoryLocked=true;
+  beep(250);
+  setTimeout(()=>{
+   memoryCards[previous].open=false;
+   c.open=false;
+   memoryLocked=false;
+   renderMemory();
+  },750);
  }
-
- moves++;
- document.getElementById("moves").textContent=moves;
-
- if(memoryCards[firstCard]===memoryCards[i]){
- firstCard=null;
- return;
- }
-
- locked=true;
- let old=firstCard;
- firstCard=null;
-
- setTimeout(()=>{
- memoryCards[old].open=false;
- memoryCards[i].open=false;
- locked=false;
- drawMemory();
- },750);
 }
-
 resetMemory();
 
-// MICROPHONE VOLUME METER
-let micStream=null,micContext=null,micAnalyser=null,micAnimation=null;
+
+// MICROPHONE 2.0
+
+let micStream=null,micContext=null,micAnalyser=null,micRAF=null;
 
 async function startMic(){
- try{
  if(!navigator.mediaDevices?.getUserMedia){
- document.getElementById("micStatus").textContent="Open this page using HTTPS or localhost.";
- return;
+  $("micStatus").textContent="Microphone requires HTTPS or localhost.";
+  return;
  }
-
- micStream=await navigator.mediaDevices.getUserMedia({audio:true});
- micContext=new(window.AudioContext||window.webkitAudioContext)();
- await micContext.resume();
-
- micAnalyser=micContext.createAnalyser();
- micAnalyser.fftSize=1024;
-
- micContext.createMediaStreamSource(micStream).connect(micAnalyser);
-
- let data=new Uint8Array(micAnalyser.fftSize);
-
- function measure(){
- micAnalyser.getByteTimeDomainData(data);
- let sum=0;
-
- for(let value of data){
- let v=(value-128)/128;
- sum+=v*v;
- }
-
- let rms=Math.sqrt(sum/data.length);
- let volume=Math.min(100,Math.round(Math.pow(rms*260,.85)));
-
- document.getElementById("volume").textContent=volume;
- document.getElementById("micBar").style.width=volume+"%";
-
- micAnimation=requestAnimationFrame(measure);
- }
-
- document.getElementById("micStatus").textContent="Microphone active!";
- measure();
-
- }catch(e){
- document.getElementById("micStatus").textContent="Microphone permission denied or unavailable.";
  stopMic();
+ try{
+  micStream=await navigator.mediaDevices.getUserMedia({audio:{
+   echoCancellation:true,noiseSuppression:true,autoGainControl:false
+  }});
+  micContext=new(window.AudioContext||window.webkitAudioContext)();
+  await micContext.resume();
+  micAnalyser=micContext.createAnalyser();
+  micAnalyser.fftSize=1024;
+  micAnalyser.smoothingTimeConstant=.7;
+  micContext.createMediaStreamSource(micStream).connect(micAnalyser);
+  let data=new Uint8Array(micAnalyser.fftSize);
+  $("micStatus").textContent="Microphone active!";
+  function measure(){
+   micAnalyser.getByteTimeDomainData(data);
+   let sum=0;
+   for(let v of data){
+    let n=(v-128)/128;sum+=n*n;
+   }
+   let rms=Math.sqrt(sum/data.length);
+   let volume=Math.min(100,Math.round(Math.pow(rms*260,.85)));
+   $("volume").textContent=volume;
+   $("micBar").style.width=volume+"%";
+   $("micLevel").textContent=volume<5?"Very quiet":volume<30?"Quiet":volume<65?"Medium":"Loud!";
+   micRAF=requestAnimationFrame(measure);
+  }
+  measure();
+ }catch(e){
+  stopMic();
+  $("micStatus").textContent="Could not access microphone. Check browser permissions.";
  }
 }
-
 function stopMic(){
- if(micAnimation)cancelAnimationFrame(micAnimation);
- micAnimation=null;
-
+ if(micRAF)cancelAnimationFrame(micRAF);
+ micRAF=null;
  if(micStream)micStream.getTracks().forEach(t=>t.stop());
  micStream=null;
-
  if(micContext&&micContext.state!=="closed")micContext.close();
  micContext=null;
-
- document.getElementById("volume").textContent=0;
- document.getElementById("micBar").style.width="0%";
- document.getElementById("micStatus").textContent="Microphone is off.";
+ $("volume").textContent=0;
+ $("micBar").style.width="0%";
+ $("micLevel").textContent="Quiet";
+ $("micStatus").textContent="Microphone is off.";
 }
 
 window.addEventListener("pagehide",()=>{
