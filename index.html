@@ -1,1733 +1,265 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080d19">
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>MINI ARCADE 4.1</title>
-
 <style>
-:root {
-  --bg:#080d19;
-  --panel:#111b2e;
-  --panel2:#192842;
-  --line:#2c405e;
-  --text:#eef4ff;
-  --muted:#9aabc5;
-  --accent:#65a8ff;
-  --green:#4ade80;
-  --red:#fb7185;
-}
-
-* {
-  box-sizing:border-box;
-}
-
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-}
-
-button {
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  padding:11px 15px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-button:hover {
-  border-color:var(--accent);
-}
-
-button:disabled {
-  opacity:.45;
-  cursor:not-allowed;
-}
-
-header {
-  padding:18px;
-  text-align:center;
-  border-bottom:1px solid var(--line);
-  background:#0d1525;
-}
-
-header h1 {
-  margin:0;
-  color:var(--accent);
-  letter-spacing:2px;
-}
-
-header p {
-  color:var(--muted);
-  margin:7px 0 0;
-}
-
-nav {
-  display:flex;
-  gap:8px;
-  padding:12px;
-  overflow-x:auto;
-  border-bottom:1px solid var(--line);
-}
-
-nav button {
-  flex-shrink:0;
-}
-
-nav button.active {
-  background:var(--accent);
-  color:#07111f;
-}
-
-main {
-  max-width:950px;
-  margin:auto;
-  padding:18px;
-}
-
-.page {
-  display:none;
-}
-
-.page.active {
-  display:block;
-}
-
-.panel {
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:15px;
-  padding:18px;
-  margin-bottom:15px;
-}
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
-  gap:12px;
-}
-
-.game-card {
-  background:var(--panel2);
-  padding:18px;
-  border:1px solid var(--line);
-  border-radius:13px;
-  cursor:pointer;
-  text-align:center;
-}
-
-.game-card h3 {
-  margin:5px 0;
-}
-
-.game-card p {
-  color:var(--muted);
-  font-size:13px;
-}
-
-canvas {
-  display:block;
-  width:100%;
-  max-width:500px;
-  margin:15px auto;
-  background:#07111f;
-  border:1px solid var(--line);
-  border-radius:12px;
-  touch-action:manipulation;
-}
-
-.stats {
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin:12px 0;
-}
-
-.stat {
-  background:var(--panel2);
-  padding:10px 14px;
-  border-radius:9px;
-}
-
-.muted {
-  color:var(--muted);
-}
-
-.success {
-  color:var(--green);
-}
-
-.danger {
-  color:var(--red);
-}
-
-.cheat-row {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding:12px 0;
-  border-bottom:1px solid var(--line);
-}
-
-.cheat-row:last-child {
-  border-bottom:0;
-}
-
-.cheat-row small {
-  display:block;
-  color:var(--muted);
-  margin-top:4px;
-}
-
-.toggle.on {
-  background:#14532d;
-  border-color:var(--green);
-}
-
-.toggle.off {
-  background:#351824;
-  border-color:var(--red);
-}
-
-footer {
-  text-align:center;
-  padding:25px;
-  color:var(--muted);
-}
-
-@media(max-width:500px) {
-  main {
-    padding:12px;
-  }
-
-  .panel {
-    padding:13px;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>MINI ARCADE</h1>
-  <p>Version 4.1 | Six games. One arcade.</p>
-</header>
-
-<nav id="navigation">
-  <button class="active" data-page="home">Home</button>
-  <button data-page="achievements">Achievements</button>
-  <button data-page="stats">Statistics</button>
-  <button data-page="dev">Dev Panel</button>
-</nav>
-
-<main>
-
-<section id="home" class="page active">
-  <div class="panel">
-    <h2>Welcome to Mini Arcade!</h2>
-    <p class="muted">Choose a game to start playing.</p>
-    <div class="grid">
-      <div class="game-card" onclick="openGame('flappy')">
-        <h3>Flappy Bird</h3>
-        <p>Fly through the pipes.</p>
-      </div>
-
-      <div class="game-card" onclick="openGame('snake')">
-        <h3>Snake</h3>
-        <p>Collect food and grow.</p>
-      </div>
-
-      <div class="game-card" onclick="openGame('reaction')">
-        <h3>Reaction Test</h3>
-        <p>Test your reaction speed.</p>
-      </div>
-
-      <div class="game-card" onclick="openGame('clickrush')">
-        <h3>Click Rush</h3>
-        <p>Click as quickly as possible.</p>
-      </div>
-
-      <div class="game-card" onclick="openGame('memory')">
-        <h3>Memory Match</h3>
-        <p>Find matching pairs.</p>
-      </div>
-
-      <div class="game-card" onclick="openGame('mic')">
-        <h3>Mic Meter</h3>
-        <p>Explore microphone input.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="achievements" class="page">
-  <div class="panel">
-    <h2>Achievements</h2>
-    <p id="achievementCount" class="muted">0 unlocked</p>
-    <div id="achievementList"></div>
-  </div>
-</section>
-
-<section id="stats" class="page">
-  <div class="panel">
-    <h2>Arcade Statistics</h2>
-    <div id="statsContent"></div>
-  </div>
-</section>
-
-<section id="dev" class="page">
-  <div class="panel">
-    <h2>Developer Panel</h2>
-    <p class="muted">Testing controls and game cheats.</p>
-    <div id="devContent"></div>
-  </div>
-</section>
-
-<section id="game" class="page">
-  <div class="panel">
-    <button onclick="goHome()">← Back to Arcade</button>
-    <h2 id="gameTitle">Game</h2>
-    <div id="gameContent"></div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  MINI ARCADE 4.1
-</footer>
-
+:root{--bg:#080d19;--p1:#111b2e;--p2:#192842;--ac:#65a8ff;--ok:#3ddc84;--bad:#ff5c6c;--tx:#e8f0ff;--mu:#8fa3c7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+header{padding:16px 14px 8px;text-align:center}
+h1{margin:0 0 10px;font-size:clamp(24px,7vw,38px);letter-spacing:2px;color:var(--ac)}
+nav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+nav button{background:var(--p1);color:var(--mu);border:1px solid var(--p2);border-radius:12px;padding:10px 14px;font-size:15px;cursor:pointer}
+nav button.on{background:var(--ac);color:#06101f;font-weight:700;border-color:var(--ac)}
+main{max-width:760px;margin:0 auto;padding:10px 14px 40px}
+.hidden{display:none!important}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.card{background:var(--p1);border:1px solid var(--p2);border-radius:16px;padding:18px 12px;text-align:center;cursor:pointer;transition:transform .15s,border-color .15s;color:var(--tx);font-size:15px}
+.card:hover{transform:translateY(-3px);border-color:var(--ac)}
+.card .i{font-size:38px;display:block;margin-bottom:6px}.card small{display:block;color:var(--mu);margin-top:4px}
+.panel{background:var(--p1);border-radius:16px;padding:14px;margin-bottom:12px}
+.gh{display:flex;align-items:center;gap:10px;margin-bottom:10px}.gh b{font-size:18px}
+.btn{background:var(--ac);color:#06101f;border:0;border-radius:12px;padding:11px 16px;font-size:15px;font-weight:700;cursor:pointer}
+.btn.red{background:var(--bad);color:#fff}.btn.gr{background:var(--p2);color:var(--tx)}
+.cw,.arena{position:relative;width:100%;max-width:320px;margin:0 auto;background:var(--p2);border-radius:14px;overflow:hidden}
+canvas{display:block;width:100%;height:auto;touch-action:none;background:#0d1a30}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(8,13,25,.72);text-align:center;padding:10px}
+.bar{display:flex;justify-content:space-between;max-width:320px;margin:8px auto;color:var(--mu)}
+.pad{display:grid;grid-template-columns:repeat(3,60px);gap:6px;justify-content:center;margin-top:10px}
+.pad button{height:54px;font-size:22px;background:var(--p2);color:var(--tx);border:0;border-radius:12px}
+.rbox{height:240px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;text-align:center;background:var(--p2);cursor:pointer;user-select:none;padding:10px}
+.rbox.wait{background:var(--bad)}.rbox.go{background:var(--ok);color:#04210f}
+.arena{height:300px}.tg{position:absolute;width:56px;height:56px;font-size:28px;border:0;border-radius:50%;background:var(--bad);cursor:pointer;touch-action:manipulation}
+.mg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:340px;margin:10px auto}
+.mc{aspect-ratio:1;font-size:30px;border:0;border-radius:12px;background:var(--p2);color:var(--tx);cursor:pointer}
+.mc.up{background:var(--ac);color:#06101f}.mc.ma{background:var(--ok)}
+.meter{height:26px;background:var(--p2);border-radius:13px;overflow:hidden;margin:12px 0}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),var(--ac),var(--bad))}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--p2)}
+.row small{display:block;color:var(--mu)}
+.sw{min-width:58px;border:0;border-radius:20px;padding:8px 12px;font-weight:700;cursor:pointer;background:var(--p2);color:var(--mu)}
+.sw.on{background:var(--ok);color:#04210f}
+.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.a{background:var(--p1);border:1px solid var(--p2);border-radius:12px;padding:10px;opacity:.55}
+.a.u{opacity:1;border-color:var(--ok)}.a small{display:block;color:var(--mu)}
+h2,h3{margin:6px 0}details summary{cursor:pointer;padding:6px 0}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ok);color:#04210f;padding:10px 16px;border-radius:12px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .3s;z-index:9;max-width:90%}
+#toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header><h1>MINI ARCADE 4.1</h1>
+<nav id="nav"><button data-t="home" class="on">Home</button><button data-t="ach">Achievements</button><button data-t="stats">Statistics</button><button data-t="dev">Dev Panel</button></nav></header>
+<main><section id="home"></section><section id="ach" class="hidden"></section><section id="stats" class="hidden"></section><section id="dev" class="hidden"></section></main>
+<div id="toast"></div>
 <script>
-"use strict";
-
-/* =================================
-   SHARED ARCADE SYSTEM
-================================= */
-
-const SAVE_KEY = "mini_arcade_4";
-
-const defaultData = {
-  achievements: [],
-  stats: {
-    gamesPlayed: 0,
-    flappyBest: 0,
-    snakeBest: 0,
-    reactionBest: 0,
-    clickBest: 0,
-    memoryBest: 0
-  },
-  cheats: {}
-};
-
-let saveData;
-
-try {
-  saveData = {
-    ...defaultData,
-    ...JSON.parse(localStorage.getItem(SAVE_KEY) || "{}")
-  };
-
-  saveData.stats = {
-    ...defaultData.stats,
-    ...(saveData.stats || {})
-  };
-
-  saveData.cheats = saveData.cheats || {};
-  saveData.achievements = saveData.achievements || [];
-
-} catch(error) {
-  saveData = structuredClone(defaultData);
+(function(){
+'use strict';
+var KEY='mini_arcade_4';
+var GAMES=[{id:'flappy',n:'Flappy Bird',i:'🐦',d:'Tap to flap'},{id:'snake',n:'Snake',i:'🐍',d:'Eat and grow'},{id:'react',n:'Reaction Test',i:'⚡',d:'How fast are you?'},{id:'rush',n:'Click Rush',i:'🎯',d:'15 seconds'},{id:'mem',n:'Memory Match',i:'🃏',d:'8 pairs, 60s'},{id:'mic',n:'Mic Meter',i:'🎤',d:'Live input level'}];
+var CH=[
+['f_pass','flappy','Pass Through Pipes','Ignore pipe collisions'],['f_inv','flappy','Invincibility','Never lose from collisions or leaving the screen'],['f_freeze','flappy','Freeze Pipes','Pipes stop moving'],['f_auto','flappy','Auto-Fly','Bird guides itself through the gaps'],
+['s_god','snake','Godmode','No game-over from collisions'],['s_wall','snake','Pass Through Walls','Wrap around the edges'],['s_self','snake','Pass Through Self','Ignore your own body'],['s_speed','snake','Maximum Speed','Snake moves much faster'],
+['r_inst','react','Instant Reaction','No random waiting period'],['r_nofs','react','No False Starts','Early clicks are ignored'],
+['c_auto','rush','Auto Click','Clicks the target for you'],['c_inf','rush','Infinite Time','Countdown stops'],['c_dbl','rush','Double Points','Each click gives 2 points'],
+['m_reveal','mem','Reveal All','Show every card'],['m_freeze','mem','Freeze Timer','Countdown stops'],['m_auto','mem','Auto Complete','Solves the board for you']];
+var NUM=['played','flappy','snake','food','react','rush','memWins','memBest','micUses','micPeak'];
+function fresh(){var s={played:0,gp:{},flags:{}};NUM.slice(1).forEach(function(k){s[k]=0});return{ach:{},cheats:{},st:s};}
+function isO(o){return o&&typeof o==='object'&&!Array.isArray(o);}
+function load(){var f=fresh();try{var r=JSON.parse(localStorage.getItem(KEY));if(!isO(r))return f;
+if(isO(r.ach))for(var k in r.ach)if(r.ach[k]===true)f.ach[k]=true;
+if(isO(r.cheats))for(var c in r.cheats)if(r.cheats[c]===true)f.cheats[c]=true;
+if(isO(r.st)){NUM.forEach(function(n){if(typeof r.st[n]==='number'&&isFinite(r.st[n]))f.st[n]=r.st[n];});
+if(isO(r.st.gp))for(var g in r.st.gp)if(typeof r.st.gp[g]==='number')f.st.gp[g]=r.st.gp[g];
+if(isO(r.st.flags))for(var q in r.st.flags)if(r.st.flags[q]===true)f.st.flags[q]=true;}}catch(e){}return f;}
+var S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+// achievements
+var A=[];
+function add(id,n,d,t,h){A.push({id:id,n:n,d:d,t:t,h:!!h});}
+[1,5,10,25,50,100].forEach(function(v){add('play'+v,'Gamer '+v,'Play '+v+' game rounds',function(s){return s.played>=v;});});
+GAMES.forEach(function(g){add('first_'+g.id,'Try '+g.n,'Play '+g.n+' once',function(s){return (s.gp[g.id]||0)>=1;});});
+[1,5,10,20,30,50].forEach(function(v){add('flap'+v,'Flappy '+v,'Score '+v+' in Flappy Bird',function(s){return s.flappy>=v;});});
+[5,10,20,30,50].forEach(function(v){add('snk'+v,'Snake '+v,'Score '+v+' in Snake',function(s){return s.snake>=v;});});
+[1,25,100,250].forEach(function(v){add('food'+v,'Snacker '+v,'Eat '+v+' food in total',function(s){return s.food>=v;});});
+[500,400,300,250,200,150].forEach(function(v){add('rt'+v,'Quick '+v,'React in under '+v+' ms',function(s){return s.react>0&&s.react<=v;});});
+[10,20,30,40,50,60].forEach(function(v){add('rush'+v,'Rush '+v,'Score '+v+' in Click Rush',function(s){return s.rush>=v;});});
+[1,3,5,10].forEach(function(v){add('mw'+v,'Matcher '+v,'Win Memory Match '+v+' time(s)',function(s){return s.memWins>=v;});});
+[45,30,20].forEach(function(v){add('mt'+v,'Memory '+v+'s','Win Memory Match in '+v+' seconds or less',function(s){return s.memBest>0&&s.memBest<=v;});});
+add('mic1','Hello Mic','Enable the microphone',function(s){return s.micUses>=1;});
+add('mic50','Loud','Reach 50% mic level',function(s){return s.micPeak>=50;});
+add('mic80','Very Loud','Reach 80% mic level',function(s){return s.micPeak>=80;});
+add('h_dev','Behind the Curtain','Open the Dev Panel',function(s){return !!s.flags.dev;},1);
+add('h_cheat','Cheater','Turn on any cheat',function(s){return !!s.flags.cheat;},1);
+add('h_zero','Oops','Lose Flappy Bird with a score of 0',function(s){return !!s.flags.zero;},1);
+add('h_fs','Too Eager','Click too early in the Reaction Test',function(s){return !!s.flags.fs;},1);
+add('h_perf','Flawless Memory','Win Memory Match with no mistakes',function(s){return !!s.flags.perfect;},1);
+add('h_rush0','Statue','Finish Click Rush with 0 points',function(s){return !!s.flags.rush0;},1);
+add('h_all','Completionist','Play all six games',function(s){return GAMES.every(function(g){return (s.gp[g.id]||0)>=1;});},1);
+var tt=0;
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('on');},2200);}
+function check(){var n=[];A.forEach(function(a){if(!S.ach[a.id]&&a.t(S.st)){S.ach[a.id]=true;n.push(a.n);}});
+if(n.length){save();toast('🏆 '+n[0]+(n.length>1?' +'+(n.length-1)+' more':''));}refreshUI();}
+function started(id){S.st.played++;S.st.gp[id]=(S.st.gp[id]||0)+1;save();check();}
+// UI
+var $=function(i){return document.getElementById(i);};
+var tab='home',cur=null,curId=null;
+function leave(){if(cur){try{cur.stop();}catch(e){}cur=null;curId=null;}}
+function show(t){leave();tab=t;['home','ach','stats','dev'].forEach(function(v){$(v).classList.toggle('hidden',v!==t);});
+Array.prototype.forEach.call(document.querySelectorAll('#nav button'),function(b){b.classList.toggle('on',b.dataset.t===t);});
+if(t==='dev'){S.st.flags.dev=true;save();check();}renderAll();}
+function sw(c){var on=!!S.cheats[c[0]];return '<div class="row"><div><b>'+c[2]+'</b><small>'+c[3]+'</small></div><button class="sw'+(on?' on':'')+'" data-c="'+c[0]+'">'+(on?'ON':'OFF')+'</button></div>';}
+function cheatsFor(g){return CH.filter(function(c){return c[1]===g;}).map(sw).join('');}
+function renderHome(){if(cur)return;$('home').innerHTML='<div class="grid">'+GAMES.map(function(g){return '<button class="card" data-g="'+g.id+'"><span class="i">'+g.i+'</span><b>'+g.n+'</b><small>'+g.d+'</small></button>';}).join('')+'</div>';}
+function renderAch(){var n=A.filter(function(a){return S.ach[a.id];}).length;
+$('ach').innerHTML='<div class="panel"><h2>Achievements '+n+' / '+A.length+'</h2></div><div class="ag">'+A.map(function(a){var u=S.ach[a.id];return '<div class="a'+(u?' u':'')+'"><b>'+(u?'🏆 ':'🔒 ')+(a.h&&!u?'???':a.n)+'</b><small>'+(a.h&&!u?'Hidden achievement':a.d)+'</small></div>';}).join('')+'</div>';}
+function renderStats(){var s=S.st,n=A.filter(function(a){return S.ach[a.id];}).length;
+function r(k,v){return '<div class="row"><span>'+k+'</span><b>'+v+'</b></div>';}
+$('stats').innerHTML='<div class="panel"><h2>Statistics</h2>'+r('Total games played',s.played)+r('Flappy Bird best score',s.flappy)+r('Snake best score',s.snake)+r('Best reaction time',s.react?s.react+' ms':'—')+r('Click Rush best score',s.rush)+r('Memory Match wins',s.memWins)+r('Memory Match best time',s.memBest?s.memBest+' s':'—')+r('Achievements',n+' / '+A.length+' ('+Math.round(n/A.length*100)+'%)')+'</div>';}
+function renderDev(){var h='<div class="panel"><h2>Cheats</h2></div>';
+GAMES.forEach(function(g){var c=cheatsFor(g.id);if(c)h+='<div class="panel"><h3>'+g.i+' '+g.n+'</h3>'+c+'</div>';});
+h+='<div class="panel"><h3>Achievement controls</h3><button class="btn" data-act="unlockall">Unlock All Achievements</button> <button class="btn gr" data-act="resetach">Reset Achievements</button><details><summary>Unlock individually</summary>'+A.map(function(a){return '<div class="row"><span>'+a.n+(S.ach[a.id]?' ✅':'')+'</span><button class="sw" data-u="'+a.id+'">Unlock</button></div>';}).join('')+'</details></div>';
+h+='<div class="panel"><h3>Arcade controls</h3><button class="btn gr" data-act="resetcheats">Reset All Cheats</button> <button class="btn gr" data-act="resetstats">Reset Statistics</button> <button class="btn red" data-act="full">Full Reset</button></div>';
+$('dev').innerHTML=h;}
+function renderMini(){var m=$('mini');if(m&&curId)m.innerHTML=cheatsFor(curId)||'<small>No cheats for this game.</small>';}
+function renderAll(){if(tab==='home')renderHome();else if(tab==='ach')renderAch();else if(tab==='stats')renderStats();else renderDev();renderMini();}
+function refreshUI(){if(tab!=='home')renderAll();else renderMini();}
+function setCheat(id){S.cheats[id]=!S.cheats[id];if(S.cheats[id]){S.st.flags.cheat=true;}save();if(cur&&cur.refresh)cur.refresh();check();renderAll();}
+function enter(id){leave();curId=id;var g=GAMES.filter(function(x){return x.id===id;})[0];
+$('home').innerHTML='<div class="gh"><button class="btn gr" data-back="1">← Back</button><b>'+g.i+' '+g.n+'</b></div><div id="stage" class="panel"></div><div class="panel"><b>Cheats</b><div id="mini"></div></div>';
+cur=({flappy:gFlappy,snake:gSnake,react:gReact,rush:gRush,mem:gMem,mic:gMic})[id]($('stage'));renderMini();}
+document.addEventListener('click',function(e){var t=e.target.closest('[data-t],[data-g],[data-c],[data-act],[data-u],[data-back]');if(!t)return;var d=t.dataset;
+if(d.t)show(d.t);else if(d.g)enter(d.g);else if(d.back){leave();renderHome();}
+else if(d.c)setCheat(d.c);
+else if(d.u){S.ach[d.u]=true;save();check();renderAll();}
+else if(d.act==='unlockall'){A.forEach(function(a){S.ach[a.id]=true;});save();renderAll();toast('All achievements unlocked');}
+else if(d.act==='resetach'){S.ach={};save();renderAll();toast('Achievements reset');}
+else if(d.act==='resetcheats'){S.cheats={};save();if(cur&&cur.refresh)cur.refresh();renderAll();toast('All cheats off');}
+else if(d.act==='resetstats'){var a=S.ach,c=S.cheats;S=fresh();S.ach=a;S.cheats=c;save();renderAll();toast('Statistics reset');}
+else if(d.act==='full'){if(window.confirm('Delete ALL saved progress, achievements, statistics and cheats?')){leave();S=fresh();save();renderAll();toast('Full reset done');}}});
+function rnd(a,b){return a+Math.random()*(b-a);}
+// FLAPPY
+function gFlappy(box){
+box.innerHTML='<div class="cw"><canvas width="320" height="480"></canvas><div class="ov"></div></div><div class="bar"><span id="fs">Score 0</span><span>Best <b id="fb">'+S.st.flappy+'</b></span></div>';
+var cv=box.querySelector('canvas'),x=cv.getContext('2d'),ov=box.querySelector('.ov');
+var W=320,H=480,PW=50,GAP=130,BX=80,BR=12,b,pipes,sc,st,raf=0,last=0,dead=false;
+function mk(px){return{x:px,g:GAP/2+40+Math.random()*(H-GAP-80),s:0};}
+function reset(){b={y:H/2,v:0};pipes=[mk(W+80)];for(var i=0;i<4;i++)pipes.push(mk(pipes[pipes.length-1].x+170));sc=0;st='ready';ov.style.display='flex';ov.innerHTML='<b>Tap or press Space to flap</b>';box.querySelector('#fs').textContent='Score 0';}
+function flap(){if(st==='ready'){st='play';ov.style.display='none';started('flappy');}if(st==='play')b.v=-7.2;}
+function die(){st='over';if(sc===0){S.st.flags.zero=true;}save();check();ov.style.display='flex';ov.innerHTML='<h2>Game Over</h2><div>Score '+sc+'</div><button class="btn">Restart</button>';ov.querySelector('button').onclick=function(e){e.stopPropagation();reset();};}
+function loop(t){if(dead)return;var k=Math.min(2,(t-last)/16.67)||1;last=t;
+if(st==='play'){
+if(S.cheats.f_auto){var n=pipes.filter(function(p){return p.x+PW>BX-BR;})[0];var tg=n?n.g:H/2;if(b.y>tg+10&&b.v>-1)b.v=-7.2;}
+b.v+=0.4*k;b.y+=b.v*k;
+if(!S.cheats.f_freeze)pipes.forEach(function(p){p.x-=2.2*k;});
+while(pipes[0].x<-PW)pipes.shift();
+while(pipes[pipes.length-1].x<W+20)pipes.push(mk(pipes[pipes.length-1].x+170));
+pipes.forEach(function(p){if(!p.s&&p.x+PW<BX-BR){p.s=1;sc++;box.querySelector('#fs').textContent='Score '+sc;if(sc>S.st.flappy){S.st.flappy=sc;box.querySelector('#fb').textContent=sc;save();}check();}});
+var out=b.y>H-BR||b.y<BR;
+if(S.cheats.f_inv){if(b.y>H-BR){b.y=H-BR;b.v=0;}if(b.y<BR){b.y=BR;b.v=0;}}
+else{if(out){die();}
+else if(!S.cheats.f_pass){for(var i=0;i<pipes.length;i++){var p=pipes[i];if(BX+BR>p.x&&BX-BR<p.x+PW&&(b.y-BR<p.g-GAP/2||b.y+BR>p.g+GAP/2)){die();break;}}}}
 }
-
-function saveGame() {
-  localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
-}
-
-function setCheat(name,value) {
-  saveData.cheats[name] = Boolean(value);
-  saveGame();
-}
-
-function cheatEnabled(name) {
-  return saveData.cheats[name] === true;
-}
-
-function unlockAchievement(id) {
-  if(saveData.achievements.includes(id)) return;
-
-  saveData.achievements.push(id);
-  saveGame();
-  renderAchievements();
-}
-
-function updateStat(name,value) {
-  saveData.stats[name] = Math.max(
-    Number(saveData.stats[name] || 0),
-    Number(value || 0)
-  );
-
-  saveGame();
-  renderStats();
-}
-
-/* =================================
-   NAVIGATION
-================================= */
-
-function openPage(page) {
-  document.querySelectorAll(".page").forEach(section => {
-    section.classList.remove("active");
-  });
-
-  const target = document.getElementById(page);
-
-  if(target) target.classList.add("active");
-
-  document.querySelectorAll("#navigation button").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.page === page
-    );
-  });
-
-  if(page === "achievements") renderAchievements();
-  if(page === "stats") renderStats();
-  if(page === "dev") renderDevPanel();
-}
-
-document.querySelectorAll("#navigation button").forEach(button => {
-  button.addEventListener("click", () => {
-    openPage(button.dataset.page);
-  });
-});
-
-function goHome() {
-  stopCurrentGame();
-  openPage("home");
-}
-
-function openGame(name) {
-  stopCurrentGame();
-
-  currentGame = name;
-
-  document.querySelectorAll(".page").forEach(section => {
-    section.classList.remove("active");
-  });
-
-  document.getElementById("game").classList.add("active");
-
-  document.getElementById("gameTitle").textContent =
-    gameNames[name] || "Game";
-
-  document.querySelectorAll("#navigation button").forEach(button => {
-    button.classList.remove("active");
-  });
-
-  startGame(name);
-}
-
-/* =================================
-   GAME REGISTRY
-================================= */
-
-const gameNames = {
-  flappy: "Flappy Bird",
-  snake: "Snake",
-  reaction: "Reaction Test",
-  clickrush: "Click Rush",
-  memory: "Memory Match",
-  mic: "Mic Meter"
-};
-
-let currentGame = null;
-
-function stopCurrentGame() {
-  if(typeof stopFlappy === "function") stopFlappy();
-  if(typeof stopSnake === "function") stopSnake();
-  if(typeof stopReaction === "function") stopReaction();
-  if(typeof stopClickRush === "function") stopClickRush();
-  if(typeof stopMemory === "function") stopMemory();
-  if(typeof stopMic === "function") stopMic();
-}
-
-function startGame(name) {
-  saveData.stats.gamesPlayed++;
-  saveGame();
-
-  const starters = {
-    flappy: startFlappy,
-    snake: startSnake,
-    reaction: startReaction,
-    clickrush: startClickRush,
-    memory: startMemory,
-    mic: startMic
-  };
-
-  if(starters[name]) starters[name]();
-}
-
-/* =================================
-   ACHIEVEMENTS
-================================= */
-
-const achievements = [
-  ["first_game","First Steps","Play your first game."],
-  ["flappy_1","First Flight","Score 1 point in Flappy Bird."],
-  ["flappy_10","Sky Traveller","Score 10 points in Flappy Bird."],
-  ["snake_1","Snack Time","Collect your first Snake food."],
-  ["snake_10","Growing Strong","Collect 10 Snake foods."],
-  ["reaction_fast","Quick Reflexes","Get a reaction time below 300ms."],
-  ["click_100","Click Machine","Reach 100 clicks."],
-  ["memory_win","Sharp Memory","Complete Memory Match."],
-  ["mic_used","Sound Explorer","Use the microphone meter."]
-];
-
-function renderAchievements() {
-  const list = document.getElementById("achievementList");
-
-  if(!list) return;
-
-  list.innerHTML = "";
-
-  for(const [id,name,description] of achievements) {
-    const unlocked = saveData.achievements.includes(id);
-
-    const item = document.createElement("div");
-    item.className = "cheat-row";
-
-    const info = document.createElement("div");
-
-    const heading = document.createElement("strong");
-    heading.textContent = name;
-
-    const detail = document.createElement("small");
-    detail.textContent = description;
-
-    info.append(heading,detail);
-
-    const status = document.createElement("span");
-    status.textContent = unlocked ? "UNLOCKED" : "LOCKED";
-    status.className = unlocked ? "success" : "muted";
-
-    item.append(info,status);
-    list.appendChild(item);
-  }
-
-  document.getElementById("achievementCount").textContent =
-    saveData.achievements.length +
-    " / " + achievements.length + " unlocked";
-}
-
-/* =================================
-   STATISTICS
-================================= */
-
-function renderStats() {
-  const container = document.getElementById("statsContent");
-
-  if(!container) return;
-
-  container.innerHTML = "";
-
-  for(const [name,value] of Object.entries(saveData.stats)) {
-    const item = document.createElement("div");
-    item.className = "cheat-row";
-
-    const label = document.createElement("strong");
-    label.textContent = name.replace(/([A-Z])/g," $1");
-
-    const number = document.createElement("span");
-    number.textContent = value;
-
-    item.append(label,number);
-    container.appendChild(item);
-  }
-}
-
-/* =================================
-   SHARED GAME HELPERS
-================================= */
-
-function createButton(text,callback) {
-  const button = document.createElement("button");
-  button.textContent = text;
-  button.addEventListener("click",callback);
-  return button;
-}
-
-function createCanvas(width,height) {
-  const canvas = document.createElement("canvas");
-
-  canvas.width = width;
-  canvas.height = height;
-
-  document.getElementById("gameContent").appendChild(canvas);
-
-  return canvas;
-}
-
-function createInfo(text) {
-  const element = document.createElement("p");
-  element.className = "muted";
-  element.textContent = text;
-
-  document.getElementById("gameContent").appendChild(element);
-
-  return element;
-}
-
-function createControls(...buttons) {
-  const container = document.createElement("div");
-  container.className = "stats";
-
-  buttons.forEach(button => container.appendChild(button));
-
-  document.getElementById("gameContent").appendChild(container);
-
-  return container;
-}
-
-/* =================================
-   GAME FUNCTION PLACEHOLDERS
-   Implemented in following parts.
-================================= */
-
-function startFlappy() {}
-function stopFlappy() {}
-
-function startSnake() {}
-function stopSnake() {}
-
-function startReaction() {}
-function stopReaction() {}
-
-function startClickRush() {}
-function stopClickRush() {}
-
-function startMemory() {}
-function stopMemory() {}
-
-function startMic() {}
-function stopMic() {}
-
-/* =================================
-   INITIALIZATION
-================================= */
-
-unlockAchievement("first_game");
-renderAchievements();
-renderStats();
-saveGame();
-
-</script>
-</body>
-</html>
-
-/* =================================
-   FLAPPY BIRD + CHEATS
-================================= */
-
-let flappy = null;
-
-const FLAPPY_CHEATS = {
-  passPipes: false,
-  invincible: false,
-  freezePipes: false,
-  autoFly: false
-};
-
-let flappyKeyHandler = null;
-
-function startFlappy() {
-  stopFlappy();
-
-  const area = document.getElementById("gameContent");
-  area.innerHTML = "";
-
-  flappy = {
-    score: 0,
-    birdY: 200,
-    velocity: 0,
-    pipes: [],
-    frame: 0,
-    running: true,
-    over: false,
-    animation: null
-  };
-
-  const canvas = createCanvas(400, 500);
-  const ctx = canvas.getContext("2d");
-  const scoreLabel = createInfo("Score: 0");
-
-  function jump() {
-    if (!flappy || flappy.over) return;
-    flappy.velocity = -6.5;
-  }
-
-  flappyKeyHandler = event => {
-    if (event.code === "Space" && currentGame === "flappy") {
-      event.preventDefault();
-      jump();
-    }
-  };
-
-  window.addEventListener("keydown", flappyKeyHandler);
-  canvas.addEventListener("pointerdown", jump);
-
-  createControls(
-    createButton("FLAP", jump),
-    createButton("RESTART", startFlappy)
-  );
-
-  function addPipe() {
-    const top = 50 + Math.random() * 220;
-    flappy.pipes.push({
-      x: 420,
-      top,
-      bottom: top + 145,
-      scored: false
-    });
-  }
-
-  function finish() {
-    if (!flappy || flappy.over) return;
-
-    flappy.over = true;
-    cancelAnimationFrame(flappy.animation);
-
-    ctx.fillStyle = "rgba(0,0,0,.7)";
-    ctx.fillRect(0, 0, 400, 500);
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    ctx.font = "28px Arial";
-    ctx.fillText("GAME OVER", 200, 230);
-    ctx.font = "18px Arial";
-    ctx.fillText("Score: " + flappy.score, 200, 265);
-    ctx.textAlign = "left";
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, 400, 500);
-
-    ctx.fillStyle = "#10233e";
-    ctx.fillRect(0, 0, 400, 500);
-
-    ctx.fillStyle = "#4ade80";
-
-    for (const pipe of flappy.pipes) {
-      ctx.fillRect(pipe.x, 0, 55, pipe.top);
-      ctx.fillRect(pipe.x, pipe.bottom, 55, 500 - pipe.bottom);
-    }
-
-    ctx.fillStyle = "#65a8ff";
-    ctx.beginPath();
-    ctx.arc(80, flappy.birdY, 12, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText("Score: " + flappy.score, 15, 30);
-  }
-
-  function update() {
-    if (!flappy || flappy.over) return;
-
-    flappy.frame++;
-
-    if (flappy.frame % 100 === 0) addPipe();
-
-    if (FLAPPY_CHEATS.autoFly) {
-      const pipe = flappy.pipes.find(p => p.x > 80);
-
-      if (pipe) {
-        const target = (pipe.top + pipe.bottom) / 2;
-        flappy.birdY += (target - flappy.birdY) * 0.08;
-      }
-
-      flappy.velocity = 0;
-    } else {
-      flappy.velocity += 0.38;
-      flappy.birdY += flappy.velocity;
-    }
-
-    if (!FLAPPY_CHEATS.freezePipes) {
-      flappy.pipes.forEach(pipe => pipe.x -= 2.5);
-    }
-
-    flappy.pipes = flappy.pipes.filter(pipe => pipe.x > -60);
-
-    for (const pipe of flappy.pipes) {
-      const horizontal = 92 > pipe.x && 68 < pipe.x + 55;
-      const vertical =
-        flappy.birdY - 12 < pipe.top ||
-        flappy.birdY + 12 > pipe.bottom;
-
-      if (
-        horizontal &&
-        vertical &&
-        !FLAPPY_CHEATS.passPipes &&
-        !FLAPPY_CHEATS.invincible
-      ) {
-        finish();
-        return;
-      }
-
-      if (!pipe.scored && pipe.x + 55 < 80) {
-        pipe.scored = true;
-        flappy.score++;
-        scoreLabel.textContent = "Score: " + flappy.score;
-        updateStat("flappyBest", flappy.score);
-
-        if (flappy.score >= 1) unlockAchievement("flappy_1");
-        if (flappy.score >= 10) unlockAchievement("flappy_10");
-      }
-    }
-
-    if (
-      !FLAPPY_CHEATS.passPipes &&
-      !FLAPPY_CHEATS.invincible &&
-      (flappy.birdY < 0 || flappy.birdY > 500)
-    ) {
-      finish();
-      return;
-    }
-
-    draw();
-    flappy.animation = requestAnimationFrame(update);
-  }
-
-  update();
-}
-
-function stopFlappy() {
-  if (flappy?.animation) {
-    cancelAnimationFrame(flappy.animation);
-  }
-
-  if (flappyKeyHandler) {
-    window.removeEventListener("keydown", flappyKeyHandler);
-    flappyKeyHandler = null;
-  }
-
-  if (flappy) flappy.running = false;
-  flappy = null;
-}
-
-/* =================================
-   SNAKE + CHEATS
-================================= */
-
-let snake = null;
-
-const SNAKE_CHEATS = {
-  godmode: false,
-  passWalls: false,
-  passSelf: false,
-  fast: false
-};
-
-let snakeKeyHandler = null;
-
-function startSnake() {
-  stopSnake();
-
-  const area = document.getElementById("gameContent");
-  area.innerHTML = "";
-
-  const size = 20;
-  const canvas = createCanvas(400, 400);
-  const ctx = canvas.getContext("2d");
-
-  snake = {
-    body: [{x:10,y:10}],
-    direction: {x:1,y:0},
-    food: {x:15,y:10},
-    score: 0,
-    running: true,
-    timer: null
-  };
-
-  const scoreLabel = createInfo("Score: 0");
-
-  function setDirection(x,y) {
-    if (snake.direction.x === -x && snake.direction.y === -y) return;
-    snake.direction = {x,y};
-  }
-
-  snakeKeyHandler = event => {
-    if (!snake || currentGame !== "snake") return;
-
-    const keys = {
-      ArrowUp: [0,-1],
-      ArrowDown: [0,1],
-      ArrowLeft: [-1,0],
-      ArrowRight: [1,0],
-      w: [0,-1],
-      s: [0,1],
-      a: [-1,0],
-      d: [1,0]
-    };
-
-    if (keys[event.key]) {
-      event.preventDefault();
-      setDirection(...keys[event.key]);
-    }
-  };
-
-  window.addEventListener("keydown", snakeKeyHandler);
-
-  createControls(
-    createButton("↑", () => setDirection(0,-1)),
-    createButton("↓", () => setDirection(0,1)),
-    createButton("←", () => setDirection(-1,0)),
-    createButton("→", () => setDirection(1,0)),
-    createButton("RESTART", startSnake)
-  );
-
-  function placeFood() {
-    snake.food = {
-      x: Math.floor(Math.random() * 20),
-      y: Math.floor(Math.random() * 20)
-    };
-  }
-
-  function endGame() {
-    snake.running = false;
-    clearInterval(snake.timer);
-
-    ctx.fillStyle = "white";
-    ctx.font = "25px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("GAME OVER", 200, 200);
-    ctx.textAlign = "left";
-  }
-
-  function draw() {
-    ctx.fillStyle = "#07111f";
-    ctx.fillRect(0,0,400,400);
-
-    ctx.fillStyle = "#4ade80";
-    snake.body.forEach(part => {
-      ctx.fillRect(part.x * size,part.y * size,size-2,size-2);
-    });
-
-    ctx.fillStyle = "#fb7185";
-    ctx.fillRect(
-      snake.food.x * size,
-      snake.food.y * size,
-      size-2,size-2
-    );
-  }
-
-  function tick() {
-    if (!snake || !snake.running) return;
-
-    const head = {
-      x: snake.body[0].x + snake.direction.x,
-      y: snake.body[0].y + snake.direction.y
-    };
-
-    if (SNAKE_CHEATS.passWalls) {
-      head.x = (head.x + 20) % 20;
-      head.y = (head.y + 20) % 20;
-    } else if (
-      head.x < 0 || head.x >= 20 ||
-      head.y < 0 || head.y >= 20
-    ) {
-      if (!SNAKE_CHEATS.godmode) return endGame();
-      head.x = Math.max(0,Math.min(19,head.x));
-      head.y = Math.max(0,Math.min(19,head.y));
-    }
-
-    const ate = head.x === snake.food.x && head.y === snake.food.y;
-
-    const bodyToCheck = ate
-      ? snake.body
-      : snake.body.slice(0,-1);
-
-    const collision = bodyToCheck.some(
-      part => part.x === head.x && part.y === head.y
-    );
-
-    if (
-      collision &&
-      !SNAKE_CHEATS.passSelf &&
-      !SNAKE_CHEATS.godmode
-    ) {
-      return endGame();
-    }
-
-    snake.body.unshift(head);
-
-    if (ate) {
-      snake.score++;
-      scoreLabel.textContent = "Score: " + snake.score;
-      updateStat("snakeBest",snake.score);
-
-      if (snake.score >= 1) unlockAchievement("snake_1");
-      if (snake.score >= 10) unlockAchievement("snake_10");
-
-      placeFood();
-    } else {
-      snake.body.pop();
-    }
-
-    draw();
-  }
-
-  function schedule() {
-    if (!snake) return;
-
-    clearInterval(snake.timer);
-
-    snake.timer = setInterval(
-      tick,
-      SNAKE_CHEATS.fast ? 55 : 120
-    );
-  }
-
-  snake.schedule = schedule;
-
-  draw();
-  schedule();
-}
-
-function stopSnake() {
-  if (snake?.timer) clearInterval(snake.timer);
-
-  if (snakeKeyHandler) {
-    window.removeEventListener("keydown",snakeKeyHandler);
-    snakeKeyHandler = null;
-  }
-
-  snake = null;
-}
-
-/* =================================
-   REACTION TEST
-================================= */
-
-let reaction = null;
-
-const REACTION_CHEATS = {
-  instant: false,
-  noFalseStarts: false
-};
-
-function startReaction() {
-  stopReaction();
-
-  const area = document.getElementById("gameContent");
-  area.innerHTML = "";
-
-  reaction = {
-    started: false,
-    ready: false,
-    startTime: 0,
-    timer: null
-  };
-
-  const message = createInfo("Press START when ready.");
-  const result = createInfo("");
-
-  const button = createButton("START", begin);
-  createControls(button);
-
-  function begin() {
-    clearTimeout(reaction.timer);
-
-    reaction.started = true;
-    reaction.ready = false;
-    message.textContent = "Wait for green...";
-
-    const delay = REACTION_CHEATS.instant
-      ? 0
-      : 1500 + Math.random() * 3000;
-
-    reaction.timer = setTimeout(() => {
-      if (!reaction) return;
-
-      reaction.ready = true;
-      reaction.startTime = performance.now();
-
-      message.textContent = "CLICK NOW!";
-      message.className = "success";
-    },delay);
-  }
-
-  button.onclick = () => {
-    if (!reaction.started) return begin();
-
-    if (!reaction.ready) {
-      if (!REACTION_CHEATS.noFalseStarts) {
-        result.textContent = "Too early! Try again.";
-      }
-      clearTimeout(reaction.timer);
-      reaction.started = false;
-      return;
-    }
-
-    const time = Math.round(
-      performance.now() - reaction.startTime
-    );
-
-    result.textContent = "Reaction time: " + time + " ms";
-
-    if (time < 300) unlockAchievement("reaction_fast");
-
-    updateStat(
-      "reactionBest",
-      saveData.stats.reactionBest === 0
-        ? 100000 - time
-        : Math.max(saveData.stats.reactionBest,100000-time)
-    );
-
-    reaction.started = false;
-    reaction.ready = false;
-    message.textContent = "Press START to try again.";
-    message.className = "muted";
-  };
-}
-
-function stopReaction() {
-  if (reaction?.timer) clearTimeout(reaction.timer);
-  reaction = null;
-}
-
-/* =================================
-   CLICK RUSH
-================================= */
-
-let clickRush = null;
-
-const CLICK_CHEATS = {
-  autoClick: false,
-  infiniteTime: false,
-  doublePoints: false
-};
-
-function startClickRush() {
-  stopClickRush();
-
-  const area = document.getElementById("gameContent");
-  area.innerHTML = "";
-
-  clickRush = {
-    score: 0,
-    time: 15,
-    running: true,
-    timer: null,
-    autoTimer: null
-  };
-
-  const scoreLabel = createInfo("Score: 0");
-  const timeLabel = createInfo("Time: 15");
-
-  const target = createButton("CLICK ME!", () => {
-    if (!clickRush?.running) return;
-
-    clickRush.score += CLICK_CHEATS.doublePoints ? 2 : 1;
-
-    scoreLabel.textContent = "Score: " + clickRush.score;
-
-    if (clickRush.score >= 100) {
-      unlockAchievement("click_100");
-    }
-  });
-
-  createControls(
-    target,
-    createButton("RESTART",startClickRush)
-  );
-
-  clickRush.timer = setInterval(() => {
-    if (!clickRush || !clickRush.running) return;
-
-    if (!CLICK_CHEATS.infiniteTime) {
-      clickRush.time--;
-      timeLabel.textContent = "Time: " + clickRush.time;
-
-      if (clickRush.time <= 0) {
-        clickRush.running = false;
-        clearInterval(clickRush.timer);
-        clearInterval(clickRush.autoTimer);
-
-        updateStat("clickBest",clickRush.score);
-        scoreLabel.textContent += " | Finished!";
-      }
-    }
-  },1000);
-
-  clickRush.autoTimer = setInterval(() => {
-    if (
-      clickRush?.running &&
-      CLICK_CHEATS.autoClick
-    ) {
-      target.click();
-    }
-  },100);
-}
-
-function stopClickRush() {
-  if (clickRush) {
-    clearInterval(clickRush.timer);
-    clearInterval(clickRush.autoTimer);
-  }
-
-  clickRush = null;
-}
-
-/* =================================
-   MEMORY MATCH
-================================= */
-
-let memory = null;
-
-const MEMORY_CHEATS = {
-  reveal: false,
-  freezeTimer: false,
-  autoComplete: false
-};
-
-function startMemory() {
-  stopMemory();
-
-  const area = document.getElementById("gameContent");
-  area.innerHTML = "";
-
-  memory = {
-    cards: [],
-    first: null,
-    locked: false,
-    matches: 0,
-    seconds: 60,
-    timer: null
-  };
-
-  const symbols = ["★","●","▲","◆","♥","♣","☀","♫"];
-  memory.cards = [...symbols,...symbols]
-    .sort(() => Math.random() - 0.5)
-    .map((symbol,index) => ({
-      id:index,
-      symbol,
-      matched:false,
-      revealed:false
-    }));
-
-  const status = createInfo("Matches: 0 / 8");
-  const timerLabel = createInfo("Time: 60");
-
-  const grid = document.createElement("div");
-  grid.className = "grid";
-  grid.style.gridTemplateColumns = "repeat(4,1fr)";
-  document.getElementById("gameContent").appendChild(grid);
-
-  function drawCards() {
-    grid.innerHTML = "";
-
-    memory.cards.forEach(card => {
-      const button = createButton(
-        card.matched || card.revealed || MEMORY_CHEATS.reveal
-          ? card.symbol
-          : "?",
-        () => revealCard(card)
-      );
-
-      button.style.minHeight = "65px";
-      button.style.fontSize = "22px";
-      button.disabled = card.matched;
-
-      grid.appendChild(button);
-    });
-  }
-
-  function revealCard(card) {
-    if (!memory || memory.locked || card.matched || card.revealed) return;
-
-    card.revealed = true;
-
-    if (!memory.first) {
-      memory.first = card;
-      drawCards();
-      return;
-    }
-
-    const first = memory.first;
-
-    if (first.symbol === card.symbol) {
-      first.matched = true;
-      card.matched = true;
-      memory.matches++;
-      memory.first = null;
-
-      status.textContent = "Matches: " + memory.matches + " / 8";
-
-      if (memory.matches === 8) {
-        clearInterval(memory.timer);
-        unlockAchievement("memory_win");
-        updateStat("memoryBest",memory.seconds);
-        status.textContent = "You won!";
-      }
-
-      drawCards();
-    } else {
-      memory.locked = true;
-      drawCards();
-
-      setTimeout(() => {
-        if (!memory) return;
-
-        first.revealed = false;
-        card.revealed = false;
-        memory.first = null;
-        memory.locked = false;
-
-        drawCards();
-      },800);
-    }
-  }
-
-  createControls(
-    createButton("RESTART",startMemory),
-    createButton("AUTO COMPLETE",() => {
-      if (!MEMORY_CHEATS.autoComplete) return;
-
-      memory.cards.forEach(card => {
-        card.matched = true;
-        card.revealed = true;
-      });
-
-      memory.matches = 8;
-      status.textContent = "You won!";
-      clearInterval(memory.timer);
-      unlockAchievement("memory_win");
-      drawCards();
-    })
-  );
-
-  memory.timer = setInterval(() => {
-    if (!memory || MEMORY_CHEATS.freezeTimer) return;
-
-    memory.seconds--;
-    timerLabel.textContent = "Time: " + memory.seconds;
-
-    if (memory.seconds <= 0) {
-      clearInterval(memory.timer);
-      status.textContent = "Time's up!";
-    }
-  },1000);
-
-  drawCards();
-}
-
-function stopMemory() {
-  if (memory?.timer) clearInterval(memory.timer);
-  memory = null;
-}
-
-/* =================================
-   MIC METER
-================================= */
-
-let mic = null;
-
-async function startMic() {
-  stopMic();
-
-  const area = document.getElementById("gameContent");
-  area.innerHTML = "";
-
-  const status = createInfo("Microphone permission is required.");
-  const meter = createInfo("Input level: 0%");
-  const canvas = createCanvas(400,150);
-  const ctx = canvas.getContext("2d");
-
-  const button = createButton("ENABLE MICROPHONE",async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio:true
-      });
-
-      if (!mic) return;
-
-      const audioContext = new AudioContext();
-      const source = audioContext.createMediaStreamSource(stream);
-      const analyser = audioContext.createAnalyser();
-
-      source.connect(analyser);
-      analyser.fftSize = 256;
-
-      mic.stream = stream;
-      mic.context = audioContext;
-      mic.analyser = analyser;
-      mic.data = new Uint8Array(analyser.frequencyBinCount);
-
-      status.textContent = "Microphone active.";
-      unlockAchievement("mic_used");
-
-      drawMic();
-    } catch(error) {
-      status.textContent = "Microphone permission unavailable.";
-    }
-  });
-
-  createControls(button);
-
-  mic = {
-    stream:null,
-    context:null,
-    analyser:null,
-    data:null,
-    animation:null
-  };
-
-  function drawMic() {
-    if (!mic?.analyser) return;
-
-    mic.analyser.getByteFrequencyData(mic.data);
-
-    const average =
-      mic.data.reduce((sum,value) => sum + value,0) /
-      mic.data.length;
-
-    const percent = Math.round(average / 255 * 100);
-
-    meter.textContent = "Input level: " + percent + "%";
-
-    ctx.clearRect(0,0,400,150);
-    ctx.fillStyle = "#10233e";
-    ctx.fillRect(0,0,400,150);
-
-    ctx.fillStyle = "#4ade80";
-    ctx.fillRect(20,50,percent * 3.6,45);
-
-    mic.animation = requestAnimationFrame(drawMic);
-  }
-}
-
-function stopMic() {
-  if (!mic) return;
-
-  cancelAnimationFrame(mic.animation);
-
-  mic.stream?.getTracks().forEach(track => track.stop());
-  mic.context?.close();
-
-  mic = null;
-}
-
-/* =================================
-   DEVELOPER PANEL
-================================= */
-
-function toggleCheat(object,key,label) {
-  object[key] = !object[key];
-
-  renderDevPanel();
-  saveGame();
-
-  if (key === "fast" && object === SNAKE_CHEATS && snake) {
-    snake.schedule?.();
-  }
-}
-
-function cheatButton(object,key,label) {
-  const button = document.createElement("button");
-
-  function refresh() {
-    const enabled = object[key];
-
-    button.textContent =
-      label + ": " + (enabled ? "ON" : "OFF");
-
-    button.className =
-      "toggle " + (enabled ? "on" : "off");
-  }
-
-  refresh();
-
-  button.onclick = () => {
-    toggleCheat(object,key,label);
-    refresh();
-  };
-
-  return button;
-}
-
-function devRow(title,description,button) {
-  const row = document.createElement("div");
-  row.className = "cheat-row";
-
-  const info = document.createElement("div");
-  const heading = document.createElement("strong");
-  heading.textContent = title;
-
-  const detail = document.createElement("small");
-  detail.textContent = description;
-
-  info.append(heading,detail);
-  row.append(info,button);
-
-  return row;
-}
-
-function renderDevPanel() {
-  const content = document.getElementById("devContent");
-  if (!content) return;
-
-  content.innerHTML = "";
-
-  function section(title) {
-    const heading = document.createElement("h3");
-    heading.textContent = title;
-    content.appendChild(heading);
-  }
-
-  function addCheat(title,description,object,key) {
-    content.appendChild(
-      devRow(
-        title,
-        description,
-        cheatButton(object,key,title)
-      )
-    );
-  }
-
-  section("Flappy Bird");
-
-  addCheat(
-    "Pass Through Pipes",
-    "Ignore pipe collisions.",
-    FLAPPY_CHEATS,
-    "passPipes"
-  );
-
-  addCheat(
-    "Invincibility",
-    "Ignore collision and boundary checks.",
-    FLAPPY_CHEATS,
-    "invincible"
-  );
-
-  addCheat(
-    "Freeze Pipes",
-    "Stop pipes from moving.",
-    FLAPPY_CHEATS,
-    "freezePipes"
-  );
-
-  addCheat(
-    "Auto Fly",
-    "Automatically follow pipe openings.",
-    FLAPPY_CHEATS,
-    "autoFly"
-  );
-
-  section("Snake");
-
-  addCheat(
-    "Godmode",
-    "Prevent collision game overs.",
-    SNAKE_CHEATS,
-    "godmode"
-  );
-
-  addCheat(
-    "Pass Through Walls",
-    "Wrap around the board.",
-    SNAKE_CHEATS,
-    "passWalls"
-  );
-
-  addCheat(
-    "Pass Through Self",
-    "Ignore body collisions.",
-    SNAKE_CHEATS,
-    "passSelf"
-  );
-
-  addCheat(
-    "Fast Mode",
-    "Increase movement speed.",
-    SNAKE_CHEATS,
-    "fast"
-  );
-
-  section("Reaction Test");
-
-  addCheat(
-    "Instant Reaction",
-    "Remove the waiting period.",
-    REACTION_CHEATS,
-    "instant"
-  );
-
-  addCheat(
-    "No False Starts",
-    "Ignore early clicks.",
-    REACTION_CHEATS,
-    "noFalseStarts"
-  );
-
-  section("Click Rush");
-
-  addCheat(
-    "Auto Click",
-    "Click automatically.",
-    CLICK_CHEATS,
-    "autoClick"
-  );
-
-  addCheat(
-    "Infinite Time",
-    "Stop the countdown.",
-    CLICK_CHEATS,
-    "infiniteTime"
-  );
-
-  addCheat(
-    "Double Points",
-    "Earn two points per click.",
-    CLICK_CHEATS,
-    "doublePoints"
-  );
-
-  section("Memory Match");
-
-  addCheat(
-    "Reveal All",
-    "Show every card.",
-    MEMORY_CHEATS,
-    "reveal"
-  );
-
-  addCheat(
-    "Freeze Timer",
-    "Stop the countdown.",
-    MEMORY_CHEATS,
-    "freezeTimer"
-  );
-
-  addCheat(
-    "Auto Complete",
-    "Enable the auto-complete button.",
-    MEMORY_CHEATS,
-    "autoComplete"
-  );
-
-  section("Achievement Controls");
-
-  content.appendChild(
-    devRow(
-      "Unlock All Achievements",
-      "Unlock all achievements in this version.",
-      createButton("UNLOCK",() => {
-        achievements.forEach(([id]) => {
-          if (!saveData.achievements.includes(id)) {
-            saveData.achievements.push(id);
-          }
-        });
-
-        saveGame();
-        renderAchievements();
-        renderDevPanel();
-      })
-    )
-  );
-
-  content.appendChild(
-    devRow(
-      "Reset Achievements",
-      "Remove all achievement progress.",
-      createButton("RESET",() => {
-        if (!confirm("Reset all achievements?")) return;
-
-        saveData.achievements = [];
-        saveGame();
-        renderAchievements();
-        renderDevPanel();
-      })
-    )
-  );
-
-  section("Arcade Controls");
-
-  content.appendChild(
-    devRow(
-      "Reset All Cheats",
-      "Turn every cheat OFF.",
-      createButton("RESET CHEATS",resetAllCheats)
-    )
-  );
-
-  content.appendChild(
-    devRow(
-      "Reset Statistics",
-      "Clear all game statistics.",
-      createButton("RESET STATS",() => {
-        if (!confirm("Reset statistics?")) return;
-
-        saveData.stats = {...defaultData.stats};
-        saveGame();
-        renderStats();
-      })
-    )
-  );
-
-  content.appendChild(
-    devRow(
-      "Reset Entire Arcade",
-      "Erase saved arcade progress.",
-      createButton("FULL RESET",() => {
-        if (!confirm("Erase all arcade progress?")) return;
-
-        localStorage.removeItem(SAVE_KEY);
-        location.reload();
-      })
-    )
-  );
-}
-
-function resetAllCheats() {
-  Object.values({
-    ...FLAPPY_CHEATS,
-    ...SNAKE_CHEATS,
-    ...REACTION_CHEATS,
-    ...CLICK_CHEATS,
-    ...MEMORY_CHEATS
-  });
-
-  for (const object of [
-    FLAPPY_CHEATS,
-    SNAKE_CHEATS,
-    REACTION_CHEATS,
-    CLICK_CHEATS,
-    MEMORY_CHEATS
-  ]) {
-    Object.keys(object).forEach(key => {
-      object[key] = false;
-    });
-  }
-
-  if (snake?.schedule) snake.schedule();
-
-  saveGame();
-  renderDevPanel();
-}
-
-/* =================================
-   FINAL INITIALIZATION
-================================= */
-
-renderAchievements();
-renderStats();
-renderDevPanel();
-saveGame();
+x.fillStyle='#0d1a30';x.fillRect(0,0,W,H);x.fillStyle='#3ddc84';
+pipes.forEach(function(p){x.fillRect(p.x,0,PW,p.g-GAP/2);x.fillRect(p.x,p.g+GAP/2,PW,H);});
+x.fillStyle='#ffd24a';x.beginPath();x.arc(BX,b.y,BR,0,7);x.fill();x.fillStyle='#000';x.fillRect(BX+4,b.y-5,3,3);
+raf=requestAnimationFrame(loop);}
+function key(e){if(e.code==='Space'){e.preventDefault();flap();}}
+cv.addEventListener('pointerdown',function(e){e.preventDefault();flap();});
+ov.addEventListener('pointerdown',function(e){if(st==='ready'){e.preventDefault();flap();}});
+document.addEventListener('keydown',key);
+reset();raf=requestAnimationFrame(loop);
+return{stop:function(){dead=true;cancelAnimationFrame(raf);document.removeEventListener('keydown',key);}};}
+// SNAKE
+function gSnake(box){
+box.innerHTML='<div class="cw"><canvas width="320" height="320"></canvas><div class="ov"></div></div><div class="bar"><span id="ss">Score 0</span><span>Best <b id="sb">'+S.st.snake+'</b></span></div><div class="pad"><span></span><button data-d="0,-1">▲</button><span></span><button data-d="-1,0">◀</button><button data-d="0,1">▼</button><button data-d="1,0">▶</button></div>';
+var cv=box.querySelector('canvas'),x=cv.getContext('2d'),ov=box.querySelector('.ov');
+var N=16,C=20,sn,dir,nd,food,sc,run,alive,tm=0,gone=false;
+function spawn(){do{food={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)};}while(sn.some(function(s){return s.x===food.x&&s.y===food.y;}));}
+function reset(){clearTimeout(tm);sn=[{x:8,y:8},{x:7,y:8},{x:6,y:8}];dir={x:1,y:0};nd=[];sc=0;run=false;alive=true;spawn();ov.style.display='flex';ov.innerHTML='<b>Press an arrow / WASD / pad to start</b>';box.querySelector('#ss').textContent='Score 0';draw();}
+function draw(){x.fillStyle='#0d1a30';x.fillRect(0,0,320,320);x.fillStyle='#ff5c6c';x.fillRect(food.x*C+2,food.y*C+2,C-4,C-4);
+sn.forEach(function(s,i){x.fillStyle=i?'#3ddc84':'#b6ffd3';x.fillRect(s.x*C+1,s.y*C+1,C-2,C-2);});}
+function over(){alive=false;run=false;save();check();ov.style.display='flex';ov.innerHTML='<h2>Game Over</h2><div>Score '+sc+'</div><button class="btn">Restart</button>';ov.querySelector('button').onclick=reset;}
+function tick(){if(gone||!alive)return;
+var d=nd.length?nd.shift():dir;dir=d;var h={x:sn[0].x+d.x,y:sn[0].y+d.y};var god=S.cheats.s_god,wrap=S.cheats.s_wall||god;
+if(h.x<0||h.y<0||h.x>=N||h.y>=N){if(wrap){h.x=(h.x+N)%N;h.y=(h.y+N)%N;}else{over();return;}}
+if(!S.cheats.s_self&&!god&&sn.slice(0,-1).some(function(s){return s.x===h.x&&s.y===h.y;})){over();return;}
+sn.unshift(h);
+if(h.x===food.x&&h.y===food.y){sc++;S.st.food++;if(sc>S.st.snake){S.st.snake=sc;box.querySelector('#sb').textContent=sc;}box.querySelector('#ss').textContent='Score '+sc;save();check();spawn();}else sn.pop();
+draw();tm=setTimeout(tick,S.cheats.s_speed?45:130);}
+function setDir(dx,dy){if(!alive)return;var l=nd.length?nd[nd.length-1]:dir;if(dx===-l.x&&dy===-l.y)return;if(dx===l.x&&dy===l.y&&run)return;if(nd.length<3)nd.push({x:dx,y:dy});
+if(!run){run=true;ov.style.display='none';started('snake');tm=setTimeout(tick,S.cheats.s_speed?45:130);}}
+var M={ArrowUp:[0,-1],w:[0,-1],W:[0,-1],ArrowDown:[0,1],s:[0,1],S:[0,1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0]};
+function key(e){var m=M[e.key];if(m){e.preventDefault();setDir(m[0],m[1]);}}
+document.addEventListener('keydown',key);
+Array.prototype.forEach.call(box.querySelectorAll('[data-d]'),function(bt){bt.addEventListener('pointerdown',function(e){e.preventDefault();var p=bt.dataset.d.split(',');setDir(+p[0],+p[1]);});});
+reset();
+return{stop:function(){gone=true;clearTimeout(tm);document.removeEventListener('keydown',key);}};}
+// REACTION
+function gReact(box){
+box.innerHTML='<div class="rbox">Click to start</div><p id="rr" style="text-align:center;color:var(--mu)"></p>';
+var rb=box.querySelector('.rbox'),rr=box.querySelector('#rr'),st='idle',tm=0,t0=0;
+function go(){st='go';t0=performance.now();rb.className='rbox go';rb.textContent='CLICK NOW!';}
+rb.addEventListener('pointerdown',function(e){e.preventDefault();
+if(st==='idle'){st='wait';started('react');rb.className='rbox wait';rb.textContent='Wait for green...';rr.textContent='';tm=setTimeout(go,S.cheats.r_inst?0:rnd(1500,4500));}
+else if(st==='wait'){if(S.cheats.r_nofs)return;clearTimeout(tm);st='idle';S.st.flags.fs=true;save();check();rb.className='rbox';rb.textContent='Too soon! Click to try again';}
+else if(st==='go'){var ms=Math.round(performance.now()-t0);st='idle';if(!S.st.react||ms<S.st.react)S.st.react=ms;save();check();rb.className='rbox';rb.textContent=ms+' ms';rr.textContent='Best: '+S.st.react+' ms — click to try again';}});
+return{stop:function(){clearTimeout(tm);st='idle';}};}
+// CLICK RUSH
+function gRush(box){
+box.innerHTML='<div class="bar" style="max-width:none"><span id="rt">15.0s</span><span id="rs">0</span><span>Best <b id="rbst">'+S.st.rush+'</b></span></div><div class="arena"><button class="tg" hidden>🎯</button><div class="ov"></div></div><div style="text-align:center;margin-top:8px"><button class="btn gr" id="fin" hidden>Finish</button></div>';
+var ar=box.querySelector('.arena'),tg=ar.querySelector('.tg'),ov=ar.querySelector('.ov'),fin=box.querySelector('#fin'),sc=0,left=15,iv=0,on=false;
+function pos(){tg.style.left=rnd(0,ar.clientWidth-56)+'px';tg.style.top=rnd(0,ar.clientHeight-56)+'px';}
+function hit(){if(!on)return;sc+=S.cheats.c_dbl?2:1;box.querySelector('#rs').textContent=sc;if(sc>S.st.rush){S.st.rush=sc;box.querySelector('#rbst').textContent=sc;save();}check();pos();}
+function end(){clearInterval(iv);on=false;tg.hidden=true;fin.hidden=true;if(sc===0){S.st.flags.rush0=true;}save();check();ov.style.display='flex';ov.innerHTML='<h2>Final score: '+sc+'</h2><button class="btn">Restart</button>';ov.querySelector('button').onclick=begin;}
+function begin(){sc=0;left=15;on=true;started('rush');ov.style.display='none';tg.hidden=false;fin.hidden=false;pos();box.querySelector('#rs').textContent='0';
+iv=setInterval(function(){if(S.cheats.c_auto)hit();if(!S.cheats.c_inf)left=Math.max(0,left-0.1);box.querySelector('#rt').textContent=S.cheats.c_inf?'∞':left.toFixed(1)+'s';if(left<=0.001)end();},100);}
+tg.addEventListener('pointerdown',function(e){e.preventDefault();hit();});
+fin.onclick=end;
+ov.innerHTML='<button class="btn">Start</button>';ov.querySelector('button').onclick=begin;
+return{stop:function(){clearInterval(iv);on=false;}};}
+// MEMORY
+function gMem(box){
+var syms=['🍎','🚀','🎲','🌙','🔥','🐱','💎','🎵'],deck=syms.concat(syms),i,j,t;
+for(i=15;i>0;i--){j=Math.floor(Math.random()*(i+1));t=deck[i];deck[i]=deck[j];deck[j]=t;}
+box.innerHTML='<div class="bar" style="max-width:none"><span id="mm">Matches 0/8</span><span id="mt">60.0s</span></div><div class="cw" style="max-width:340px"><div class="mg">'+deck.map(function(_,k){return '<button class="mc" data-k="'+k+'">?</button>';}).join('')+'</div><div class="ov" style="display:none"></div></div>';
+var cards=box.querySelectorAll('.mc'),ov=box.querySelector('.ov'),open=[],done=[],busy=false,over=false,begun=false,left=60,mist=0,autoUsed=false,n=0,to=0,iv=0;
+function render(){var m=done.filter(Boolean).length/2;Array.prototype.forEach.call(cards,function(c,k){var up=done[k]||open.indexOf(k)>-1||S.cheats.m_reveal;c.textContent=up?deck[k]:'?';c.className='mc'+(done[k]?' ma':up?' up':'');});box.querySelector('#mm').textContent='Matches '+m+'/8';box.querySelector('#mt').textContent=left.toFixed(1)+'s';}
+function begin(){if(!begun){begun=true;started('mem');}}
+function finish(win){over=true;clearInterval(iv);clearTimeout(to);if(win){S.st.memWins++;var u=Math.round(60-left);if(!S.st.memBest||u<S.st.memBest)S.st.memBest=u;if(mist===0&&!autoUsed)S.st.flags.perfect=true;}save();check();ov.style.display='flex';ov.innerHTML='<h2>'+(win?'You won! 🎉':'Time is up!')+'</h2><button class="btn">Restart</button>';ov.querySelector('button').onclick=function(){enter('mem');};}
+function won(){return done.filter(Boolean).length===16;}
+function flip(k){if(busy||over||done[k]||open.indexOf(k)>-1)return;begin();open.push(k);render();
+if(open.length===2){var a=open[0],c=open[1];if(deck[a]===deck[c]){done[a]=done[c]=true;open=[];render();if(won())finish(true);}else{mist++;busy=true;to=setTimeout(function(){open=[];busy=false;render();},700);}}}
+Array.prototype.forEach.call(cards,function(c,k){c.addEventListener('click',function(){flip(k);});});
+iv=setInterval(function(){if(over)return;n++;
+if(begun&&!S.cheats.m_freeze){left=Math.max(0,left-0.1);}
+if(S.cheats.m_auto&&n%4===0&&!busy){begin();autoUsed=true;open=[];for(var a=0;a<16;a++){if(done[a])continue;for(var c=a+1;c<16;c++){if(!done[c]&&deck[c]===deck[a]){done[a]=done[c]=true;a=99;break;}}}
+render();if(won()){finish(true);return;}}
+if(left<=0){finish(false);return;}render();},100);
+render();
+return{refresh:render,stop:function(){over=true;clearInterval(iv);clearTimeout(to);}};}
+// MIC
+function gMic(box){
+box.innerHTML='<button class="btn" id="en">Enable Microphone</button><div class="meter"><i></i></div><h2 id="pc" style="text-align:center">0%</h2><p id="mg" style="color:var(--mu)">Audio is analysed live on this device only. Nothing is recorded or uploaded.</p>';
+var bar=box.querySelector('.meter i'),pc=box.querySelector('#pc'),mg=box.querySelector('#mg'),stream=null,ctx=null,raf=0,gone=false,sm=0;
+function stopAll(){cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}if(ctx){try{ctx.close();}catch(e){}ctx=null;}}
+box.querySelector('#en').onclick=function(){
+if(stream)return;
+if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){mg.textContent='Microphone access is not available here. Use a modern browser over HTTPS or a local file/localhost.';return;}
+mg.textContent='Waiting for permission...';
+navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
+if(gone){s.getTracks().forEach(function(t){t.stop();});return;}
+stream=s;var AC=window.AudioContext||window.webkitAudioContext;
+if(!AC){mg.textContent='Audio analysis is not supported in this browser.';stopAll();return;}
+ctx=new AC();var an=ctx.createAnalyser();an.fftSize=512;ctx.createMediaStreamSource(s).connect(an);var data=new Uint8Array(an.fftSize);
+if(ctx.state==='suspended')ctx.resume();
+mg.textContent='Microphone on. Make some noise!';S.st.micUses++;started('mic');
+(function loop(){if(gone)return;an.getByteTimeDomainData(data);var sum=0;for(var i=0;i<data.length;i++){var v=(data[i]-128)/128;sum+=v*v;}
+var p=Math.min(100,Math.round(Math.sqrt(sum/data.length)*300));sm=p>sm?p:sm*0.9+p*0.1;var r=Math.round(sm);
+bar.style.width=r+'%';pc.textContent=r+'%';if(r>S.st.micPeak){S.st.micPeak=r;save();check();}raf=requestAnimationFrame(loop);})();
+}).catch(function(e){mg.textContent=(e&&(e.name==='NotAllowedError'||e.name==='SecurityError'))?'Permission denied. Allow microphone access in your browser settings and try again.':'No microphone could be opened ('+(e&&e.name||'error')+').';});};
+return{stop:function(){gone=true;stopAll();}};}
+// init
+check();renderAll();
+})();
+</script></body></html>
